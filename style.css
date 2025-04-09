@@ -118,6 +118,34 @@ body {
   - margin-left: отступ слева (равен ширине sidebar)
   - padding: внутренние отступы контента
 */
+
+/* ===== СТИЛЬ КНОПКИ "НА ГЛАВНУЮ" ===== */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #2a2a2a; /* Темный фон как у sidebar */
+    color: #ddd !important; /* Цвет текста */
+    border: 1px solid #444 !important; /* Граница */
+    border-radius: 4px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
+    margin-bottom: 20px; /* Отступ от заголовка */
+}
+
+.back-button:hover {
+    background-color: #3a3a3a !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.back-button i {
+    font-size: 0.9rem;
+}
 .main-content {
     flex: 1;
     margin-left: 280px; /* Важно! Должно совпадать с width sidebar */
