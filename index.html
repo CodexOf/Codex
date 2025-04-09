@@ -1,50 +1,38 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Название вашего сайта</title>
-    <link rel="stylesheet" href="style.css">
+<!DOCTYPE html> <!-- Объявление типа документа как HTML5 -->
+<html lang="ru"> <!-- Корневой элемент с указанием языка -->
+<head> <!-- Секция метаданных и подключений -->
+    <meta charset="UTF-8"> <!-- Кодировка символов UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Для адаптивности на мобильных -->
+    <title>Название вашего сайта</title> <!-- Заголовок вкладки браузера -->
+    <link rel="stylesheet" href="style.css"> <!-- Подключение CSS файла -->
+    <!-- Подключение шрифтов Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Название игры/проекта</h1>
-            <nav>
-                <a href="#about">О проекте</a>
-                <a href="#rules">Правила</a>
-                <a href="#download">Скачать</a>
-            </nav>
-        </header>
-        
-        <section id="about">
-            <h2>О проекте</h2>
-            <p>Здесь описание вашего проекта, вдохновлённого Blades in the Dark.</p>
-        </section>
-        
-        <section id="rules">
-            <h2>Основные правила</h2>
-            <div class="rules-grid">
-                <!-- Здесь могут быть карточки с правилами -->
-                <div class="rule-card">
-                    <h3>Механика 1</h3>
-                    <p>Описание механики...</p>
-                </div>
-                <!-- Добавьте больше карточек по необходимости -->
-            </div>
-        </section>
-        
-        <section id="download">
-            <h2>Скачать</h2>
-            <a href="#" class="download-btn">PDF версия</a>
-            <a href="#" class="download-btn">Текстовая версия</a>
-        </section>
-        
-        <footer>
-            <p>Создано с ❤️ для фанатов настольных игр</p>
-        </footer>
+<body> <!-- Тело документа -->
+    <!-- Приветственный экран (полноэкранный блок) -->
+    <div class="welcome-screen">
+        <div class="welcome-content">
+            <!-- Главный заголовок игры -->
+            <h1 class="game-title">НАЗВАНИЕ ИГРЫ</h1>
+            <!-- Подзаголовок/описание -->
+            <p class="game-subtitle">Захватывающая ролевая игра в тёмном фэнтези-сеттинге</p>
+            <!-- Кнопка для перехода к контенту -->
+            <a href="#main-content" class="start-button">Начать приключение</a>
+        </div>
     </div>
     
+    <!-- Основное содержимое сайта -->
+    <div id="main-content" class="container">
+        <!-- Секция "О проекте" -->
+        <section id="about">
+            <h2>О проекте</h2> <!-- Заголовок секции -->
+            <p>Здесь описание вашего проекта...</p> <!-- Текст описания -->
+        </section>
+        
+        <!-- Другие секции будут здесь -->
+    </div>
+    
+    <!-- Подключение JavaScript файла -->
     <script src="script.js"></script>
 </body>
 </html>

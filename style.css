@@ -1,78 +1,109 @@
-/* Базовые стили, вдохновлённые bladesinthedark */
+/* === СТИЛИ ПРИВЕТСТВЕННОГО ЭКРАНА === */
+
+/* Основной контейнер приветственного экрана */
+.welcome-screen {
+    height: 100vh; /* На всю высоту viewport */
+    /* Темный градиент поверх фонового изображения */
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                url('assets/background.jpg') no-repeat center center;
+    background-size: cover; /* Растягиваем изображение на весь экран */
+    display: flex; /* Flexbox для центрирования */
+    justify-content: center; /* Центрирование по горизонтали */
+    align-items: center; /* Центрирование по вертикали */
+    text-align: center; /* Выравнивание текста по центру */
+    color: white; /* Цвет текста */
+}
+
+/* Контейнер для контента внутри приветственного экрана */
+.welcome-content {
+    max-width: 800px; /* Максимальная ширина контента */
+    padding: 20px; /* Внутренние отступы */
+    animation: fadeIn 1.5s ease-in-out; /* Анимация появления */
+}
+
+/* Стили для главного заголовка игры */
+.game-title {
+    font-family: 'Cinzel Decorative', cursive; /* Декоративный шрифт */
+    font-size: 5rem; /* Размер шрифта */
+    margin: 0; /* Убираем внешние отступы */
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8); /* Тень текста */
+    letter-spacing: 5px; /* Расстояние между буквами */
+}
+
+/* Стили для подзаголовка */
+.game-subtitle {
+    font-family: 'Roboto', sans-serif; /* Шрифт без засечек */
+    font-size: 1.5rem; /* Размер шрифта */
+    font-weight: 300; /* Тонкость шрифта */
+    margin: 20px 0 40px; /* Внешние отступы */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8); /* Тень текста */
+}
+
+/* Стили для кнопки "Начать приключение" */
+.start-button {
+    display: inline-block; /* Блочно-строчное отображение */
+    padding: 15px 30px; /* Внутренние отступы */
+    background-color: transparent; /* Прозрачный фон */
+    color: white; /* Цвет текста */
+    border: 2px solid white; /* Белая рамка */
+    font-size: 1.2rem; /* Размер шрифта */
+    text-decoration: none; /* Убираем подчеркивание */
+    text-transform: uppercase; /* Все буквы заглавные */
+    letter-spacing: 2px; /* Расстояние между буквами */
+    transition: all 0.3s ease; /* Плавные переходы */
+    animation: pulse 2s infinite; /* Анимация пульсации */
+}
+
+/* Стили при наведении на кнопку */
+.start-button:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Полупрозрачный белый */
+    transform: translateY(-3px); /* Сдвиг вверх */
+}
+
+/* === АНИМАЦИИ === */
+
+/* Анимация плавного появления */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); } /* Начальное состояние */
+    to { opacity: 1; transform: translateY(0); } /* Конечное состояние */
+}
+
+/* Анимация пульсации кнопки */
+@keyframes pulse {
+    0% { transform: scale(1); } /* Нормальный размер */
+    50% { transform: scale(1.05); } /* Увеличение на 5% */
+    100% { transform: scale(1); } /* Возврат к нормальному размеру */
+}
+
+/* === ОСНОВНЫЕ СТИЛИ САЙТА === */
+
+/* Стили для тела документа */
 body {
-    font-family: 'Courier New', monospace;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 0;
+    font-family: 'Roboto', sans-serif; /* Основной шрифт */
+    line-height: 1.6; /* Межстрочный интервал */
+    color: #333; /* Основной цвет текста */
+    margin: 0; /* Убираем внешние отступы */
+    padding: 0; /* Убираем внутренние отступы */
 }
 
+/* Основной контейнер контента */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+    max-width: 1200px; /* Максимальная ширина */
+    margin: 0 auto; /* Центрирование по горизонтали */
+    padding: 20px; /* Внутренние отступы */
 }
 
-header {
-    background-color: #222;
-    color: white;
-    padding: 20px 0;
-    text-align: center;
-    margin-bottom: 30px;
-}
+/* === МЕДИАЗАПРОСЫ ДЛЯ АДАПТИВНОСТИ === */
 
-header h1 {
-    margin: 0;
-    font-size: 2.5em;
-}
-
-nav a {
-    color: white;
-    margin: 0 15px;
-    text-decoration: none;
-    font-size: 1.2em;
-}
-
-section {
-    margin-bottom: 40px;
-    padding: 20px;
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.rules-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.rule-card {
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 5px;
-}
-
-.download-btn {
-    display: inline-block;
-    background-color: #222;
-    color: white;
-    padding: 10px 20px;
-    margin-right: 10px;
-    text-decoration: none;
-    border-radius: 5px;
-}
-
-footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #222;
-    color: white;
-}
-
-/* Добавьте адаптивность */
 @media (max-width: 768px) {
-    .rules-grid {
-        grid-template-columns: 1fr;
+    /* Уменьшаем размеры для мобильных */
+    .game-title {
+        font-size: 3rem;
+    }
+    .game-subtitle {
+        font-size: 1.2rem;
+    }
+    .start-button {
+        padding: 10px 20px;
     }
 }
