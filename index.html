@@ -3,35 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Название Игры | Вход</title>
+    <title>Название Игры | Главная</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <style>
-        /* Анимация перехода */
-        .page-transition {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+        /* Базовые стили для гарантии отображения */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            opacity: 1 !important; /* Принудительно отображаем */
+        }
+        .welcome-screen {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('assets/background.jpg') center/cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
         }
     </style>
 </head>
 <body>
-    <!-- Элемент для анимации перехода -->
-    <div class="page-transition" id="pageTransition"></div>
-
-    <!-- Основной контент -->
     <div class="welcome-screen">
         <div class="welcome-content">
             <h1 class="game-title">НАЗВАНИЕ ИГРЫ</h1>
             <p class="game-subtitle">Погрузитесь в мир тёмного фэнтези</p>
-            <a href="content.html" class="start-button" id="startButton">Начать приключение</a>
+            <a href="content.html" class="start-button">Начать приключение</a>
         </div>
     </div>
 
@@ -39,29 +39,10 @@
         <p>© 2023 Название Игры</p>
     </footer>
 
+    <!-- Упрощённый скрипт без анимаций -->
     <script>
-        // Анимация перехода
-        document.getElementById('startButton').addEventListener('click', function(e) {
-            e.preventDefault();
-            const transition = document.getElementById('pageTransition');
-            
-            // Запуск анимации
-            transition.style.opacity = '1';
-            
-            // Переход после завершения анимации
-            setTimeout(() => {
-                window.location.href = this.getAttribute('href');
-            }, 800);
-        });
-
-        // Анимация появления при загрузке
-        document.addEventListener('DOMContentLoaded', () => {
-            document.body.style.opacity = '0';
-            setTimeout(() => {
-                document.body.style.transition = 'opacity 0.8s ease';
-                document.body.style.opacity = '1';
-            }, 50);
-        });
+        // Минимальный функционал для проверки
+        console.log('Страница загружена');
     </script>
 </body>
 </html>
