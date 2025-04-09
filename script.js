@@ -1,10 +1,7 @@
-// Общие функции для всех страниц
 class PageTransitions {
     static init() {
-        // Инициализация переходов
         this.setupPageTransitions();
         
-        // Инициализация специфичных для страницы элементов
         if (document.querySelector('.welcome-screen')) {
             this.initHomePage();
         } else if (document.querySelector('.content-wrapper')) {
@@ -13,16 +10,13 @@ class PageTransitions {
     }
 
     static setupPageTransitions() {
-        // Обработка всех переходов между страницами
         document.addEventListener('click', (e) => {
             const link = e.target.closest('a[href^="http"]:not([target="_blank"]), a[href^="/"], a[href^="#"]');
             
             if (link && !link.hash) {
                 e.preventDefault();
                 const transition = document.getElementById('pageTransition');
-                
                 transition.style.opacity = '1';
-                
                 setTimeout(() => {
                     window.location.href = link.href;
                 }, 800);
@@ -31,7 +25,6 @@ class PageTransitions {
     }
 
     static initHomePage() {
-        // Дополнительная анимация для главной страницы
         const startButton = document.getElementById('startButton');
         if (startButton) {
             startButton.addEventListener('mouseenter', () => {
@@ -57,8 +50,17 @@ class PageTransitions {
                 }
             });
         });
+
+        // Меню для мобильных
+        const menuToggle = document.createElement('button');
+        menuToggle.className = 'menu-toggle';
+        menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+        document.body.appendChild(menuToggle);
+        
+        menuToggle.addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
     }
 }
 
-// Запуск при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => PageTransitions.init());

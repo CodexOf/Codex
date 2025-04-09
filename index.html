@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <style>
-        /* Анимация перехода */
         .page-transition {
             position: fixed;
             top: 0;
@@ -23,10 +22,8 @@
     </style>
 </head>
 <body>
-    <!-- Элемент для анимации перехода -->
     <div class="page-transition" id="pageTransition"></div>
 
-    <!-- Основной контент -->
     <div class="welcome-screen">
         <div class="welcome-content">
             <h1 class="game-title">НАЗВАНИЕ ИГРЫ</h1>
@@ -40,21 +37,15 @@
     </footer>
 
     <script>
-        // Анимация перехода
         document.getElementById('startButton').addEventListener('click', function(e) {
             e.preventDefault();
             const transition = document.getElementById('pageTransition');
-            
-            // Запуск анимации
             transition.style.opacity = '1';
-            
-            // Переход после завершения анимации
             setTimeout(() => {
                 window.location.href = this.getAttribute('href');
             }, 800);
         });
 
-        // Анимация появления при загрузке
         document.addEventListener('DOMContentLoaded', () => {
             document.body.style.opacity = '0';
             setTimeout(() => {

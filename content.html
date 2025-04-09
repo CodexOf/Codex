@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Анимации перехода */
         .page-transition {
             position: fixed;
             top: 0;
@@ -24,27 +23,44 @@
         body {
             opacity: 0;
             animation: pageFadeIn 1s ease-out forwards;
+            padding-left: 280px; /* Отступ для бокового бара */
         }
         
         @keyframes pageFadeIn {
             to { opacity: 1; }
         }
+        
+        @media (max-width: 992px) {
+            body {
+                padding-left: 0;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Элемент для анимации перехода -->
     <div class="page-transition" id="pageTransition"></div>
 
-    <!-- Шапка -->
-    <header class="content-header">
-        <a href="index.html" class="back-button" id="backButton">
-            <i class="fas fa-arrow-left"></i> На главную
-        </a>
-        <h1>Правила игры</h1>
-    </header>
+    <!-- Левый бар -->
+    <aside class="sidebar">
+        <nav class="toc-nav">
+            <h3 class="toc-title"><i class="fas fa-list-ul"></i> Оглавление</h3>
+            <ul class="toc-list">
+                <li><a href="#about" class="toc-link"><i class="fas fa-info-circle"></i> О игре</a></li>
+                <li><a href="#rules" class="toc-link"><i class="fas fa-book"></i> Правила</a></li>
+                <li><a href="#characters" class="toc-link"><i class="fas fa-users"></i> Персонажи</a></li>
+            </ul>
+        </nav>
+    </aside>
 
     <!-- Основной контент -->
     <div class="content-wrapper">
+        <header class="content-header">
+            <a href="index.html" class="back-button" id="backButton">
+                <i class="fas fa-arrow-left"></i> На главную
+            </a>
+            <h1>Правила игры</h1>
+        </header>
+
         <main class="main-content">
             <section id="about" class="content-section">
                 <h2><i class="fas fa-info-circle"></i> О игре</h2>
@@ -62,36 +78,21 @@
             </section>
         </main>
 
-        <!-- Боковая панель -->
-        <aside class="sidebar">
-            <nav class="toc-nav">
-                <h3 class="toc-title"><i class="fas fa-list-ul"></i> Оглавление</h3>
-                <ul class="toc-list">
-                    <li><a href="#about" class="toc-link"><i class="fas fa-info-circle"></i> О игре</a></li>
-                    <li><a href="#rules" class="toc-link"><i class="fas fa-book"></i> Правила</a></li>
-                </ul>
-            </nav>
-        </aside>
+        <footer class="content-footer">
+            <p>© 2023 Название Игры</p>
+        </footer>
     </div>
 
-    <footer class="content-footer">
-        <p>© 2023 Название Игры</p>
-    </footer>
-
     <script>
-        // Анимация возврата
         document.getElementById('backButton').addEventListener('click', function(e) {
             e.preventDefault();
             const transition = document.getElementById('pageTransition');
-            
             transition.style.opacity = '1';
-            
             setTimeout(() => {
                 window.location.href = this.getAttribute('href');
             }, 800);
         });
 
-        // Анимация появления элементов
         document.addEventListener('DOMContentLoaded', () => {
             const sections = document.querySelectorAll('.content-section');
             sections.forEach((section, index) => {

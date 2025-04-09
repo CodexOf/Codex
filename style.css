@@ -10,7 +10,7 @@ body {
     line-height: 1.6;
     color: #333;
     background-color: #f5f5f5;
-    overflow-x: hidden;
+    min-height: 100vh;
 }
 
 /* Главная страница */
@@ -25,51 +25,34 @@ body {
     color: white;
 }
 
-.game-title {
-    font-family: 'Cinzel Decorative', cursive;
-    font-size: 5rem;
-    text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
-    letter-spacing: 5px;
-    margin-bottom: 1rem;
-    animation: titleFadeIn 1.2s ease-out;
-}
-
-.start-button {
-    display: inline-block;
-    padding: 15px 30px;
-    background: transparent;
-    color: white;
-    border: 2px solid white;
-    font-size: 1.2rem;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    transition: all 0.3s ease;
-    animation: buttonFadeIn 1.5s ease-out;
-}
-
-/* Страница контента */
-.content-wrapper {
-    display: flex;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px;
-    gap: 30px;
-}
-
+/* Левый бар */
 .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
     width: 280px;
-    position: sticky;
-    top: 20px;
-    align-self: flex-start;
-    animation: sidebarFadeIn 0.8s ease-out;
+    height: 100vh;
+    background: #2a2a2a;
+    z-index: 100;
+    padding: 20px 0;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
 }
 
 .toc-nav {
-    background: #2a2a2a;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 0 20px;
+}
+
+.toc-title {
+    color: #fff;
+    font-size: 1.2rem;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #444;
+}
+
+.toc-list {
+    list-style: none;
 }
 
 .toc-link {
@@ -77,12 +60,67 @@ body {
     align-items: center;
     gap: 10px;
     color: #ddd;
-    padding: 10px 15px;
-    margin-bottom: 5px;
-    border-radius: 4px;
+    padding: 12px 15px;
+    text-decoration: none;
     transition: all 0.3s;
 }
 
+.toc-link:hover {
+    background: #3a3a3a;
+    color: #fff;
+}
+
+/* Основной контент */
+.content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.content-header {
+    margin-bottom: 30px;
+}
+
+.back-button {
+    color: #333;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
 /* Анимации */
-@keyframes titleFadeIn {
-    from { opacity: 0; transform: translateY(-20px
+@keyframes pageFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes sectionFadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    body {
+        padding-left: 0 !important;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .menu-toggle {
+        display: block;
+        position: fixed;
+        left: 10px;
+        top: 10px;
+        z-index: 101;
+    }
+}
