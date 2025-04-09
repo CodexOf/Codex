@@ -8,8 +8,6 @@
     
     <!-- Подключение стилей и иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="animations.css">
     
     <!-- Основные стили документа -->
     <style>
@@ -21,6 +19,20 @@
             display: flex;
             min-height: 100vh;
             background-color: #f5f5f5;
+        }
+
+        /* Анимация перехода (новый блок) */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1);
         }
 
         /* Стили боковой панели */
@@ -236,7 +248,7 @@
     <!-- Элемент для анимации перехода (добавлен) -->
     <div class="page-transition" id="pageTransition"></div>
 
-    <!-- Боковая панель (все кнопки и вкладки на месте) -->
+    <!-- Боковая панель -->
     <div class="sidebar">
         <!-- Заголовок панели -->
         <div class="sidebar-header">
@@ -251,7 +263,7 @@
             <a href="contact.html">Контакты</a>
         </div>
         
-        <!-- Блок выбора версий правил (все кнопки сохранены) -->
+        <!-- Блок выбора версий правил -->
         <div class="sidebar-version-selectors">
             <!-- Селектор основных правил -->
             <div class="version-selector">
@@ -305,7 +317,7 @@
 
     <!-- Основное содержимое страницы -->
     <div class="main-content">
-        <!-- Контент будет подгружаться динамически -->
+        <!-- Контент будет подгружаться динамически в зависимости от выбранной страницы -->
         <div id="content-container">
             <!-- По умолчанию загружаются правила -->
             <h1>Правила Codex</h1>
@@ -367,7 +379,6 @@
             // Функция загрузки страницы
             function loadPage(page) {
                 const container = document.getElementById('content-container');
-                container.style.opacity = '0'; // Скрываем перед загрузкой
                 
                 // Обновляем активную ссылку в навигации
                 document.querySelectorAll('.sidebar-nav a').forEach(link => {
@@ -438,23 +449,17 @@
                         break;
                         
                     default:
+                        // По умолчанию загружаем страницу правил
                         container.innerHTML = `
                             <h1>Правила Codex</h1>
                             <p>Выберите категорию и версию правил в боковой панели.</p>
                         `;
                 }
-                
-                // Плавное появление контента после загрузки
-                setTimeout(() => {
-                    container.style.opacity = '1';
-                    container.classList.add('content-load-animation');
-                }, 50);
             }
             
             // Функция загрузки контента правил
             function loadRulesContent(version) {
                 const container = document.getElementById('content-container');
-                container.style.opacity = '0';
                 container.innerHTML = `
                     <h1>${version}</h1>
                     <p>Здесь будет содержание выбранной версии правил.</p>
@@ -462,14 +467,9 @@
                         <p>Контент для ${version} находится в разработке и скоро будет доступен.</p>
                     </div>
                 `;
-                
-                setTimeout(() => {
-                    container.style.opacity = '1';
-                    container.classList.add('content-load-animation');
-                }, 50);
             }
             
-            // Загружаем начальную страницу
+            // Загружаем начальную страницу (из URL или по умолчанию правила)
             const initialPage = window.location.pathname.split('/').pop().replace('.html', '') || 'content';
             loadPage(initialPage);
         });

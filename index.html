@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Название Игры | Вход</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="animations.css"> <!-- Добавлено -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <style>
         /* Анимация перехода */
@@ -40,6 +39,29 @@
         <p>© 2025 Нифига не защищено! Бери, играй, распространяй!</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // Анимация перехода
+        document.getElementById('startButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            const transition = document.getElementById('pageTransition');
+            
+            // Запуск анимации
+            transition.style.opacity = '1';
+            
+            // Переход после завершения анимации
+            setTimeout(() => {
+                window.location.href = this.getAttribute('href');
+            }, 800);
+        });
+
+        // Анимация появления при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.8s ease';
+                document.body.style.opacity = '1';
+            }, 50);
+        });
+    </script>
 </body>
 </html>
