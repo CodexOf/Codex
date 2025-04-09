@@ -3,22 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Название Игры | Главная</title>
+    <title>Название Игры | Вход</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <style>
-        /* Анимация перехода (оставляем только это изменение) */
-        body {
-            opacity: 1;
-            transition: opacity 0.8s ease-in-out;
-        }
-        body.fade-out {
+        /* Анимация перехода */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
             opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1);
         }
     </style>
 </head>
 <body>
-    <!-- Приветственный экран (без изменений) -->
+    <!-- Элемент для анимации перехода -->
+    <div class="page-transition" id="pageTransition"></div>
+
+    <!-- Основной контент -->
     <div class="welcome-screen">
         <div class="welcome-content">
             <h1 class="game-title">НАЗВАНИЕ ИГРЫ</h1>
@@ -27,28 +35,32 @@
         </div>
     </div>
 
-    <!-- Подвал (без изменений) -->
     <footer class="main-footer">
-        <p>© 2023 Название Игры. Все права защищены.</p>
+        <p>© 2023 Название Игры</p>
     </footer>
 
     <script>
-        // Анимация перехода (как было)
+        // Анимация перехода
         document.getElementById('startButton').addEventListener('click', function(e) {
             e.preventDefault();
-            document.body.classList.add('fade-out');
+            const transition = document.getElementById('pageTransition');
             
-            setTimeout(function() {
-                window.location.href = 'content.html';
+            // Запуск анимации
+            transition.style.opacity = '1';
+            
+            // Переход после завершения анимации
+            setTimeout(() => {
+                window.location.href = this.getAttribute('href');
             }, 800);
         });
 
-        // Анимация появления при загрузке (как было)
-        document.addEventListener('DOMContentLoaded', function() {
+        // Анимация появления при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
             document.body.style.opacity = '0';
-            setTimeout(function() {
-                document.body.classList.add('fade-in');
-            }, 100);
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.8s ease';
+                document.body.style.opacity = '1';
+            }, 50);
         });
     </script>
 </body>
