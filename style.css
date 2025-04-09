@@ -1,77 +1,110 @@
-/* === СТИЛИ БОКОВОГО БАРА === */
+/* === Глобальные стили === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+/* === Стили главной страницы (index.html) === */
+.welcome-screen {
+    height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                url('assets/background.jpg') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+
+.game-title {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 5rem;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8);
+    letter-spacing: 5px;
+}
+
+.start-button {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+    font-size: 1.2rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+/* === Стили страницы контента (content.html) === */
 .content-wrapper {
-    display: flex; /* Делаем контейнер flex */
-    max-width: 1400px; /* Ширина всей области */
-    margin: 0 auto; /* Центрирование */
-    padding: 0 20px; /* Отступы по бокам */
-}
-
-.sidebar {
-    width: 250px; /* Фиксированная ширина */
-    padding: 20px; /* Внутренние отступы */
-    position: sticky; /* Липкая позиция */
-    top: 80px; /* Отступ сверху (ниже шапки) */
-    align-self: flex-start; /* Выравнивание по верху */
-    height: calc(100vh - 100px); /* Высота на весь экран минус шапка */
-    overflow-y: auto; /* Прокрутка если контента много */
-}
-
-.toc-nav {
-    background: #2c2c2c; /* Темный фон */
-    border-radius: 8px; /* Скругленные углы */
-    padding: 15px; /* Внутренние отступы */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Тень */
-}
-
-.toc-title {
-    color: #f0f0f0; /* Цвет текста */
-    font-size: 1.2rem; /* Размер шрифта */
-    margin-bottom: 15px; /* Отступ снизу */
-    padding-bottom: 10px; /* Отступ снизу */
-    border-bottom: 1px solid #444; /* Граница снизу */
-}
-
-.toc-list {
-    list-style: none; /* Убираем маркеры списка */
-}
-
-.toc-link {
-    display: block; /* Блочные элементы */
-    color: #ccc; /* Цвет ссылок */
-    padding: 8px 12px; /* Отступы */
-    margin-bottom: 5px; /* Отступ между пунктами */
-    border-radius: 4px; /* Скругление */
-    text-decoration: none; /* Убираем подчеркивание */
-    transition: all 0.3s ease; /* Плавные переходы */
-}
-
-.toc-link:hover {
-    background: #3a3a3a; /* Фон при наведении */
-    color: #fff; /* Цвет текста */
-}
-
-.toc-link.active {
-    background: #ff3366; /* Активный пункт */
-    color: white; /* Цвет текста */
-    font-weight: bold; /* Жирный шрифт */
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    gap: 30px;
 }
 
 .main-content {
-    flex: 1; /* Занимает всё оставшееся пространство */
-    padding: 0 30px; /* Отступы */
+    flex: 1;
+    min-width: 0; /* Фикс для переполнения */
 }
 
-/* === АДАПТИВНОСТЬ === */
+.sidebar {
+    width: 280px;
+    position: sticky;
+    top: 20px;
+    align-self: flex-start;
+}
+
+.toc-nav {
+    background: #2a2a2a;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.toc-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ddd;
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.toc-link:hover {
+    background: #3a3a3a;
+    color: white;
+}
+
+/* Анимации */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Адаптивность */
 @media (max-width: 992px) {
     .content-wrapper {
-        flex-direction: column; /* Меняем направление на колонку */
+        flex-direction: column;
     }
-    
     .sidebar {
-        width: 100%; /* На всю ширину */
-        position: static; /* Отменяем sticky */
-        height: auto; /* Автоматическая высота */
-        margin-bottom: 30px; /* Отступ снизу */
+        width: 100%;
+        position: static;
+        order: -1; /* Перемещаем бар вверх */
     }
 }

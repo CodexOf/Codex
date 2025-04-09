@@ -4,60 +4,78 @@
     <!-- Метаданные -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Название Игры | Контент</title>
+    <title>Название Игры | Правила</title>
     
-    <!-- Стили и иконка -->
+    <!-- Стили -->
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
     
-    <!-- Скрипты (если нужны в head) -->
-    <script src="https://kit.fontawesome.com/ваш-код.js" crossorigin="anonymous"></script>
+    <!-- Шрифты и иконки -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Шапка (остаётся без изменений) -->
+    <!-- Шапка -->
     <header class="content-header">
-        <a href="index.html" class="back-button">← На главную</a>
-        <h1>Название Игры</h1>
-        <nav class="content-nav">
-            <a href="#about">О игре</a>
-            <a href="#rules">Правила</a>
-            <a href="#characters">Персонажи</a>
-        </nav>
+        <a href="index.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> На главную
+        </a>
+        <h1>Правила игры</h1>
     </header>
 
-    <!-- Основной контейнер -->
+    <!-- Основной контейнер с боковым баром -->
     <div class="content-wrapper">
-        <!-- Боковая панель (новый блок) -->
-        <aside class="sidebar">
-            <nav class="toc-nav">
-                <h3 class="toc-title"><i class="fas fa-list-ul"></i> Оглавление</h3>
-                <ul class="toc-list">
-                    <li><a href="#about" class="toc-link"><i class="fas fa-info-circle"></i> О игре</a></li>
-                    <li><a href="#rules" class="toc-link"><i class="fas fa-book"></i> Правила</a></li>
-                    <li><a href="#characters" class="toc-link"><i class="fas fa-users"></i> Персонажи</a></li>
-                </ul>
-            </nav>
-        </aside>
-
-        <!-- Основной контент (существующие секции) -->
+        <!-- Основной контент -->
         <main class="main-content">
             <section id="about" class="content-section">
                 <h2><i class="fas fa-info-circle"></i> О игре</h2>
-                <p>Контент без изменений...</p>
+                <p>Полное описание вашего проекта...</p>
             </section>
 
             <section id="rules" class="content-section">
-                <h2><i class="fas fa-book"></i> Правила</h2>
+                <h2><i class="fas fa-book"></i> Основные правила</h2>
                 <div class="rules-grid">
-                    <!-- Ваши существующие карточки -->
+                    <div class="rule-card">
+                        <h3>Создание персонажа</h3>
+                        <p>Описание процесса создания персонажа...</p>
+                    </div>
+                    <div class="rule-card">
+                        <h3>Боевая система</h3>
+                        <p>Описание боевых механик...</p>
+                    </div>
                 </div>
             </section>
         </main>
+
+        <!-- Правый бар с оглавлением -->
+        <aside class="sidebar">
+            <nav class="toc-nav">
+                <h3 class="toc-title">
+                    <i class="fas fa-list-ul"></i> Оглавление
+                </h3>
+                <ul class="toc-list">
+                    <li>
+                        <a href="#about" class="toc-link">
+                            <i class="fas fa-info-circle"></i> О игре
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#rules" class="toc-link">
+                            <i class="fas fa-book"></i> Правила
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#characters" class="toc-link">
+                            <i class="fas fa-users"></i> Персонажи
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
     </div>
 
     <!-- Подвал -->
     <footer class="content-footer">
-        <p>© 2023 Название Игры | <a href="mailto:contact@example.com">Контакты</a></p>
+        <p>© 2023 Название Игры | Версия 1.0</p>
     </footer>
 
     <!-- Скрипты -->
