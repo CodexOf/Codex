@@ -1,104 +1,89 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <!-- Мета-данные -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Название Игры | Контент</title>
+    <title>Название Игры | Правила</title>
+    
+    <!-- Подключение стилей -->
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Иконки Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .page-transition {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1);
-        }
-        
-        body {
-            opacity: 0;
-            animation: pageFadeIn 1s ease-out forwards;
-            padding-left: 280px; /* Отступ для бокового бара */
-        }
-        
-        @keyframes pageFadeIn {
-            to { opacity: 1; }
-        }
-        
-        @media (max-width: 992px) {
-            body {
-                padding-left: 0;
-            }
-        }
-    </style>
 </head>
 <body>
-    <div class="page-transition" id="pageTransition"></div>
-
-    <!-- Левый бар -->
-    <aside class="sidebar">
-        <nav class="toc-nav">
-            <h3 class="toc-title"><i class="fas fa-list-ul"></i> Оглавление</h3>
-            <ul class="toc-list">
-                <li><a href="#about" class="toc-link"><i class="fas fa-info-circle"></i> О игре</a></li>
-                <li><a href="#rules" class="toc-link"><i class="fas fa-book"></i> Правила</a></li>
-                <li><a href="#characters" class="toc-link"><i class="fas fa-users"></i> Персонажи</a></li>
-            </ul>
-        </nav>
-    </aside>
-
-    <!-- Основной контент -->
+    <!-- Основной контейнер страницы -->
     <div class="content-wrapper">
-        <header class="content-header">
-            <a href="index.html" class="back-button" id="backButton">
-                <i class="fas fa-arrow-left"></i> На главную
-            </a>
-            <h1>Правила игры</h1>
-        </header>
+        <!-- ===== ЛЕВАЯ ПАНЕЛЬ (ОГЛАВЛЕНИЕ) ===== -->
+        <aside class="sidebar">
+            <nav class="toc-nav">
+                <h3 class="toc-title"><i class="fas fa-list-ul"></i> Оглавление</h3>
+                <ul class="toc-list">
+                    <!-- Ссылки на разделы -->
+                    <li><a href="#about" class="toc-link"><i class="fas fa-info-circle"></i> О игре</a></li>
+                    <li><a href="#rules" class="toc-link"><i class="fas fa-book"></i> Правила</a></li>
+                    <li><a href="#characters" class="toc-link"><i class="fas fa-users"></i> Персонажи</a></li>
+                </ul>
+            </nav>
+        </aside>
 
+        <!-- ===== ОСНОВНОЕ СОДЕРЖИМОЕ ===== -->
         <main class="main-content">
-            <section id="about" class="content-section">
-                <h2><i class="fas fa-info-circle"></i> О игре</h2>
-                <p>Полное описание вашего проекта...</p>
-            </section>
+            <!-- Шапка страницы -->
+            <header class="content-header">
+                <!-- Кнопка возврата -->
+                <a href="index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> На главную
+                </a>
+                <h1>Правила игры</h1>
+            </header>
 
+            <!-- ===== СЕКЦИЯ С ВКЛАДКАМИ ===== -->
             <section id="rules" class="content-section">
-                <h2><i class="fas fa-book"></i> Основные правила</h2>
-                <div class="rules-grid">
-                    <div class="rule-card">
-                        <h3>Создание персонажа</h3>
-                        <p>Описание процесса создания...</p>
+                <h2><i class="fas fa-book"></i> Правила</h2>
+                
+                <!-- Контейнер вкладок -->
+                <div class="tabs-container">
+                    <!-- Панель с кнопками вкладок -->
+                    <div class="tabs-buttons">
+                        <!-- Кнопки переключения -->
+                        <button class="tab-button active" data-tab="tab1">
+                            <i class="fas fa-dice"></i> Базовая версия
+                        </button>
+                        <button class="tab-button" data-tab="tab2">
+                            <i class="fas fa-plus-circle"></i> Расширенная
+                        </button>
+                        <button class="tab-button" data-tab="tab3">
+                            <i class="fas fa-home"></i> Домашние правила
+                        </button>
+                    </div>
+                    
+                    <!-- ===== СОДЕРЖИМОЕ ВКЛАДОК ===== -->
+                    <!-- Вкладка 1 -->
+                    <div class="tab-content active" id="tab1">
+                        <h3>Основные правила</h3>
+                        <p>Здесь разместите текст базовых правил...</p>
+                        <!-- Добавьте свой контент -->
+                    </div>
+                    
+                    <!-- Вкладка 2 -->
+                    <div class="tab-content" id="tab2">
+                        <h3>Дополнительные механики</h3>
+                        <p>Здесь разместите расширенные правила...</p>
+                    </div>
+                    
+                    <!-- Вкладка 3 -->
+                    <div class="tab-content" id="tab3">
+                        <h3>Ваши модификации</h3>
+                        <p>Здесь разместите домашние правила...</p>
                     </div>
                 </div>
             </section>
         </main>
-
-        <footer class="content-footer">
-            <p>© 2023 Название Игры</p>
-        </footer>
     </div>
 
-    <script>
-        document.getElementById('backButton').addEventListener('click', function(e) {
-            e.preventDefault();
-            const transition = document.getElementById('pageTransition');
-            transition.style.opacity = '1';
-            setTimeout(() => {
-                window.location.href = this.getAttribute('href');
-            }, 800);
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const sections = document.querySelectorAll('.content-section');
-            sections.forEach((section, index) => {
-                section.style.animation = `sectionFadeIn 0.6s ease-out ${index * 0.2 + 0.3}s both`;
-            });
-        });
-    </script>
+    <!-- Подключение скриптов -->
+    <script src="script.js"></script>
 </body>
 </html>
