@@ -21,6 +21,20 @@
             background-color: #f5f5f5;
         }
 
+        /* Анимация перехода (новый блок) */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
         /* Стили боковой панели */
         .sidebar {
             width: 250px;
@@ -231,6 +245,9 @@
     </style>
 </head>
 <body>
+    <!-- Элемент для анимации перехода (добавлен) -->
+    <div class="page-transition" id="pageTransition"></div>
+
     <!-- Боковая панель -->
     <div class="sidebar">
         <!-- Заголовок панели -->
@@ -309,6 +326,7 @@
     </div>
 
     <!-- Скрипты для работы страницы -->
+    <script src="script.js"></script>
     <script>
         // Обработчик загрузки DOM
         document.addEventListener('DOMContentLoaded', function() {

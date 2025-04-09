@@ -4,22 +4,27 @@ class PageTransitions {
         
         if (document.querySelector('.welcome-screen')) {
             this.initHomePage();
-        } else if (document.querySelector('.content-wrapper')) {
+        } else if (document.querySelector('.content-wrapper') || document.querySelector('.main-content')) {
             this.initContentPage();
         }
     }
 
     static setupPageTransitions() {
         document.addEventListener('click', (e) => {
-            const link = e.target.closest('a[href^="http"]:not([target="_blank"]), a[href^="/"], a[href^="#"]');
+            // Обрабатываем все внутренние ссылки (включая навигацию и кнопку "Начать")
+            const link = e.target.closest('a[href^="/"], a[href^="#"], a[href^="http"]:not([target="_blank"]), a:not([href^="mailto:"])');
             
-            if (link && !link.hash) {
+            if (link && link.href && !link.hash) {
                 e.preventDefault();
                 const transition = document.getElementById('pageTransition');
-                transition.style.opacity = '1';
-                setTimeout(() => {
-                    window.location.href = link.href;
-                }, 800);
+                
+                // Если переход на другую страницу (не якорь)
+                if (!link.href.includes('#')) {
+                    transition.style.opacity = '1';
+                    setTimeout(() => {
+                        window.location.href = link.href;
+                    }, 800);
+                }
             }
         });
     }
