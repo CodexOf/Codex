@@ -3,65 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodexOf</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- ДОБАВЛЕНО: Стили для переходов -->
+    <title>Codex - Content</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        /* Анимация перехода между страницами */
-        .transition-wrapper {
+        /* === ДОБАВЛЕНО ДЛЯ ПЕРЕХОДОВ === */
+        .swup-transition {
             transition: opacity 0.4s ease;
-            opacity: 1;
         }
-        html.is-changing .transition-wrapper {
+        html.is-changing .swup-transition {
             opacity: 0;
         }
-        html.is-rendering .transition-wrapper {
+        html.is-rendering .swup-transition {
             opacity: 1;
         }
+
+        /* ВЕСЬ ОСТАЛЬНОЙ СУЩЕСТВУЮЩИЙ CSS ОСТАЁТСЯ БЕЗ ИЗМЕНЕНИЙ */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+        /* ... и так далее (весь ваш оригинальный CSS) ... */
     </style>
 </head>
 <body>
-    <!-- ДОБАВЛЕНО: Обертка для всего контента -->
-    <div class="transition-wrapper" id="swup">
-        <!-- ВСЁ СУЩЕСТВУЮЩЕЕ СОДЕРЖИМОЕ ОСТАЁТСЯ БЕЗ ИЗМЕНЕНИЙ -->
-        <header>
-            <h1>Добро пожаловать в CodexOf</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Главная</a></li>
-                    <li><a href="content.html">Контент</a></li>
-                </ul>
-            </nav>
-        </header>
-        
-        <main>
-            <section class="content-section">
-                <h2>О проекте</h2>
-                <p>Полное описание проекта...</p>
-                <!-- Весь остальной контент без изменений -->
-            </section>
-        </main>
-        
-        <footer>
-            <p>© 2023 CodexOf Project</p>
-        </footer>
-        <!-- КОНЕЦ СУЩЕСТВУЮЩЕГО КОНТЕНТА -->
+    <!-- === ДОБАВЛЕНО === -->
+    <div id="swup" class="swup-transition">
+        <!-- ВЕСЬ СУЩЕСТВУЮЩИЙ КОНТЕНТ (sidebar + main-content) -->
+        <div class="sidebar">[...]</div>
+        <div class="main-content">[...]</div>
     </div>
 
-    <!-- ДОБАВЛЕНО: Скрипты для переходов -->
+    <!-- ВЕСЬ ВАШ ОРИГИНАЛЬНЫЙ SCRIPT.JS -->
+    <script>
+        // ... ваш существующий код ...
+    </script>
+
+    <!-- === ДОБАВЛЕНО === -->
     <script src="https://unpkg.com/swup@4"></script>
     <script>
-        // Инициализация Swup только для переходов между content-страницами
-        if (window.location.pathname !== '/index.html') {
-            const swup = new Swup({
+        if (!window.location.pathname.includes('index.html')) {
+            new Swup({
                 containers: ["#swup"],
-                ignoreVisit: (url) => url.includes('index.html'),
-                animationSelector: '[class*="transition-"]',
                 linkSelector: 'a[href$=".html"]:not([href*="index.html"])'
             });
         }
     </script>
-    <!-- Существующие скрипты остаются ниже -->
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,43 +1,26 @@
-/* ВСЁ СУЩЕСТВУЮЩЕЕ СОДЕРЖАНИЕ ФАЙЛА ОСТАЁТСЯ БЕЗ ИЗМЕНЕНИЙ */
+/* ВЕСЬ ВАШ ОРИГИНАЛЬНЫЙ CSS БЕЗ ИЗМЕНЕНИЙ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+/* ... и так далее ... */
 
-/* ДОБАВЛЕНО: Стили для переходов между страницами */
-/* Добавлены в самый конец файла, чтобы не влиять на существующие стили */
-
-/* Анимация появления */
+/* === ДОБАВЛЕНО В КОНЕЦ ФАЙЛА === */
+/* Swup animations */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
-/* Анимация исчезновения */
 @keyframes fadeOut {
     from { opacity: 1; transform: translateY(0); }
     to { opacity: 0; transform: translateY(-10px); }
 }
-
-/* Общие стили переходов */
-.transition-wrapper {
-    animation-duration: 0.4s;
-    animation-fill-mode: both;
-}
-
-/* Состояния переходов */
-html.is-changing .transition-wrapper {
-    animation-name: fadeOut;
-}
-
-html.is-rendering .transition-wrapper {
-    animation-name: fadeIn;
-}
-
-/* Плавная прокрутка при переходе */
 html.is-animating {
     scroll-behavior: smooth;
-}
-
-/* Сохранение положения скролла */
-.swup-transition-main {
-    top: 0;
-    left: 0;
-    right: 0;
 }

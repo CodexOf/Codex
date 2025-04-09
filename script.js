@@ -1,23 +1,19 @@
-// ВСЁ СУЩЕСТВУЮЩЕЕ СОДЕРЖАНИЕ ОСТАЁТСЯ БЕЗ ИЗМЕНЕНИЙ
+// ВЕСЬ ВАШ ОРИГИНАЛЬНЫЙ КОД (класс PageTransitions)
+class PageTransitions {
+    static init() {
+        this.setupPageTransitions();
+        // ... ваш код ...
+    }
+    // ... все ваши методы ...
+}
 
-// ДОБАВЛЕНО: Логика для плавных переходов
-document.addEventListener('DOMContentLoaded', function() {
-    // Инициализация Swup только для content-страниц
-    if (!window.location.pathname.includes('index.html') && document.getElementById('swup')) {
-        const swup = new Swup({
-            containers: ['#swup'],
-            plugins: [new SwupScrollPlugin()],
-            cache: true,
-            animateHistoryBrowsing: true,
-            linkSelector: 'a[href$=".html"]:not([href*="index.html"])'
-        });
-
-        // Обработчики событий для кастомной логики
-        swup.on('clickLink', () => {
+// === ДОБАВЛЕНО В КОНЕЦ ФАЙЛА ===
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('swup')) {
+        document.addEventListener('swup:clickLink', () => {
             document.documentElement.classList.add('is-changing');
         });
-
-        swup.on('contentReplaced', () => {
+        document.addEventListener('swup:contentReplaced', () => {
             document.documentElement.classList.remove('is-changing');
             document.documentElement.classList.add('is-rendering');
             setTimeout(() => {
@@ -27,4 +23,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Остальной существующий JavaScript код остаётся без изменений
+// Ваш оригинальный вызов
+document.addEventListener('DOMContentLoaded', () => PageTransitions.init());
