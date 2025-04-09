@@ -18,6 +18,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             min-height: 100vh;
+            background-color: #f5f5f5;
         }
 
         /* Стили боковой панели */
@@ -138,8 +139,80 @@
         .main-content {
             flex: 1;
             margin-left: 250px;
-            padding: 20px;
-            background-color: #f5f5f5;
+            padding: 40px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* Стили для страницы "О проекте" */
+        .about-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-section h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .about-section p {
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Стили для страницы "Контакты" */
+        .contact-section {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-section h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .contact-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            height: 150px;
+        }
+
+        .submit-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #2980b9;
         }
 
         /* Адаптивность для мобильных устройств */
@@ -152,6 +225,7 @@
             
             .main-content {
                 margin-left: 0;
+                padding: 20px;
             }
         }
     </style>
@@ -226,9 +300,12 @@
 
     <!-- Основное содержимое страницы -->
     <div class="main-content">
-        <h1>Правила Codex</h1>
-        <p>Здесь будет содержание выбранного раздела правил.</p>
-        <!-- Основное содержание будет загружаться динамически или добавляться здесь -->
+        <!-- Контент будет подгружаться динамически в зависимости от выбранной страницы -->
+        <div id="content-container">
+            <!-- По умолчанию загружаются правила -->
+            <h1>Правила Codex</h1>
+            <p>Выберите категорию и версию правил в боковой панели.</p>
+        </div>
     </div>
 
     <!-- Скрипты для работы страницы -->
@@ -263,14 +340,120 @@
                 });
             });
             
-            // Обработчики для ссылок версий (заглушка)
+            // Обработчики для ссылок версий
             document.querySelectorAll('.version-content a').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
-                    // TODO: Реализовать загрузку контента
-                    console.log('Загрузка: ' + this.textContent);
+                    // Загрузка контента правил
+                    loadRulesContent(this.textContent);
                 });
             });
+            
+            // Обработчики навигационных ссылок
+            document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('href').replace('.html', '');
+                    loadPage(page);
+                });
+            });
+            
+            // Функция загрузки страницы
+            function loadPage(page) {
+                const container = document.getElementById('content-container');
+                
+                // Обновляем активную ссылку в навигации
+                document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(page)) {
+                        link.classList.add('active');
+                    }
+                });
+                
+                // Загружаем соответствующий контент
+                switch(page) {
+                    case 'about':
+                        container.innerHTML = `
+                            <div class="about-section">
+                                <h1>О проекте Codex</h1>
+                                <p>Codex - это система правил для настольных ролевых игр, разрабатываемая с 2020 года.</p>
+                                <p>Наша цель - создать гибкую и удобную систему, которая позволит игрокам полностью погрузиться в игровой мир.</p>
+                                <p>Проект находится в активной разработке, и мы всегда рады новым участникам и идеям.</p>
+                                <h2>Команда разработчиков</h2>
+                                <p>Над проектом работает небольшая команда энтузиастов:</p>
+                                <ul>
+                                    <li>Главный разработчик: Алексей "Codex" Петров</li>
+                                    <li>Геймдизайнер: Мария "Mirage" Смирнова</li>
+                                    <li>Художник: Дмитрий "Artix" Иванов</li>
+                                </ul>
+                            </div>
+                        `;
+                        break;
+                        
+                    case 'contact':
+                        container.innerHTML = `
+                            <div class="contact-section">
+                                <h1>Свяжитесь с нами</h1>
+                                <p>Если у вас есть вопросы или предложения по проекту, заполните форму ниже:</p>
+                                
+                                <form class="contact-form">
+                                    <div class="form-group">
+                                        <label for="name">Ваше имя:</label>
+                                        <input type="text" id="name" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="email">Email:</label>
+                                        <input type="email" id="email" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="message">Сообщение:</label>
+                                        <textarea id="message" required></textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="submit-btn">Отправить</button>
+                                </form>
+                                
+                                <h2>Другие способы связи</h2>
+                                <p>Email: contact@codex-rpg.com</p>
+                                <p>Discord: CodexRPG#official</p>
+                                <p>Telegram: @CodexRPG</p>
+                            </div>
+                        `;
+                        
+                        // Добавляем обработчик формы
+                        document.querySelector('.contact-form')?.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            alert('Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.');
+                            this.reset();
+                        });
+                        break;
+                        
+                    default:
+                        // По умолчанию загружаем страницу правил
+                        container.innerHTML = `
+                            <h1>Правила Codex</h1>
+                            <p>Выберите категорию и версию правил в боковой панели.</p>
+                        `;
+                }
+            }
+            
+            // Функция загрузки контента правил
+            function loadRulesContent(version) {
+                const container = document.getElementById('content-container');
+                container.innerHTML = `
+                    <h1>${version}</h1>
+                    <p>Здесь будет содержание выбранной версии правил.</p>
+                    <div class="rules-content">
+                        <p>Контент для ${version} находится в разработке и скоро будет доступен.</p>
+                    </div>
+                `;
+            }
+            
+            // Загружаем начальную страницу (из URL или по умолчанию правила)
+            const initialPage = window.location.pathname.split('/').pop().replace('.html', '') || 'content';
+            loadPage(initialPage);
         });
     </script>
 </body>
