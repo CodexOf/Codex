@@ -1,73 +1,44 @@
-/**
- * Основной скрипт сайта
- * Работает на всех страницах
- */
-
-// Ждем полной загрузки DOM перед выполнением скриптов
+// Активное отслеживание секций для подсветки в оглавлении
 document.addEventListener('DOMContentLoaded', function() {
+    const sections = document.querySelectorAll('.content-section');
+    const navLinks = document.querySelectorAll('.toc-link');
     
-    // ===== Плавная прокрутка для якорных ссылок =====
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault(); // Отменяем стандартное поведение
+    // Функция для обновления активного пункта
+    function updateActiveNav() {
+        let current = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
             
-            // Получаем целевой элемент по ID из href
+            if (pageYOffset >= (sectionTop - 150)) {
+                current = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
+    }
+    
+    // Слушаем события
+    window.addEventListener('scroll', updateActiveNav);
+    window.addEventListener('load', updateActiveNav);
+    
+    // Плавный скролл для ссылок оглавления
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
             const targetId = this.getAttribute('href');
             const targetElement = document.querySelector(targetId);
             
-            // Если элемент существует, плавно прокручиваем к нему
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 80, // Учитываем высоту шапки
-                    behavior: 'smooth' // Плавная прокрутка
-                });
-            }
+            window.scrollTo({
+                top: targetElement.offsetTop - 100,
+                behavior: 'smooth'
+            });
         });
     });
-    
-    // ===== Анимация карточек при появлении в viewport =====
-    const animateOnScroll = () => {
-        const elements = document.querySelectorAll('.rule-card, .content-section');
-        
-        elements.forEach(element => {
-            const elementPosition = element.getBoundingClientRect().top;
-            const screenPosition = window.innerHeight / 1.3;
-            
-            if (elementPosition < screenPosition) {
-                element.style.opacity = '1';
-                element.style.transform = 'translateY(0)';
-            }
-        });
-    };
-    
-    // Инициализация анимаций
-    window.addEventListener('scroll', animateOnScroll);
-    animateOnScroll(); // Запускаем сразу при загрузке
-    
-    // ===== Дополнительные эффекты для кнопок =====
-    const buttons = document.querySelectorAll('.start-button, .back-button');
-    
-    buttons.forEach(button => {
-        // Эффект при наведении
-        button.addEventListener('mouseenter', () => {
-            button.style.transform = 'scale(1.05)';
-        });
-        
-        // Эффект при уходе курсора
-        button.addEventListener('mouseleave', () => {
-            button.style.transform = 'scale(1)';
-        });
-        
-        // Эффект при нажатии
-        button.addEventListener('mousedown', () => {
-            button.style.transform = 'scale(0.95)';
-        });
-        
-        button.addEventListener('mouseup', () => {
-            button.style.transform = 'scale(1.05)';
-        });
-    });
-    
-    // ===== Инициализация других компонентов =====
-    console.log('Сайт полностью загружен и готов!');
 });

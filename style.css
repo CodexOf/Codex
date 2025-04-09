@@ -1,206 +1,77 @@
-/* === Глобальные стили === */
+/* === СТИЛИ БОКОВОГО БАРА === */
 
-/* Сброс стандартных отступов и полей */
-* {
-    margin: 0; /* Обнуление внешних отступов */
-    padding: 0; /* Обнуление внутренних отступов */
-    box-sizing: border-box; /* Правильная модель размеров */
+.content-wrapper {
+    display: flex; /* Делаем контейнер flex */
+    max-width: 1400px; /* Ширина всей области */
+    margin: 0 auto; /* Центрирование */
+    padding: 0 20px; /* Отступы по бокам */
 }
 
-/* Основные стили тела документа */
-body {
-    font-family: 'Roboto', sans-serif; /* Основной шрифт */
-    line-height: 1.6; /* Межстрочный интервал */
-    color: #333; /* Основной цвет текста */
-    background-color: #f5f5f5; /* Цвет фона */
-}
-
-/* === Стили главной страницы === */
-
-/* Приветственный экран */
-.welcome-screen {
-    height: 100vh; /* Высота на весь экран */
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                url('assets/background.jpg') no-repeat center center; /* Фон с градиентом */
-    background-size: cover; /* Растягивание фона */
-    display: flex; /* Flex-контейнер */
-    justify-content: center; /* Центрирование по горизонтали */
-    align-items: center; /* Центрирование по вертикали */
-    text-align: center; /* Выравнивание текста */
-    color: white; /* Цвет текста */
-}
-
-/* Контент внутри приветственного экрана */
-.welcome-content {
-    max-width: 800px; /* Максимальная ширина */
-    padding: 2rem; /* Внутренние отступы */
-    animation: fadeIn 1.5s ease-in-out; /* Анимация появления */
-}
-
-/* Заголовок игры */
-.game-title {
-    font-family: 'Cinzel Decorative', cursive; /* Декоративный шрифт */
-    font-size: 5rem; /* Размер шрифта */
-    margin-bottom: 1rem; /* Отступ снизу */
-    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8); /* Тень текста */
-    letter-spacing: 5px; /* Расстояние между буквами */
-}
-
-/* Подзаголовок */
-.game-subtitle {
-    font-size: 1.5rem; /* Размер шрифта */
-    margin-bottom: 2rem; /* Отступ снизу */
-    font-weight: 300; /* Тонкость шрифта */
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8); /* Тень текста */
-}
-
-/* Кнопка "Начать приключение" */
-.start-button {
-    display: inline-block; /* Строчно-блочный элемент */
-    padding: 15px 30px; /* Внутренние отступы */
-    background-color: transparent; /* Прозрачный фон */
-    color: white; /* Цвет текста */
-    border: 2px solid white; /* Рамка */
-    font-size: 1.2rem; /* Размер шрифта */
-    text-decoration: none; /* Убрать подчеркивание */
-    text-transform: uppercase; /* Все буквы заглавные */
-    letter-spacing: 2px; /* Расстояние между буквами */
-    transition: all 0.3s ease; /* Плавные переходы */
-    animation: pulse 2s infinite; /* Анимация пульсации */
-}
-
-/* Состояние кнопки при наведении */
-.start-button:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* Полупрозрачный фон */
-    transform: translateY(-3px); /* Сдвиг вверх */
-}
-
-/* === Стили страницы контента === */
-
-/* Шапка страницы контента */
-.content-header {
-    background-color: #222; /* Темный фон */
-    color: white; /* Белый текст */
-    padding: 1rem 2rem; /* Внутренние отступы */
+.sidebar {
+    width: 250px; /* Фиксированная ширина */
+    padding: 20px; /* Внутренние отступы */
     position: sticky; /* Липкая позиция */
-    top: 0; /* Прилипание к верху */
-    z-index: 100; /* Поверх других элементов */
-    display: flex; /* Flex-контейнер */
-    justify-content: space-between; /* Распределение пространства */
-    align-items: center; /* Выравнивание по центру */
+    top: 80px; /* Отступ сверху (ниже шапки) */
+    align-self: flex-start; /* Выравнивание по верху */
+    height: calc(100vh - 100px); /* Высота на весь экран минус шапка */
+    overflow-y: auto; /* Прокрутка если контента много */
 }
 
-/* Кнопка "Назад" */
-.back-button {
-    color: white; /* Цвет текста */
-    text-decoration: none; /* Убрать подчеркивание */
+.toc-nav {
+    background: #2c2c2c; /* Темный фон */
+    border-radius: 8px; /* Скругленные углы */
+    padding: 15px; /* Внутренние отступы */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Тень */
+}
+
+.toc-title {
+    color: #f0f0f0; /* Цвет текста */
     font-size: 1.2rem; /* Размер шрифта */
-    transition: opacity 0.3s; /* Плавное изменение прозрачности */
+    margin-bottom: 15px; /* Отступ снизу */
+    padding-bottom: 10px; /* Отступ снизу */
+    border-bottom: 1px solid #444; /* Граница снизу */
 }
 
-/* Состояние кнопки при наведении */
-.back-button:hover {
-    opacity: 0.8; /* Небольшая прозрачность */
+.toc-list {
+    list-style: none; /* Убираем маркеры списка */
 }
 
-/* Навигация в шапке */
-.content-nav {
-    display: flex; /* Flex-контейнер */
-    gap: 1.5rem; /* Расстояние между элементами */
+.toc-link {
+    display: block; /* Блочные элементы */
+    color: #ccc; /* Цвет ссылок */
+    padding: 8px 12px; /* Отступы */
+    margin-bottom: 5px; /* Отступ между пунктами */
+    border-radius: 4px; /* Скругление */
+    text-decoration: none; /* Убираем подчеркивание */
+    transition: all 0.3s ease; /* Плавные переходы */
 }
 
-/* Ссылки в навигации */
-.content-nav a {
+.toc-link:hover {
+    background: #3a3a3a; /* Фон при наведении */
+    color: #fff; /* Цвет текста */
+}
+
+.toc-link.active {
+    background: #ff3366; /* Активный пункт */
     color: white; /* Цвет текста */
-    text-decoration: none; /* Убрать подчеркивание */
-    transition: color 0.3s; /* Плавное изменение цвета */
+    font-weight: bold; /* Жирный шрифт */
 }
 
-/* Состояние ссылок при наведении */
-.content-nav a:hover {
-    color: #ccc; /* Светло-серый цвет */
+.main-content {
+    flex: 1; /* Занимает всё оставшееся пространство */
+    padding: 0 30px; /* Отступы */
 }
 
-/* Основной контейнер контента */
-.content-container {
-    max-width: 1200px; /* Максимальная ширина */
-    margin: 2rem auto; /* Внешние отступы */
-    padding: 0 1rem; /* Внутренние отступы */
-    animation: fadeIn 1s ease-out; /* Анимация появления */
-}
-
-/* Секции контента */
-.content-section {
-    background-color: white; /* Белый фон */
-    padding: 2rem; /* Внутренние отступы */
-    margin-bottom: 2rem; /* Отступ снизу */
-    border-radius: 5px; /* Скругление углов */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Тень */
-}
-
-/* Сетка для правил */
-.rules-grid {
-    display: grid; /* Грид-контейнер */
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Автоматические колонки */
-    gap: 1.5rem; /* Расстояние между элементами */
-    margin-top: 1.5rem; /* Отступ сверху */
-}
-
-/* Карточки правил */
-.rule-card {
-    border: 1px solid #ddd; /* Граница */
-    padding: 1.5rem; /* Внутренние отступы */
-    border-radius: 5px; /* Скругление углов */
-    transition: transform 0.3s; /* Плавное преобразование */
-}
-
-/* Состояние карточек при наведении */
-.rule-card:hover {
-    transform: translateY(-5px); /* Сдвиг вверх */
-}
-
-/* Подвал страницы контента */
-.content-footer {
-    background-color: #222; /* Темный фон */
-    color: white; /* Белый текст */
-    text-align: center; /* Выравнивание по центру */
-    padding: 1.5rem; /* Внутренние отступы */
-    margin-top: 2rem; /* Отступ сверху */
-}
-
-/* === Анимации === */
-
-/* Появление элемента */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); } /* Начальное состояние */
-    to { opacity: 1; transform: translateY(0); } /* Конечное состояние */
-}
-
-/* Пульсация */
-@keyframes pulse {
-    0% { transform: scale(1); } /* Нормальный размер */
-    50% { transform: scale(1.05); } /* Увеличение */
-    100% { transform: scale(1); } /* Возврат к нормальному размеру */
-}
-
-/* === Адаптивность === */
-
-@media (max-width: 768px) {
-    /* Для экранов меньше 768px */
-    .game-title {
-        font-size: 3rem; /* Уменьшенный размер шрифта */
+/* === АДАПТИВНОСТЬ === */
+@media (max-width: 992px) {
+    .content-wrapper {
+        flex-direction: column; /* Меняем направление на колонку */
     }
     
-    .game-subtitle {
-        font-size: 1.2rem; /* Уменьшенный размер шрифта */
-    }
-    
-    .content-header {
-        flex-direction: column; /* Колонка вместо ряда */
-        gap: 1rem; /* Расстояние между элементами */
-    }
-    
-    .rules-grid {
-        grid-template-columns: 1fr; /* Одна колонка */
+    .sidebar {
+        width: 100%; /* На всю ширину */
+        position: static; /* Отменяем sticky */
+        height: auto; /* Автоматическая высота */
+        margin-bottom: 30px; /* Отступ снизу */
     }
 }
