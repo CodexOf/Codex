@@ -1,0 +1,6 @@
+# Игнорировать node_modules
+node_modules/
+
+# Игнорировать системные файлы
+.DS_Store
+Thumbs.db
