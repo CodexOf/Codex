@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- Объявление типа документа -->
+<html lang="ru"> <!-- Язык контента -->
+<head> <!-- Метаданные -->
+    <meta charset="UTF-8"> <!-- Кодировка -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Адаптивный дизайн -->
+    <meta name="description" content="Правила и описание игры Название Игры"> <!-- SEO описание -->
+    
+    <title>Название Игры | Контент</title> <!-- Заголовок страницы -->
+    
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="style.css"> <!-- Общие стили -->
+    
+    <!-- Иконка -->
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+</head>
+<body> <!-- Тело документа -->
+    <!-- Шапка страницы -->
+    <header class="content-header">
+        <!-- Кнопка возврата на главную -->
+        <a href="index.html" class="back-button">← На главную</a>
+        
+        <!-- Заголовок страницы -->
+        <h1>Название Игры</h1>
+        
+        <!-- Навигационное меню -->
+        <nav class="content-nav">
+            <a href="#about">О игре</a> <!-- Ссылка на секцию -->
+            <a href="#rules">Правила</a>
+            <a href="#characters">Персонажи</a>
+        </nav>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="content-container">
+        <!-- Секция "О игре" -->
+        <section id="about" class="content-section">
+            <h2>О игре</h2> <!-- Заголовок секции -->
+            <p>Полное описание вашей игры...</p> <!-- Текст -->
+        </section>
+
+        <!-- Секция "Правила" -->
+        <section id="rules" class="content-section">
+            <h2>Правила</h2>
+            <div class="rules-grid"> <!-- Контейнер для карточек правил -->
+                <!-- Карточка правила 1 -->
+                <div class="rule-card">
+                    <h3>Создание персонажа</h3> <!-- Заголовок карточки -->
+                    <p>Описание процесса создания...</p> <!-- Текст карточки -->
+                </div>
+                <!-- Дополнительные карточки -->
+            </div>
+        </section>
+
+        <!-- Другие секции -->
+    </main>
+
+    <!-- Подвал -->
+    <footer class="content-footer">
+        <p>© 2023 Название Игры</p> <!-- Копирайт -->
+    </footer>
+
+    <!-- Подключение скриптов -->
+    <script src="script.js"></script>
+</body>
+</html>

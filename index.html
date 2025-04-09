@@ -1,38 +1,44 @@
-<!DOCTYPE html> <!-- Объявление типа документа как HTML5 -->
+<!DOCTYPE html> <!-- Объявление типа документа HTML5 -->
 <html lang="ru"> <!-- Корневой элемент с указанием языка -->
-<head> <!-- Секция метаданных и подключений -->
-    <meta charset="UTF-8"> <!-- Кодировка символов UTF-8 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Для адаптивности на мобильных -->
-    <title>Название вашего сайта</title> <!-- Заголовок вкладки браузера -->
-    <link rel="stylesheet" href="style.css"> <!-- Подключение CSS файла -->
+<head> <!-- Секция метаданных -->
+    <!-- Мета-теги для корректного отображения в браузере -->
+    <meta charset="UTF-8"> <!-- Кодировка UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Адаптивность -->
+    <meta name="description" content="Официальный сайт игры Название Игры"> <!-- Описание для SEO -->
+    
+    <title>Название Игры | Главная</title> <!-- Заголовок вкладки -->
+    
+    <!-- Подключение CSS -->
+    <link rel="stylesheet" href="style.css"> <!-- Основные стили -->
+    
     <!-- Подключение шрифтов Google -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    
+    <!-- Иконка сайта -->
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
 </head>
 <body> <!-- Тело документа -->
     <!-- Приветственный экран (полноэкранный блок) -->
     <div class="welcome-screen">
+        <!-- Контент внутри приветственного экрана -->
         <div class="welcome-content">
-            <!-- Главный заголовок игры -->
+            <!-- Главный заголовок с классом для стилизации -->
             <h1 class="game-title">НАЗВАНИЕ ИГРЫ</h1>
-            <!-- Подзаголовок/описание -->
-            <p class="game-subtitle">Захватывающая ролевая игра в тёмном фэнтези-сеттинге</p>
-            <!-- Кнопка для перехода к контенту -->
-            <a href="#main-content" class="start-button">Начать приключение</a>
+            
+            <!-- Подзаголовок с описанием -->
+            <p class="game-subtitle">Погрузитесь в мир тёмного фэнтези</p>
+            
+            <!-- Кнопка перехода на страницу контента -->
+            <a href="content.html" class="start-button">Начать приключение</a>
         </div>
     </div>
-    
-    <!-- Основное содержимое сайта -->
-    <div id="main-content" class="container">
-        <!-- Секция "О проекте" -->
-        <section id="about">
-            <h2>О проекте</h2> <!-- Заголовок секции -->
-            <p>Здесь описание вашего проекта...</p> <!-- Текст описания -->
-        </section>
-        
-        <!-- Другие секции будут здесь -->
-    </div>
-    
-    <!-- Подключение JavaScript файла -->
+
+    <!-- Подвал (можно добавить копирайт) -->
+    <footer class="main-footer">
+        <p>© 2023 Название Игры. Все права защищены.</p>
+    </footer>
+
+    <!-- Подключение JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>
