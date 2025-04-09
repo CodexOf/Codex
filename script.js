@@ -1,52 +1,66 @@
-// Ждем полной загрузки DOM
-document.addEventListener('DOMContentLoaded', function() {
-    // ===== ФУНКЦИЯ ДЛЯ ВКЛАДОК =====
-    function initTabs() {
-        // Получаем все кнопки вкладок
-        const tabButtons = document.querySelectorAll('.tab-button');
+class PageTransitions {
+    static init() {
+        this.setupPageTransitions();
         
-        // Для каждой кнопки
-        tabButtons.forEach(button => {
-            // Обработчик клика
-            button.addEventListener('click', () => {
-                // 1. Убираем активный класс у всех кнопок
-                document.querySelectorAll('.tab-button').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                
-                // 2. Убираем активный класс у всего контента
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                
-                // 3. Добавляем активный класс текущей кнопке
-                button.classList.add('active');
-                
-                // 4. Находим связанный контент и активируем его
-                const tabId = button.getAttribute('data-tab');
-                document.getElementById(tabId).classList.add('active');
-                
-                // 5. Сохраняем активную вкладку в localStorage
-                localStorage.setItem('activeTab', tabId);
-            });
-        });
-        
-        // ===== ВОССТАНОВЛЕНИЕ АКТИВНОЙ ВКЛАДКИ =====
-        // Проверяем, есть ли сохраненная вкладка
-        const savedTab = localStorage.getItem('activeTab');
-        
-        // Если есть и такой элемент существует
-        if (savedTab && document.getElementById(savedTab)) {
-            // Активируем вкладку
-            document.getElementById(savedTab).classList.add('active');
-            document.querySelector(`[data-tab="${savedTab}"]`).classList.add('active');
-        } else {
-            // Иначе активируем первую вкладку по умолчанию
-            document.querySelector('.tab-button').classList.add('active');
-            document.querySelector('.tab-content').classList.add('active');
+        if (document.querySelector('.welcome-screen')) {
+            this.initHomePage();
+        } else if (document.querySelector('.content-wrapper')) {
+            this.initContentPage();
         }
     }
 
-    // Инициализируем вкладки
-    initTabs();
-});
+    static setupPageTransitions() {
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a[href^="http"]:not([target="_blank"]), a[href^="/"], a[href^="#"]');
+            
+            if (link && !link.hash) {
+                e.preventDefault();
+                const transition = document.getElementById('pageTransition');
+                transition.style.opacity = '1';
+                setTimeout(() => {
+                    window.location.href = link.href;
+                }, 800);
+            }
+        });
+    }
+
+    static initHomePage() {
+        const startButton = document.getElementById('startButton');
+        if (startButton) {
+            startButton.addEventListener('mouseenter', () => {
+                startButton.style.transform = 'scale(1.05)';
+            });
+            startButton.addEventListener('mouseleave', () => {
+                startButton.style.transform = 'scale(1)';
+            });
+        }
+    }
+
+    static initContentPage() {
+        // Плавная прокрутка для оглавления
+        document.querySelectorAll('.toc-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.hash) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.hash);
+                    window.scrollTo({
+                        top: target.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Меню для мобильных
+        const menuToggle = document.createElement('button');
+        menuToggle.className = 'menu-toggle';
+        menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+        document.body.appendChild(menuToggle);
+        
+        menuToggle.addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => PageTransitions.init());
