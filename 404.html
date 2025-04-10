@@ -1,0 +1,7 @@
+<script>
+  // Перенаправление на главную с сохранением пути
+  if (window.location.pathname.startsWith('/app')) {
+    sessionStorage.setItem('spa-redirect', window.location.pathname);
+  }
+  window.location.href = '/';
+</script>
