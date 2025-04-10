@@ -8,6 +8,7 @@
     
     <!-- Подключение стилей и иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
     
     <!-- Основные стили документа -->
     <style>
@@ -257,62 +258,64 @@
         
         <!-- Основная навигация -->
         <div class="sidebar-nav">
-            <a href="content.html" class="active">Что-то будет</a>
-			<a href="index.html">Главная</a>
+            <a href="index.html">Главная</a>
+            <a href="content.html" class="active">_</a>
             <a href="about.html">О проекте</a>
             <a href="contact.html">Контакты</a>
         </div>
         
         <!-- Блок выбора версий правил -->
         <div class="sidebar-version-selectors">
-            <!-- Селектор Codex of Heroes -->
+            <!-- Селектор основных правил -->
             <div class="version-selector">
                 <button class="version-btn">Codex of Heroes <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
                     <a href="#">Введение</a>
                     <a href="#">Как играть?</a>
                     <a href="#">Версия 0.8</a>
-					<a href="#">Игровые кости</a>
-					<a href="#">Действия</a>
-					<a href="#">Сцена</a>
-					<a href="#">Игровое поле</a>
-					<a href="#">Персонажи</a>
-					<a href="##">Подготовки</a>
-					<a href="##">Навыки</a>
-					<a href="##">Мастерство</a>
-					<a href="##">Способности</a>
-					<a href="##">Черты</a>
-					<a href="##">"Туз в рукаве"</a>
-					<a href="#">Счетчики</a>
-					<a href="#">Создание персонажа</a>
-					<a href="#">Развитие персонажа</a>
-					<a href="#">Награды за активности</a>
-					<a href="#">Эффекты</a>
-					<a href="##">Урон</a>
-					<a href="##">Приказы</a>
-					<a href="##">Состояния</a>
+                    <a href="#">Игровые кости</a>
+                    <a href="#">Действия</a>
+                    <a href="#">Сцена</a>
+                    <a href="#">Игровое поле</a>
+                    <a href="#">Персонажи</a>
+                    <a href="#">Подготовки</a>
+                    <a href="#">Навыки</a>
+                    <a href="#">Мастерство</a>
+                    <a href="#">Способности</a>
+                    <a href="#">Черты</a>
+                    <a href="#">"Туз в рукаве"</a>
+                    <a href="#">Счетчики</a>
+                    <a href="#">Создание персонажа</a>
+                    <a href="#">Развитие персонажа</a>
+                    <a href="#">Награды за активности</a>
+                    <a href="#">Эффекты</a>
+                    <a href="#">Урон</a>
+                    <a href="#">Приказы</a>
+                    <a href="#">Состояния</a>
                 </div>
             </div>
             
-            <!-- Селектор Codex of Mortals -->
+            <!-- Селектор боевой системы -->
             <div class="version-selector">
                 <button class="version-btn">Codex of Mortals <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
-                    <a href="#">Услышишь</a>
-                    <a href="#">Увидишь</a>
+                    <a href="#">Версия 1.2 (текущая)</a>
+                    <a href="#">Версия 1.1</a>
+                    <a href="#">Версия 1.0</a>
                 </div>
             </div>
             
-            <!-- Селектор Codex of Dust -->
+            <!-- Селектор магии -->
             <div class="version-selector">
                 <button class="version-btn">Codex of Dust <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
-                    <a href="#">Подумаешь</a>
-                    <a href="#">Сыграешь</a>
+                    <a href="#">Версия 0.9 (бета)</a>
+                    <a href="#">Версия 0.8</a>
+                    <a href="#">Версия 0.7</a>
                 </div>
             </div>
             
-            <!-- Селектор § Параграфов -->
+            <!-- Селектор персонажей -->
             <div class="version-selector">
                 <button class="version-btn">§ Параграфы <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
@@ -321,7 +324,7 @@
                 </div>
             </div>
             
-            <!-- Селектор Примечаний -->
+            <!-- Селектор мира -->
             <div class="version-selector">
                 <button class="version-btn">Примечания <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
@@ -344,6 +347,7 @@
 
     <!-- Скрипты для работы страницы -->
     <script src="script.js"></script>
+    <script src="content-loader.js"></script> <!-- Добавленный скрипт -->
     <script>
         // Обработчик загрузки DOM
         document.addEventListener('DOMContentLoaded', function() {
