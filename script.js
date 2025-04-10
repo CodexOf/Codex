@@ -1,9 +1,13 @@
 class PageTransitions {
     static init() {
+<<<<<<< HEAD
         // Инициализация только для index.html
         if (!window.location.pathname.includes('content.html')) {
             this.setupPageTransitions();
         }
+=======
+        this.setupPageTransitions();
+>>>>>>> parent of 299e33f (Fix)
         
         // Определяем тип страницы
         if (document.querySelector('.welcome-screen')) {
@@ -16,6 +20,12 @@ class PageTransitions {
     static setupPageTransitions() {
         // Обработка кликов по ссылкам
         document.addEventListener('click', (e) => {
+<<<<<<< HEAD
+=======
+            // Пропускаем анимацию для content.html
+            if (window.location.pathname.includes('content.html')) return;
+            
+>>>>>>> parent of 299e33f (Fix)
             const link = e.target.closest('a[href^="/"], a[href^="#"], a[href^="http"]:not([target="_blank"]), a:not([href^="mailto:"])');
             
             if (link && link.href && !link.hash) {
