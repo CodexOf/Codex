@@ -1,66 +1,97 @@
 <!DOCTYPE html>
+<!-- Указываем язык страницы -->
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Название Игры | Вход</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- Базовые мета-теги -->
+    <meta charset="UTF-8"> <!-- Кодировка UTF-8 для поддержки русских символов -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Адаптивность для мобильных -->
+    <meta name="description" content="Codex RPG - инновационная система для настольных ролевых игр"> <!-- Описание для SEO -->
+    
+    <title>Codex RPG | Вход в мир приключений</title> <!-- Заголовок страницы -->
+    
+    <!-- Подключение CSS -->
+    <link rel="stylesheet" href="style.css"> <!-- Основной файл стилей -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> <!-- Иконки -->
+    
+    <!-- Подключение шрифтов Google -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    
+    <!-- Встроенные стили для анимаций -->
     <style>
-        /* Анимация перехода */
+        /* Анимация перехода между страницами */
         .page-transition {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+            position: fixed; /* Фиксированное позиционирование */
+            top: 0; /* Прижимаем к верху */
+            left: 0; /* Прижимаем к левому краю */
+            width: 100%; /* На всю ширину */
+            height: 100%; /* На всю высоту */
+            background: #000; /* Черный фон */
+            z-index: 1000; /* Поверх всех элементов */
+            opacity: 0; /* Начальная прозрачность */
+            pointer-events: none; /* Не блокирует клики */
+            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1); /* Плавный переход */
+        }
+        
+        /* Анимация появления страницы */
+        body {
+            opacity: 0; /* Начальная прозрачность */
+            transition: opacity 0.8s ease; /* Плавное появление */
         }
     </style>
 </head>
 <body>
-    <!-- Элемент для анимации перехода -->
+    <!-- Затемнение для анимации перехода -->
     <div class="page-transition" id="pageTransition"></div>
 
     <!-- Основной контент -->
     <div class="welcome-screen">
         <div class="welcome-content">
-            <h1 class="game-title">Codex of...</h1>
-            <p class="game-subtitle">Вдохновись	Настрой	Играй</p>
-            <a href="content.html" class="start-button" id="startButton">Начать приключение</a>
+            <!-- Главный заголовок -->
+            <h1 class="game-title">Codex of Heroes</h1>
+            
+            <!-- Подзаголовок -->
+            <p class="game-subtitle">Создай свою легенду</p>
+            
+            <!-- Кнопка перехода к правилам -->
+            <a href="content.html" class="start-button" id="startButton">
+                Начать игру
+            </a>
         </div>
     </div>
 
+    <!-- Подвал сайта -->
     <footer class="main-footer">
-        <p>© 2025 Нифига не защищено! Бери, играй, распространяй!</p>
+        <p>© 2025 Codex RPG | Открытая игровая система</p>
     </footer>
 
+    <!-- Подключение основного скрипта -->
+    <script src="script.js"></script>
+    
+    <!-- Скрипт инициализации анимаций -->
     <script>
-        // Анимация перехода
-        document.getElementById('startButton').addEventListener('click', function(e) {
-            e.preventDefault();
-            const transition = document.getElementById('pageTransition');
-            
-            // Запуск анимации
-            transition.style.opacity = '1';
-            
-            // Переход после завершения анимации
-            setTimeout(() => {
-                window.location.href = this.getAttribute('href');
-            }, 800);
-        });
-
-        // Анимация появления при загрузке
+        // Когда DOM полностью загружен
         document.addEventListener('DOMContentLoaded', () => {
-            document.body.style.opacity = '0';
+            // Плавное появление страницы
             setTimeout(() => {
-                document.body.style.transition = 'opacity 0.8s ease';
                 document.body.style.opacity = '1';
             }, 50);
+            
+            // Обработчик для кнопки старта
+            const startButton = document.getElementById('startButton');
+            if (startButton) {
+                startButton.addEventListener('click', function(e) {
+                    e.preventDefault(); // Отменяем стандартное поведение
+                    const transition = document.getElementById('pageTransition');
+                    
+                    // Запускаем анимацию
+                    transition.style.opacity = '1';
+                    
+                    // Переход после анимации
+                    setTimeout(() => {
+                        window.location.href = this.getAttribute('href');
+                    }, 800);
+                });
+            }
         });
     </script>
 </body>
