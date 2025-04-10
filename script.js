@@ -13,6 +13,7 @@ class PageTransitions {
 
     static initContentPage() {
         this.initVersionSelectors();
+        this.highlightActiveNav(); // Добавленная функция
     }
 
     static initVersionSelectors() {
@@ -24,6 +25,38 @@ class PageTransitions {
             });
         });
     }
+
+    // Новая функция для подсветки активного пункта меню
+    static highlightActiveNav() {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+            const linkPage = link.getAttribute('href');
+            link.classList.toggle('active', linkPage === currentPage);
+        });
+    }
+
+    static setupPageTransitions() {
+        const startButton = document.getElementById('startButton');
+        if (startButton) {
+            startButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                const transition = document.getElementById('pageTransition');
+                if (transition) {
+                    transition.style.opacity = '1';
+                    setTimeout(() => {
+                        window.location.href = this.getAttribute('href');
+                    }, 800);
+                }
+            });
+        }
+    }
+
+    static initHomePage() {
+        // Дополнительные функции для главной страницы (если нужны)
+    }
 }
 
-document.addEventListener('DOMContentLoaded', () => PageTransitions.init());
+// Инициализация при загрузке документа
+document.addEventListener('DOMContentLoaded', () => {
+    PageTransitions.init();
+});
