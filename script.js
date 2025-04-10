@@ -1,117 +1,71 @@
-/**
- * Класс для управления переходами между страницами
- * и другими интерактивными элементами
- */
 class PageTransitions {
-    /**
-     * Инициализация всех функций
-     */
     static init() {
-        this.setupPageTransitions(); // Настройка переходов
+        this.setupPageTransitions();
         
-        // Определяем тип страницы
-        if (this.isHomePage()) {
-            this.initHomePage(); // Инициализация главной
-        } else if (this.isContentPage()) {
-            this.initContentPage(); // Инициализация контента
+        if (document.querySelector('.welcome-screen')) {
+            this.initHomePage();
+        } else if (document.querySelector('.content-wrapper') || document.querySelector('.main-content')) {
+            this.initContentPage();
         }
     }
 
-    /**
-     * Проверка главной страницы
-     */
-    static isHomePage() {
-        return document.querySelector('.welcome-screen') !== null;
-    }
-
-    /**
-     * Проверка страницы контента
-     */
-    static isContentPage() {
-        return document.querySelector('.content-wrapper, .main-content') !== null;
-    }
-
-    /**
-     * Настройка плавных переходов между страницами
-     */
     static setupPageTransitions() {
-        // Обработчик всех кликов по ссылкам
         document.addEventListener('click', (e) => {
-            const link = e.target.closest('a'); // Ближайшая ссылка
+            // Обрабатываем все внутренние ссылки (включая навигацию и кнопку "Начать")
+            const link = e.target.closest('a[href^="/"], a[href^="#"], a[href^="http"]:not([target="_blank"]), a:not([href^="mailto:"])');
             
-            // Проверяем нужные нам ссылки
-            if (link && this.isInternalLink(link)) {
-                e.preventDefault(); // Отменяем стандартное поведение
-                this.handleTransition(link); // Запускаем анимацию
+            if (link && link.href && !link.hash) {
+                e.preventDefault();
+                const transition = document.getElementById('pageTransition');
+                
+                // Если переход на другую страницу (не якорь)
+                if (!link.href.includes('#')) {
+                    transition.style.opacity = '1';
+                    setTimeout(() => {
+                        window.location.href = link.href;
+                    }, 800);
+                }
             }
         });
     }
 
-    /**
-     * Проверка внутренних ссылок
-     */
-    static isInternalLink(link) {
-        return link.href && 
-               !link.hash && 
-               !link.target === '_blank' && 
-               !link.href.startsWith('mailto:');
-    }
-
-    /**
-     * Обработка анимации перехода
-     */
-    static handleTransition(link) {
-        const transition = document.getElementById('pageTransition');
-        
-        // Запуск анимации
-        transition.style.opacity = '1';
-        
-        // Переход после анимации
-        setTimeout(() => {
-            window.location.href = link.href;
-        }, 800);
-    }
-
-    /**
-     * Инициализация главной страницы
-     */
     static initHomePage() {
         const startButton = document.getElementById('startButton');
-        
         if (startButton) {
-            // Анимация при наведении
             startButton.addEventListener('mouseenter', () => {
                 startButton.style.transform = 'scale(1.05)';
             });
-            
             startButton.addEventListener('mouseleave', () => {
                 startButton.style.transform = 'scale(1)';
             });
         }
     }
 
-    /**
-     * Инициализация страницы контента
-     */
     static initContentPage() {
-        this.createMobileMenuButton(); // Кнопка меню для мобильных
-    }
+        // Плавная прокрутка для оглавления
+        document.querySelectorAll('.toc-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.hash) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.hash);
+                    window.scrollTo({
+                        top: target.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
 
-    /**
-     * Создание кнопки меню для мобильных
-     */
-    static createMobileMenuButton() {
-        const button = document.createElement('button');
-        button.className = 'menu-toggle';
-        button.innerHTML = '<i class="fas fa-bars"></i>';
-        document.body.appendChild(button);
+        // Меню для мобильных
+        const menuToggle = document.createElement('button');
+        menuToggle.className = 'menu-toggle';
+        menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+        document.body.appendChild(menuToggle);
         
-        // Обработчик клика
-        button.addEventListener('click', () => {
+        menuToggle.addEventListener('click', () => {
             document.querySelector('.sidebar').classList.toggle('active');
         });
     }
 }
 
-// Запуск при полной загрузке DOM
 document.addEventListener('DOMContentLoaded', () => PageTransitions.init());
