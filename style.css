@@ -83,7 +83,7 @@ body {
     z-index: 100;
 }
 
-/* ===== СТРАНИЦА КОНТЕНТА ===== */
+/* ===== ОБНОВЛЕННАЯ СТРАНИЦА КОНТЕНТА ===== */
 .sidebar {
     width: 280px;
     position: fixed;
@@ -92,7 +92,7 @@ body {
     height: 100vh;
     background: #1a1a1a;
     color: #ddd;
-    padding: 20px;
+    padding: 25px 20px;
     overflow-y: auto;
     z-index: 100;
     transition: all 0.3s;
@@ -103,68 +103,87 @@ body {
     font-family: 'Cinzel Decorative', cursive;
     font-size: 1.8rem;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
-.sidebar-nav a {
+/* ОБНОВЛЕННЫЕ СТИЛИ КНОПОК */
+.sidebar-nav a, 
+.nav-btn {
     display: block;
-    color: #ddd;
-    padding: 12px 15px;
-    margin: 5px 0;
+    padding: 16px 20px;
+    margin: 10px 0;
+    font-size: 1.1rem;
+    background: #252525;
+    color: #e0e0e0;
+    border: none;
+    border-radius: 6px;
     text-decoration: none;
-    border-radius: 4px;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
 }
 
-.sidebar-nav a:hover, .sidebar-nav a.active {
-    background: #2a2a2a;
+.sidebar-nav a:hover, 
+.nav-btn:hover {
+    background: #303030;
     color: #fff;
+    transform: translateX(3px);
 }
 
-.sidebar-nav a.active {
-    border-left: 3px solid #3498db;
+.sidebar-nav a.active, 
+.nav-btn.active {
+    background: #1e3a57;
+    color: #fff;
+    border-left: 4px solid #3498db;
+    font-weight: 500;
 }
 
 .version-selector {
-    margin-bottom: 15px;
+    margin: 20px 0;
 }
 
 .version-btn {
     width: 100%;
-    padding: 12px 15px;
-    background: #2a2a2a;
-    color: #ddd;
+    padding: 16px 20px;
+    background: #252525;
+    color: #e0e0e0;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     text-align: left;
     cursor: pointer;
     transition: all 0.3s;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 1.1rem;
 }
 
 .version-btn:hover {
-    background: #333;
+    background: #303030;
     color: #fff;
 }
 
 .version-content {
     display: none;
-    padding: 10px 0 0 15px;
+    padding: 12px 0 0 20px;
 }
 
 .version-content a {
     display: block;
-    color: #0D1A13;
-    padding: 8px 10px;
-    margin-bottom: 5px;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    color: #aaa;
     text-decoration: none;
     transition: all 0.3s;
+    font-size: 1rem;
+    background: #2a2a2a;
+    border-radius: 4px;
 }
 
 .version-content a:hover {
     color: #fff;
+    background: #333;
 }
 
 .main-content {
@@ -181,9 +200,6 @@ body {
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-}
-
-#content-container {
     transition: opacity 0.3s ease;
 }
 
@@ -191,6 +207,34 @@ body {
     text-align: center;
     padding: 50px;
     color: #666;
+    font-size: 1.2rem;
+}
+
+.error-message {
+    text-align: center;
+    padding: 30px;
+    color: #dc3545;
+    background: #f8d7da;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.error-message button {
+    margin: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.retry-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.home-btn {
+    background-color: #6c757d;
+    color: white;
 }
 
 /* ===== АНИМАЦИИ ===== */
@@ -216,6 +260,7 @@ body {
         width: 100%;
         height: auto;
         position: static;
+        padding: 20px;
     }
     
     .main-content {
@@ -224,6 +269,12 @@ body {
     
     .game-title {
         font-size: 3.5rem;
+    }
+    
+    .sidebar-nav a, 
+    .nav-btn {
+        padding: 14px 18px;
+        font-size: 1rem;
     }
 }
 
@@ -243,52 +294,14 @@ body {
     .main-content {
         padding: 15px;
     }
-}
-
-/* Индикатор загрузки */
-.loading-indicator {
-    text-align: center;
-    padding: 2rem;
-    color: #666;
-    font-size: 1.2rem;
-}
-
-.loading-indicator i {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-/* Сообщение об ошибке */
-.error-message {
-    text-align: center;
-    padding: 2rem;
-    color: #dc3545;
-}
-
-.error-message i {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-.error-message button {
-    margin: 0.5rem;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.retry-btn {
-    background-color: #007bff;
-    color: white;
-}
-
-.home-btn {
-    background-color: #6c757d;
-    color: white;
-}
-
-/* Анимация контента */
-#content-container {
-    transition: opacity 0.3s ease;
+    
+    #content-container {
+        padding: 20px;
+    }
+    
+    .sidebar-nav a, 
+    .nav-btn {
+        padding: 12px 15px;
+        font-size: 0.95rem;
+    }
 }
