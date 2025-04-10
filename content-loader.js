@@ -4,6 +4,7 @@
  * - Подробные ошибки
  * - Кнопка обновления
  * - Индикатор загрузки
+ * Убрана анимация перехода между разделами
  */
 class ContentLoader {
     static async loadIntroduction() {
@@ -18,14 +19,19 @@ class ContentLoader {
                 </div>
             `;
 
+            // Загрузка HTML-файла с правилами
             const response = await fetch('introduction.html');
             if (!response.ok) throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
             
+            // Парсинг полученного HTML
             const html = await response.text();
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
+            
+            // Извлечение контента или сообщение об ошибке, если не найден
             const content = doc.querySelector('.rule-section')?.innerHTML || '<p>Контент не найден</p>';
             
+            // Вставка контента в контейнер
             container.innerHTML = `
                 <div class="rule-section">
                     ${content}
@@ -34,10 +40,9 @@ class ContentLoader {
                     </button>
                 </div>
             `;
-
-            document.querySelector('.main-content').scrollTo(0, 0);
             
         } catch (error) {
+            // Обработка ошибок загрузки
             console.error('Ошибка:', error);
             container.innerHTML = `
                 <div class="error-message">
@@ -50,6 +55,9 @@ class ContentLoader {
         }
     }
 
+    /**
+     * Показывает список правил (возврат к основному виду)
+     */
     static showRulesList() {
         document.getElementById('content-container').innerHTML = `
             <h1>Правила Codex</h1>
@@ -58,13 +66,14 @@ class ContentLoader {
     }
 }
 
-// Инициализация (без изменений)
+// Инициализация обработчиков событий после загрузки DOM
 document.addEventListener('DOMContentLoaded', () => {
+    // Находим все ссылки на "Введение" и добавляем обработчики
     document.querySelectorAll('.version-content a').forEach(link => {
         if (link.textContent.includes('Введение')) {
             link.addEventListener('click', (e) => {
-                e.preventDefault();
-                ContentLoader.loadIntroduction();
+                e.preventDefault(); // Отменяем стандартное поведение
+                ContentLoader.loadIntroduction(); // Загружаем контент
             });
         }
     });
