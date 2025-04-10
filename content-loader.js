@@ -1,93 +1,67 @@
-/**
- * Класс для загрузки контента с защитой от наложения
- */
 class ContentLoader {
-    static isLoading = false; // Флаг блокировки параллельных загрузок
+    static baseUrl = '/';
+    static isLoading = false;
 
-    /**
-     * Загружает контент с защитой от наложения
-     * @param {string} url - URL для загрузки
-     */
     static async loadContent(url) {
-        const container = document.getElementById('content-container');
-        if (!container || this.isLoading) return;
-
-        // Блокируем повторные вызовы
+        if (this.isLoading) return;
         this.isLoading = true;
-        
-        // 1. Подготовка контейнера
-        container.style.opacity = '0'; // Плавное исчезновение
-        container.style.pointerEvents = 'none'; // Блокируем взаимодействие
-        
-        // 2. Показываем индикатор загрузки
-        const loaderHtml = `
-            <div class="loading-indicator">
-                <i class="fas fa-spinner fa-spin"></i>
-            </div>
-        `;
-        container.innerHTML = loaderHtml;
-        container.style.opacity = '1';
+
+        const container = document.getElementById('content-container');
+        if (!container) return;
+
+        // Нормализация URL
+        const fullUrl = url.startsWith('/') 
+            ? url 
+            : `${this.baseUrl}${url}`;
 
         try {
-            // 3. Загрузка данных с защитой от кеширования
-            const response = await fetch(url, {
+            // Показ индикатора загрузки
+            container.innerHTML = `
+                <div class="loading-indicator">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            `;
+
+            // Запрос с контролем кеширования
+            const response = await fetch(fullUrl, {
                 headers: { 'Cache-Control': 'no-cache' }
             });
             
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            
-            // 4. Полная очистка перед вставкой
+            if (!response.ok) {
+                throw new Error(`Ошибка загрузки: ${response.status}`);
+            }
+
             const html = await response.text();
-            container.replaceChildren(); // Важно: полная очистка DOM
-            
-            // 5. Безопасная вставка нового контента
             container.innerHTML = html;
-            
-            // 6. Плавное появление с requestAnimationFrame
-            requestAnimationFrame(() => {
-                container.style.opacity = '0';
-                requestAnimationFrame(() => {
-                    container.style.opacity = '1';
-                    container.style.pointerEvents = 'auto';
-                });
-            });
-            
-            // 7. Обновляем историю браузера
-            history.pushState(null, '', url);
-            
+            history.pushState(null, '', fullUrl);
+
         } catch (error) {
-            // 8. Обработка ошибок с восстановлением
-            console.error('Load error:', error);
+            console.error('Ошибка:', error);
             container.innerHTML = `
                 <div class="error-message">
-                    <p>Ошибка загрузки: ${error.message}</p>
+                    <p>${error.message}</p>
                     <button onclick="window.location.reload()">Обновить</button>
                 </div>
             `;
         } finally {
-            // 9. Всегда снимаем блокировку
             this.isLoading = false;
         }
     }
 
-    /**
-     * Инициализация обработчиков событий
-     */
-    static init() {
-        // Обработчик для ссылок в сайдбаре
+    static init(baseUrl = '/') {
+        this.baseUrl = baseUrl;
+        
+        // Обработчик для ссылок
         document.querySelectorAll('.sidebar-nav a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.loadContent(link.href);
+                this.loadContent(link.getAttribute('href'));
             });
         });
 
-        // Обработчик кнопок назад/вперед
+        // Обработчик истории
         window.addEventListener('popstate', () => {
             this.loadContent(window.location.pathname);
         });
     }
 }
-
-// Автоматическая инициализация после загрузки DOM
-document.addEventListener('DOMContentLoaded', () => ContentLoader.init());

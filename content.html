@@ -1,58 +1,36 @@
 <!DOCTYPE html>
-<!--
-  Главная страница контента Codex of Heroes
-  Язык: русский
--->
 <html lang="ru">
 <head>
-    <!-- Мета-информация -->
-    <meta charset="UTF-8"> <!-- Кодировка UTF-8 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Адаптивность для мобильных -->
-    <title>Codex of Heroes | Правила</title> <!-- Заголовок вкладки -->
-    
-    <!-- Подключение стилей -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> <!-- Иконки Font Awesome -->
-    <link rel="stylesheet" href="style.css"> <!-- Основные стили -->
-    
-    <!-- Стили для текущей страницы -->
-    <style>
-        /* Локальные стили для плавного появления */
-        body {
-            opacity: 0;
-            animation: fadeIn 0.5s ease-in forwards;
-        }
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex of Heroes | Правила</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Боковая панель навигации -->
+    <!-- Сайдбар (полная версия с ВСЕМИ разделами) -->
     <div class="sidebar">
-        <!-- Заголовок сайдбара -->
         <div class="sidebar-header">
-            <h2>Codex</h2> <!-- Логотип/название системы -->
+            <h2>Codex</h2>
         </div>
         
-        <!-- Основное меню навигации -->
+        <!-- Основное меню -->
         <div class="sidebar-nav">
-            <!-- Ссылки с относительными путями -->
-            <a href="index.html">Главная</a> <!-- Ссылка на домашнюю страницу -->
-            <a href="content.html" class="active">Основная информация</a> <!-- Активная страница -->
-            <a href="pages/content/about.html">О проекте</a> <!-- Ссылка на страницу "О проекте" -->
-            <a href="pages/content/contact.html">Контакты</a> <!-- Ссылка на контакты -->
+            <a href="/Codex/index.html">Главная</a>
+            <a href="/Codex/content.html" class="active">Основная информация</a>
+            <a href="/Codex/pages/content/about.html">О проекте</a>
+            <a href="/Codex/pages/content/contact.html">Контакты</a>
         </div>
         
-        <!-- Блок выбора версий правил -->
+        <!-- Версии правил - ПОЛНОСТЬЮ СОХРАНЯЕМ ОБА РАЗДЕЛА -->
         <div class="sidebar-version-selectors">
-            <!-- Выпадающее меню "Codex of Heroes" -->
+            <!-- Codex of Heroes -->
             <div class="version-selector">
                 <button class="version-btn">
                     Codex of Heroes 
-                    <i class="fas fa-caret-down"></i> <!-- Иконка стрелки -->
+                    <i class="fas fa-caret-down"></i>
                 </button>
                 <div class="version-content">
-                    <!-- Ссылки на разделы правил -->
                     <a href="#" class="load-intro">Введение</a>
                     <a href="#">Как играть?</a>
                     <a href="#">Игровые кости</a>
@@ -60,7 +38,7 @@
                 </div>
             </div>
             
-            <!-- Выпадающее меню "Codex of Mortals" -->
+            <!-- Codex of Mortals - ВОССТАНАВЛИВАЕМ -->
             <div class="version-selector">
                 <button class="version-btn">
                     Codex of Mortals 
@@ -69,62 +47,32 @@
                 <div class="version-content">
                     <a href="#">Обзор</a>
                     <a href="#">Персонажи</a>
+                    <a href="#">Механики</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Основная область контента -->
+    <!-- Основной контент -->
     <div class="main-content">
-        <!-- Контейнер для динамического контента -->
         <div id="content-container">
-            <!-- Fallback-контент при отключенном JavaScript -->
-            <noscript>
-                <div class="error-message">
-                    <h2>Требуется JavaScript</h2>
-                    <p>Для корректной работы сайта необходимо включить JavaScript в настройках браузера.</p>
-                </div>
-            </noscript>
-            
-            <!-- Стандартное содержимое при первой загрузке -->
             <h1>Правила Codex</h1>
             <p>Выберите категорию и версию правил в боковой панели.</p>
         </div>
     </div>
 
-    <!-- Подключение скриптов -->
-    <script src="script.js"></script> <!-- Основные скрипты -->
-    <script src="content-loader.js"></script> <!-- Загрузчик контента -->
+    <!-- Скрипты -->
+    <script src="script.js"></script>
+    <script src="content-loader.js"></script>
     
-    <!-- Инициализация после загрузки -->
     <script>
-        // Обработчик полной загрузки страницы
         document.addEventListener('DOMContentLoaded', function() {
-            try {
-                // Инициализация системы переходов
-                PageTransitions.init();
-                
-                // Инициализация загрузчика контента
-                if (typeof ContentLoader !== 'undefined') {
-                    ContentLoader.init();
-                }
-                
-                // Плавное появление контента
-                setTimeout(() => {
-                    document.body.style.opacity = '1';
-                }, 100);
-                
-            } catch (error) {
-                // Обработка ошибок инициализации
-                console.error('Initialization error:', error);
-                document.getElementById('content-container').innerHTML = `
-                    <div class="error-message">
-                        <h2>Ошибка загрузки</h2>
-                        <p>${error.message}</p>
-                        <button onclick="window.location.reload()">Обновить страницу</button>
-                    </div>
-                `;
-            }
+            // Автоматическая адаптация путей
+            const isGitHub = window.location.host.includes('github.io');
+            ContentLoader.init(isGitHub ? '/Codex/' : '/');
+            
+            // Инициализация выпадающих меню
+            PageTransitions.initVersionSelectors();
         });
     </script>
 </body>
