@@ -1,6 +1,9 @@
 class PageTransitions {
     static init() {
-        this.setupPageTransitions();
+        // Не инициализируем анимации для content.html
+        if (!window.location.pathname.includes('content.html')) {
+            this.setupPageTransitions();
+        }
         
         if (document.querySelector('.welcome-screen')) {
             this.initHomePage();
@@ -11,15 +14,14 @@ class PageTransitions {
 
     static setupPageTransitions() {
         document.addEventListener('click', (e) => {
-            // Пропускаем анимацию для content.html
-            if (window.location.pathname.includes('content.html')) return;
-            
+            // Обрабатываем все внутренние ссылки
             const link = e.target.closest('a[href^="/"], a[href^="#"], a[href^="http"]:not([target="_blank"]), a:not([href^="mailto:"])');
             
             if (link && link.href && !link.hash) {
                 e.preventDefault();
                 const transition = document.getElementById('pageTransition');
                 
+                // Если переход на другую страницу (не якорь)
                 if (!link.href.includes('#')) {
                     transition.style.opacity = '1';
                     setTimeout(() => {

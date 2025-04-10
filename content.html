@@ -8,7 +8,6 @@
     
     <!-- Подключение стилей и иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <!-- ADDED: Preload для ускорения загрузки -->
     <link rel="preload" href="introduction.html" as="document" crossorigin>
     <link rel="stylesheet" href="style.css">
     
@@ -36,20 +35,283 @@
             overflow-y: auto;
         }
 
-        /* Остальные стили остаются без изменений... */
+        /* Заголовок боковой панели */
+        .sidebar-header {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            padding: 0;
+            font-size: 1.5em;
+        }
+
+        /* Навигационное меню */
+        .sidebar-nav {
+            margin-bottom: 30px;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 8px 0;
+            transition: color 0.3s;
+        }
+
+        .sidebar-nav a:hover {
+            color: #3498db;
+        }
+
+        /* Контейнер для селекторов версий */
+        .sidebar-version-selectors {
+            margin: 15px 0;
+        }
+
+        /* Стили для отдельных селекторов версий */
+        .version-selector {
+            margin-bottom: 10px;
+        }
+
+        .version-btn {
+            width: 100%;
+            padding: 8px 15px;
+            text-align: left;
+            background-color: #34495e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .version-btn:hover {
+            background-color: #3d566e;
+        }
+
+        .version-btn i {
+            margin-left: 5px;
+            transition: transform 0.3s;
+        }
+
+        /* Содержимое выпадающего списка версий */
+        .version-content {
+            display: none;
+            padding: 5px 0;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .version-content a {
+            display: block;
+            padding: 6px 20px;
+            color: #2c3e50;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .version-content a:hover {
+            background-color: #e9ecef;
+            color: #1a252f;
+        }
+
+        /* Класс для отображения содержимого */
+        .version-content.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        /* Анимация для активной кнопки */
+        .version-btn.active i {
+            transform: rotate(180deg);
+        }
+
+        /* Анимация появления */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Основная область контента */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 40px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* Стили для страницы "О проекте" */
+        .about-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-section h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .about-section p {
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Стили для страницы "Контакты" */
+        .contact-section {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-section h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .contact-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            height: 150px;
+        }
+
+        .submit-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- УДАЛЕНО: Элемент для анимации перехода -->
-
     <!-- Боковая панель -->
     <div class="sidebar">
-        <!-- Остальное содержимое без изменений... -->
+        <!-- Заголовок панели -->
+        <div class="sidebar-header">
+            <h2>Codex</h2>
+        </div>
+        
+        <!-- Основная навигация -->
+        <div class="sidebar-nav">
+            <a href="index.html">Главная</a>
+            <a href="content.html" class="active">Основная информация</a>
+            <a href="about.html">О проекте</a>
+            <a href="contact.html">Контакты</a>
+        </div>
+        
+        <!-- Блок выбора версий правил -->
+        <div class="sidebar-version-selectors">
+            <!-- Селектор основных правил -->
+            <div class="version-selector">
+                <button class="version-btn">Codex of Heroes <i class="fas fa-caret-down"></i></button>
+                <div class="version-content">
+                    <a href="#">Введение</a>
+                    <a href="#">Как играть?</a>
+                    <a href="#">Игровые кости</a>
+                    <a href="#">Действия</a>
+                    <a href="#">Сцена</a>
+                    <a href="#">Игровое поле</a>
+                    <a href="#">Персонажи</a>
+                    <a href="#">Счетчики</a>
+                    <a href="#">Создание персонажа</a>
+                    <a href="#">Развитие персонажа</a>
+                    <a href="#">Награды за активности</a>
+                    <a href="#">Эффекты</a>
+                </div>
+            </div>
+            
+            <!-- Селектор боевой системы -->
+            <div class="version-selector">
+                <button class="version-btn">Codex of Mortals <i class="fas fa-caret-down"></i></button>
+                <div class="version-content">
+                    <a href="#">Посмотришь</a>
+                    <a href="#">Поймешь</a>
+                </div>
+            </div>
+            
+            <!-- Селектор магии -->
+            <div class="version-selector">
+                <button class="version-btn">Codex of Dust <i class="fas fa-caret-down"></i></button>
+                <div class="version-content">
+                    <a href="#">Согласишься</a>
+                    <a href="#">Поиграешь</a>
+                </div>
+            </div>
+            
+            <!-- Селектор персонажей -->
+            <div class="version-selector">
+                <button class="version-btn">§ Параграфы <i class="fas fa-caret-down"></i></button>
+                <div class="version-content">
+                    <a href="#">Версия 1.1 (текущая)</a>
+                    <a href="#">Версия 1.0</a>
+                </div>
+            </div>
+            
+            <!-- Селектор мира -->
+            <div class="version-selector">
+                <button class="version-btn">Примечания <i class="fas fa-caret-down"></i></button>
+                <div class="version-content">
+                    <a href="#">Версия 0.8 (альфа)</a>
+                    <a href="#">Версия 0.7</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Основное содержимое страницы -->
     <div class="main-content">
+        <!-- Контент будет подгружаться динамически в зависимости от выбранной страницы -->
         <div id="content-container">
+            <!-- По умолчанию загружаются правила -->
             <h1>Правила Codex</h1>
             <p>Выберите категорию и версию правил в боковой панели.</p>
         </div>
@@ -59,14 +321,18 @@
     <script src="script.js"></script>
     <script src="content-loader.js"></script>
     <script>
+        // Обработчик загрузки DOM
         document.addEventListener('DOMContentLoaded', function() {
+            // Получаем все кнопки выбора версий
             const versionButtons = document.querySelectorAll('.version-btn');
             
+            // Добавляем обработчики клика для кнопок
             versionButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const content = this.nextElementSibling;
                     const isShowing = content.classList.contains('show');
                     
+                    // Закрываем все открытые списки, кроме текущего
                     document.querySelectorAll('.version-content.show').forEach(openContent => {
                         if (openContent !== content) {
                             openContent.classList.remove('show');
@@ -74,6 +340,7 @@
                         }
                     });
                     
+                    // Переключаем текущий список
                     if (!isShowing) {
                         content.classList.add('show');
                         this.classList.add('active');
@@ -84,96 +351,24 @@
                 });
             });
             
+            // Обработчики для ссылок версий
             document.querySelectorAll('.version-content a').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
+                    // Загрузка контента правил
                     loadRulesContent(this.textContent);
                 });
             });
             
+            // Обработчики навигационных ссылок (без анимации перехода)
             document.querySelectorAll('.sidebar-nav a').forEach(link => {
                 link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const page = this.getAttribute('href').replace('.html', '');
-                    loadPage(page);
+                    // Убрано e.preventDefault() для мгновенного перехода
+                    window.location.href = this.getAttribute('href');
                 });
             });
             
-            function loadPage(page) {
-                const container = document.getElementById('content-container');
-                
-                document.querySelectorAll('.sidebar-nav a').forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href').includes(page)) {
-                        link.classList.add('active');
-                    }
-                });
-                
-                switch(page) {
-                    case 'about':
-                        container.innerHTML = `
-                            <div class="about-section">
-                                <h1>О проекте Codex</h1>
-                                <p>Codex - это система правил для настольных ролевых игр, разрабатываемая с 2020 года.</p>
-                                <p>Наша цель - создать гибкую и удобную систему, которая позволит игрокам полностью погрузиться в игровой мир.</p>
-                                <p>Проект находится в активной разработке, и мы всегда рады новым участникам и идеям.</p>
-                                <h2>Команда разработчиков</h2>
-                                <p>Над проектом работает небольшая команда энтузиастов:</p>
-                                <ul>
-                                    <li>Дмитрий "Rebus"</li>
-                                    <li>Андрей "Феникс"</li>
-                                    <li>Анастасия "Морриган"</li>
-                                    <li>Сергей "Тихоня"</li>
-                                </ul>
-                            </div>
-                        `;
-                        break;
-                        
-                    case 'contact':
-                        container.innerHTML = `
-                            <div class="contact-section">
-                                <h1>Свяжитесь с нами</h1>
-                                <p>Если у вас есть вопросы или предложения по проекту, заполните форму ниже:</p>
-                                
-                                <form class="contact-form">
-                                    <div class="form-group">
-                                        <label for="name">Ваше имя:</label>
-                                        <input type="text" id="name" required>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="email">Email:</label>
-                                        <input type="email" id="email" required>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="message">Сообщение:</label>
-                                        <textarea id="message" required></textarea>
-                                    </div>
-                                    
-                                    <button type="submit" class="submit-btn">Отправить</button>
-                                </form>
-                                
-                                <h2>Другие способы связи</h2>
-                                <p>VK: https://vk.com/codex_of_limits?from=groups</p>
-                            </div>
-                        `;
-                        
-                        document.querySelector('.contact-form')?.addEventListener('submit', function(e) {
-                            e.preventDefault();
-                            alert('Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.');
-                            this.reset();
-                        });
-                        break;
-                        
-                    default:
-                        container.innerHTML = `
-                            <h1>Правила Codex</h1>
-                            <p>Выберите категорию и версию правил в боковой панели.</p>
-                        `;
-                }
-            }
-            
+            // Функция загрузки контента правил
             function loadRulesContent(version) {
                 const container = document.getElementById('content-container');
                 container.innerHTML = `
@@ -184,9 +379,6 @@
                     </div>
                 `;
             }
-            
-            const initialPage = window.location.pathname.split('/').pop().replace('.html', '') || 'content';
-            loadPage(initialPage);
         });
     </script>
 </body>
