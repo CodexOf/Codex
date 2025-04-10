@@ -183,6 +183,16 @@ body {
     box-shadow: 0 2px 15px rgba(0,0,0,0.1);
 }
 
+#content-container {
+    transition: opacity 0.3s ease;
+}
+
+.loading-indicator {
+    text-align: center;
+    padding: 50px;
+    color: #666;
+}
+
 /* ===== АНИМАЦИИ ===== */
 @keyframes fadeIn {
     from { opacity: 0; }

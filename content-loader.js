@@ -2,21 +2,31 @@ class ContentLoader {
     static async loadContent(url) {
         const container = document.getElementById('content-container');
         if (!container) return;
+
+        // Плавное исчезновение текущего контента
+        container.style.opacity = '0';
         
         try {
-            container.innerHTML = `
-                <div class="loading-indicator">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Загрузка контента...</p>
-                </div>
-            `;
-
             const response = await fetch(url);
             if (!response.ok) throw new Error(`Ошибка ${response.status}`);
             
             const html = await response.text();
-            container.innerHTML = html;
             
+            // Вставка нового контента с анимацией
+            setTimeout(() => {
+                container.innerHTML = html;
+                container.style.opacity = '1';
+                window.scrollTo(0, 0); // Сброс скролла
+                
+                // Обновляем активный пункт меню
+                document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                    link.classList.toggle('active', link.href === url);
+                });
+            }, 300);
+
+            // Обновляем URL без перезагрузки
+            history.pushState(null, '', url);
+
         } catch (error) {
             container.innerHTML = `
                 <div class="error-message">
@@ -26,17 +36,27 @@ class ContentLoader {
                     </button>
                 </div>
             `;
+            container.style.opacity = '1';
         }
     }
 
-    static async loadIntroduction() {
-        await this.loadContent('introduction.html');
+    static init() {
+        // Обработка кликов в сайдбаре
+        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.loadContent(link.href);
+            });
+        });
+
+        // Обработка кнопок "Назад"/"Вперёд"
+        window.addEventListener('popstate', () => {
+            this.loadContent(window.location.href);
+        });
     }
 }
 
+// Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelector('.load-intro')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        ContentLoader.loadIntroduction();
-    });
+    ContentLoader.init();
 });
