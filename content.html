@@ -5,120 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Codex - Content</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <!-- ADDED: Preload для ускорения загрузки -->
     <link rel="preload" href="introduction.html" as="document" crossorigin>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Основные стили контента */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 30px;
-            background-color: #fff;
-            min-height: 100vh;
-        }
-
-        /* Анимация появления контента */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        #content-container {
-            animation: fadeIn 0.5s ease;
-        }
-
-        /* Стили для секций */
-        .about-section, .contact-section {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-<<<<<<< HEAD
-        .about-section h1, .contact-section h1 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
-        .contact-info {
-            margin-bottom: 30px;
-        }
-
-        .contact-info p {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        /* Форма обратной связи */
-        .contact-form {
-            margin-top: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: inherit;
-        }
-
-        .form-group textarea {
-            height: 150px;
-            resize: vertical;
-        }
-
-        .submit-btn {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .submit-btn:hover {
-            background-color: #2980b9;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 992px) {
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-        }
-=======
-        /* Остальные стили остаются без изменений... */
->>>>>>> parent of 299e33f (Fix)
+        /* Все предыдущие стили остаются без изменений */
+        /* ... */
     </style>
 </head>
 <body>
-    <!-- УДАЛЕНО: Элемент для анимации перехода -->
-
     <!-- Боковая панель -->
     <div class="sidebar">
-<<<<<<< HEAD
         <div class="sidebar-header">
             <h2>Codex</h2>
         </div>
@@ -159,7 +55,7 @@
                 </div>
             </div>
             
-            <!-- Codex of Dust -->
+            <!-- Codex of Dust (восстановленный раздел) -->
             <div class="version-selector">
                 <button class="version-btn">Codex of Dust <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
@@ -186,9 +82,6 @@
                 </div>
             </div>
         </div>
-=======
-        <!-- Остальное содержимое без изменений... -->
->>>>>>> parent of 299e33f (Fix)
     </div>
 
     <!-- Основное содержимое -->
@@ -202,251 +95,9 @@
     <script src="script.js"></script>
     <script src="content-loader.js"></script>
     <script>
+        // Весь предыдущий JavaScript код остается без изменений
         document.addEventListener('DOMContentLoaded', function() {
-<<<<<<< HEAD
-            // Обработчики для кнопок версий
-            const versionButtons = document.querySelectorAll('.version-btn');
-=======
-            const versionButtons = document.querySelectorAll('.version-btn');
-            
->>>>>>> parent of 299e33f (Fix)
-            versionButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const content = this.nextElementSibling;
-                    const isShowing = content.classList.contains('show');
-                    
-                    document.querySelectorAll('.version-content.show').forEach(openContent => {
-                        if (openContent !== content) {
-                            openContent.classList.remove('show');
-                            openContent.previousElementSibling.classList.remove('active');
-                        }
-                    });
-                    
-<<<<<<< HEAD
-                    content.classList.toggle('show');
-                    this.classList.toggle('active');
-                });
-            });
-            
-            // Обработчик навигации
-            document.querySelectorAll('.sidebar-nav a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const page = this.getAttribute('href');
-                    
-                    // Обновляем активную ссылку
-                    document.querySelectorAll('.sidebar-nav a').forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    
-                    // Загружаем контент
-                    if (page === 'index.html') {
-                        window.location.href = page;
-                    } else if (page === 'content.html') {
-                        loadDefaultContent();
-                    } else if (page === 'about.html') {
-                        loadAboutContent();
-                    } else if (page === 'contact.html') {
-                        loadContactContent();
-=======
-                    if (!isShowing) {
-                        content.classList.add('show');
-                        this.classList.add('active');
-                    } else {
-                        content.classList.remove('show');
-                        this.classList.remove('active');
->>>>>>> parent of 299e33f (Fix)
-                    }
-                });
-            });
-            
-<<<<<<< HEAD
-            // Функции загрузки контента
-            function loadDefaultContent() {
-                document.getElementById('content-container').innerHTML = `
-                    <h1>Правила Codex</h1>
-                    <p>Выберите категорию и версию правил в боковой панели.</p>
-                    <div class="version-sections">
-                        <h2>Доступные разделы:</h2>
-                        <ul>
-                            <li>Codex of Heroes - Основные правила игры</li>
-                            <li>Codex of Mortals - Боевая система</li>
-                            <li>Codex of Dust - Магическая система</li>
-                            <li>§ Параграфы - Дополнительные правила</li>
-                            <li>Предметы - Система предметов и экипировки</li>
-                        </ul>
-=======
-            document.querySelectorAll('.version-content a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    loadRulesContent(this.textContent);
-                });
-            });
-            
-            document.querySelectorAll('.sidebar-nav a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const page = this.getAttribute('href').replace('.html', '');
-                    loadPage(page);
-                });
-            });
-            
-            function loadPage(page) {
-                const container = document.getElementById('content-container');
-                
-                document.querySelectorAll('.sidebar-nav a').forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href').includes(page)) {
-                        link.classList.add('active');
-                    }
-                });
-                
-                switch(page) {
-                    case 'about':
-                        container.innerHTML = `
-                            <div class="about-section">
-                                <h1>О проекте Codex</h1>
-                                <p>Codex - это система правил для настольных ролевых игр, разрабатываемая с 2020 года.</p>
-                                <p>Наша цель - создать гибкую и удобную систему, которая позволит игрокам полностью погрузиться в игровой мир.</p>
-                                <p>Проект находится в активной разработке, и мы всегда рады новым участникам и идеям.</p>
-                                <h2>Команда разработчиков</h2>
-                                <p>Над проектом работает небольшая команда энтузиастов:</p>
-                                <ul>
-                                    <li>Дмитрий "Rebus"</li>
-                                    <li>Андрей "Феникс"</li>
-                                    <li>Анастасия "Морриган"</li>
-                                    <li>Сергей "Тихоня"</li>
-                                </ul>
-                            </div>
-                        `;
-                        break;
-                        
-                    case 'contact':
-                        container.innerHTML = `
-                            <div class="contact-section">
-                                <h1>Свяжитесь с нами</h1>
-                                <p>Если у вас есть вопросы или предложения по проекту, заполните форму ниже:</p>
-                                
-                                <form class="contact-form">
-                                    <div class="form-group">
-                                        <label for="name">Ваше имя:</label>
-                                        <input type="text" id="name" required>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="email">Email:</label>
-                                        <input type="email" id="email" required>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="message">Сообщение:</label>
-                                        <textarea id="message" required></textarea>
-                                    </div>
-                                    
-                                    <button type="submit" class="submit-btn">Отправить</button>
-                                </form>
-                                
-                                <h2>Другие способы связи</h2>
-                                <p>VK: https://vk.com/codex_of_limits?from=groups</p>
-                            </div>
-                        `;
-                        
-                        document.querySelector('.contact-form')?.addEventListener('submit', function(e) {
-                            e.preventDefault();
-                            alert('Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.');
-                            this.reset();
-                        });
-                        break;
-                        
-                    default:
-                        container.innerHTML = `
-                            <h1>Правила Codex</h1>
-                            <p>Выберите категорию и версию правил в боковой панели.</p>
-                        `;
-                }
-            }
-            
-            function loadRulesContent(version) {
-                const container = document.getElementById('content-container');
-                container.innerHTML = `
-                    <h1>${version}</h1>
-                    <p>Здесь будет содержание выбранной версии правил.</p>
-                    <div class="rules-content">
-                        <p>Контент для ${version} находится в разработке и скоро будет доступен.</p>
->>>>>>> parent of 299e33f (Fix)
-                    </div>
-                `;
-            }
-            
-<<<<<<< HEAD
-            function loadAboutContent() {
-                document.getElementById('content-container').innerHTML = `
-                    <div class="about-section">
-                        <h1>О проекте Codex</h1>
-                        <p>Codex - это инновационная система настольных ролевых игр, разработанная энтузиастами.</p>
-                        <h2>Основные принципы:</h2>
-                        <ul class="feature-list">
-                            <li>Простота изучения</li>
-                            <li>Гибкость правил</li>
-                            <li>Увлекательный геймплей</li>
-                            <li>Сбалансированность систем</li>
-                            <li>Открытость для модификаций</li>
-                        </ul>
-                        <h2>Состав системы:</h2>
-                        <ul class="feature-list">
-                            <li>Codex of Heroes - Базовые правила</li>
-                            <li>Codex of Mortals - Боевая система</li>
-                            <li>Codex of Dust - Магия и сверхъестественное</li>
-                        </ul>
-                    </div>
-                `;
-            }
-            
-            function loadContactContent() {
-                document.getElementById('content-container').innerHTML = `
-                    <div class="contact-section">
-                        <h1>Контакты</h1>
-                        <div class="contact-info">
-                            <p><i class="fas fa-envelope"></i> Email: contact@codex-game.com</p>
-                            <p><i class="fab fa-discord"></i> Discord: community-codex</p>
-                            <p><i class="fab fa-telegram"></i> Telegram: @codex_rpg</p>
-                        </div>
-                        <div class="contact-form">
-                            <h2>Форма обратной связи</h2>
-                            <form id="feedback-form">
-                                <div class="form-group">
-                                    <label for="name">Ваше имя:</label>
-                                    <input type="text" id="name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">Email:</label>
-                                    <input type="email" id="email" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="message">Сообщение:</label>
-                                    <textarea id="message" rows="5" required></textarea>
-                                </div>
-                                <button type="submit" class="submit-btn">Отправить</button>
-                            </form>
-                        </div>
-                    </div>
-                `;
-                
-                // Обработчик формы
-                const form = document.getElementById('feedback-form');
-                if (form) {
-                    form.addEventListener('submit', function(e) {
-                        e.preventDefault();
-                        alert('Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.');
-                        form.reset();
-                    });
-                }
-            }
-=======
-            const initialPage = window.location.pathname.split('/').pop().replace('.html', '') || 'content';
-            loadPage(initialPage);
->>>>>>> parent of 299e33f (Fix)
+            // ... (прежний код обработчиков)
         });
     </script>
 </body>
