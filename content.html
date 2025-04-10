@@ -4,36 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Codex - Content</title>
-    <!-- Подключение Font Awesome для иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <!-- Предзагрузка важных ресурсов -->
-    <link rel="preload" href="introduction.html" as="document" crossorigin>
-    <!-- Основные стили -->
     <link rel="stylesheet" href="style.css">
-    <!-- Встроенные стили для критически важных элементов -->
     <style>
-        /* Быстрая загрузка основных элементов до полной загрузки CSS */
-        body {
-            margin: 0;
-            font-family: 'Roboto', sans-serif;
-            background: #f5f5f5;
-            color: #333;
-        }
-        .sidebar {
-            background: #1a1a1a;
-            color: white;
+        /* Восстановление скролла для content.html */
+        html, body {
+            overflow: auto;
+            height: auto;
         }
     </style>
 </head>
 <body>
-    <!-- Боковая панель навигации -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <!-- Логотип/заголовок системы -->
             <h2>Codex</h2>
         </div>
         
-        <!-- Основное меню навигации -->
         <div class="sidebar-nav">
             <a href="index.html">Главная</a>
             <a href="content.html" class="active">Основная информация</a>
@@ -41,9 +27,7 @@
             <a href="contact.html">Контакты</a>
         </div>
         
-        <!-- Выбор версий правил -->
         <div class="sidebar-version-selectors">
-            <!-- Codex of Heroes -->
             <div class="version-selector">
                 <button class="version-btn">Codex of Heroes <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
@@ -51,18 +35,9 @@
                     <a href="#">Как играть?</a>
                     <a href="#">Игровые кости</a>
                     <a href="#">Действия</a>
-                    <a href="#">Сцена</a>
-                    <a href="#">Игровое поле</a>
-                    <a href="#">Персонажи</a>
-                    <a href="#">Счетчики</a>
-                    <a href="#">Создание персонажа</a>
-                    <a href="#">Развитие персонажа</a>
-                    <a href="#">Награды за активности</a>
-                    <a href="#">Эффекты</a>
                 </div>
             </div>
             
-            <!-- Codex of Mortals -->
             <div class="version-selector">
                 <button class="version-btn">Codex of Mortals <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
@@ -70,37 +45,9 @@
                     <a href="#">Поймешь</a>
                 </div>
             </div>
-            
-            <!-- Codex of Dust -->
-            <div class="version-selector">
-                <button class="version-btn">Codex of Dust <i class="fas fa-caret-down"></i></button>
-                <div class="version-content">
-                    <a href="#">Согласишься</a>
-                    <a href="#">Поиграешь</a>
-                </div>
-            </div>
-            
-            <!-- Параграфы -->
-            <div class="version-selector">
-                <button class="version-btn">§ Параграфы <i class="fas fa-caret-down"></i></button>
-                <div class="version-content">
-                    <a href="#">§ 1)</a>
-                    <a href="#">§ 2</a>
-                </div>
-            </div>
-            
-            <!-- Предметы -->
-            <div class="version-selector">
-                <button class="version-btn">Предметы <i class="fas fa-caret-down"></i></button>
-                <div class="version-content">
-                    <a href="#">Категории</a>
-                    <a href="#">Создание</a>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Основное содержимое страницы -->
     <div class="main-content">
         <div id="content-container">
             <h1>Правила Codex</h1>
@@ -108,18 +55,7 @@
         </div>
     </div>
 
-    <!-- Подключение скриптов -->
     <script src="script.js"></script>
     <script src="content-loader.js"></script>
-    <script>
-        // Инициализация после загрузки DOM
-        document.addEventListener('DOMContentLoaded', function() {
-            // Обработчик для кнопки "Введение"
-            document.querySelector('.load-intro')?.addEventListener('click', function(e) {
-                e.preventDefault();
-                ContentLoader.loadIntroduction();
-            });
-        });
-    </script>
 </body>
 </html>
