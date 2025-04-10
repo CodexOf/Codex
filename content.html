@@ -1,180 +1,61 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <!-- Мета-информация -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Codex - Content</title>
-    
-    <!-- Подключение стилей и иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="preload" href="introduction.html" as="document" crossorigin>
     <link rel="stylesheet" href="style.css">
-    
-    <!-- Основные стили документа -->
     <style>
-        /* Общие стили страницы */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
+        /* Основные стили контента */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+            background-color: #fff;
             min-height: 100vh;
-            background-color: #f5f5f5;
         }
 
-        /* Стили боковой панели */
-        .sidebar {
-            width: 250px;
-            background-color: #2c3e50;
-            color: white;
+        /* Анимация появления контента */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #content-container {
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Стили для секций */
+        .about-section, .contact-section {
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            box-sizing: border-box;
-            height: 100vh;
-            position: fixed;
-            overflow-y: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        /* Заголовок боковой панели */
-        .sidebar-header {
+        .about-section h1, .contact-section h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
             margin-bottom: 20px;
         }
 
-        .sidebar-header h2 {
-            margin: 0;
-            padding: 0;
-            font-size: 1.5em;
-        }
-
-        /* Навигационное меню */
-        .sidebar-nav {
+        .contact-info {
             margin-bottom: 30px;
         }
 
-        .sidebar-nav a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 8px 0;
-            transition: color 0.3s;
-        }
-
-        .sidebar-nav a:hover {
-            color: #3498db;
-        }
-
-        /* Контейнер для селекторов версий */
-        .sidebar-version-selectors {
-            margin: 15px 0;
-        }
-
-        /* Стили для отдельных селекторов версий */
-        .version-selector {
+        .contact-info p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 10px;
         }
 
-        .version-btn {
-            width: 100%;
-            padding: 8px 15px;
-            text-align: left;
-            background-color: #34495e;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s;
-        }
-
-        .version-btn:hover {
-            background-color: #3d566e;
-        }
-
-        .version-btn i {
-            margin-left: 5px;
-            transition: transform 0.3s;
-        }
-
-        /* Содержимое выпадающего списка версий */
-        .version-content {
-            display: none;
-            padding: 5px 0;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            margin-top: 5px;
-        }
-
-        .version-content a {
-            display: block;
-            padding: 6px 20px;
-            color: #2c3e50;
-            text-decoration: none;
-            font-size: 13px;
-        }
-
-        .version-content a:hover {
-            background-color: #e9ecef;
-            color: #1a252f;
-        }
-
-        /* Класс для отображения содержимого */
-        .version-content.show {
-            display: block;
-            animation: fadeIn 0.3s;
-        }
-
-        /* Анимация для активной кнопки */
-        .version-btn.active i {
-            transform: rotate(180deg);
-        }
-
-        /* Анимация появления */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Основная область контента */
-        .main-content {
-            flex: 1;
-            margin-left: 250px;
-            padding: 40px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        /* Стили для страницы "О проекте" */
-        .about-section {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .about-section h1 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-
-        .about-section p {
-            line-height: 1.6;
-            color: #333;
-        }
-
-        /* Стили для страницы "Контакты" */
-        .contact-section {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .contact-section h1 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-
+        /* Форма обратной связи */
         .contact-form {
             margin-top: 20px;
         }
@@ -186,8 +67,8 @@
         .form-group label {
             display: block;
             margin-bottom: 5px;
-            color: #333;
             font-weight: bold;
+            color: #333;
         }
 
         .form-group input,
@@ -201,6 +82,7 @@
 
         .form-group textarea {
             height: 150px;
+            resize: vertical;
         }
 
         .submit-btn {
@@ -217,14 +99,8 @@
             background-color: #2980b9;
         }
 
-        /* Адаптивность для мобильных устройств */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-            
+        /* Адаптивность */
+        @media (max-width: 992px) {
             .main-content {
                 margin-left: 0;
                 padding: 20px;
@@ -235,12 +111,10 @@
 <body>
     <!-- Боковая панель -->
     <div class="sidebar">
-        <!-- Заголовок панели -->
         <div class="sidebar-header">
             <h2>Codex</h2>
         </div>
         
-        <!-- Основная навигация -->
         <div class="sidebar-nav">
             <a href="index.html">Главная</a>
             <a href="content.html" class="active">Основная информация</a>
@@ -248,9 +122,8 @@
             <a href="contact.html">Контакты</a>
         </div>
         
-        <!-- Блок выбора версий правил -->
         <div class="sidebar-version-selectors">
-            <!-- Селектор основных правил -->
+            <!-- Codex of Heroes -->
             <div class="version-selector">
                 <button class="version-btn">Codex of Heroes <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
@@ -269,7 +142,7 @@
                 </div>
             </div>
             
-            <!-- Селектор боевой системы -->
+            <!-- Codex of Mortals -->
             <div class="version-selector">
                 <button class="version-btn">Codex of Mortals <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
@@ -278,7 +151,7 @@
                 </div>
             </div>
             
-            <!-- Селектор магии -->
+            <!-- Codex of Dust -->
             <div class="version-selector">
                 <button class="version-btn">Codex of Dust <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
@@ -287,7 +160,7 @@
                 </div>
             </div>
             
-            <!-- Селектор персонажей -->
+            <!-- § Параграфы -->
             <div class="version-selector">
                 <button class="version-btn">§ Параграфы <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
@@ -296,43 +169,36 @@
                 </div>
             </div>
             
-            <!-- Селектор мира -->
+            <!-- Предметы -->
             <div class="version-selector">
                 <button class="version-btn">Предметы <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
-                    <a href="#">Категории </a>
+                    <a href="#">Категории</a>
                     <a href="#">Создание</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Основное содержимое страницы -->
+    <!-- Основное содержимое -->
     <div class="main-content">
-        <!-- Контент будет подгружаться динамически в зависимости от выбранной страницы -->
         <div id="content-container">
-            <!-- По умолчанию загружаются правила -->
             <h1>Правила Codex</h1>
             <p>Выберите категорию и версию правил в боковой панели.</p>
         </div>
     </div>
 
-    <!-- Скрипты для работы страницы -->
     <script src="script.js"></script>
     <script src="content-loader.js"></script>
     <script>
-        // Обработчик загрузки DOM
         document.addEventListener('DOMContentLoaded', function() {
-            // Получаем все кнопки выбора версий
+            // Обработчики для кнопок версий
             const versionButtons = document.querySelectorAll('.version-btn');
-            
-            // Добавляем обработчики клика для кнопок
             versionButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const content = this.nextElementSibling;
                     const isShowing = content.classList.contains('show');
                     
-                    // Закрываем все открытые списки, кроме текущего
                     document.querySelectorAll('.version-content.show').forEach(openContent => {
                         if (openContent !== content) {
                             openContent.classList.remove('show');
@@ -340,44 +206,116 @@
                         }
                     });
                     
-                    // Переключаем текущий список
-                    if (!isShowing) {
-                        content.classList.add('show');
-                        this.classList.add('active');
-                    } else {
-                        content.classList.remove('show');
-                        this.classList.remove('active');
+                    content.classList.toggle('show');
+                    this.classList.toggle('active');
+                });
+            });
+            
+            // Обработчик навигации
+            document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('href');
+                    
+                    // Обновляем активную ссылку
+                    document.querySelectorAll('.sidebar-nav a').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Загружаем контент
+                    if (page === 'index.html') {
+                        window.location.href = page;
+                    } else if (page === 'content.html') {
+                        loadDefaultContent();
+                    } else if (page === 'about.html') {
+                        loadAboutContent();
+                    } else if (page === 'contact.html') {
+                        loadContactContent();
                     }
                 });
             });
             
-            // Обработчики для ссылок версий
-            document.querySelectorAll('.version-content a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    // Загрузка контента правил
-                    loadRulesContent(this.textContent);
-                });
-            });
-            
-            // Обработчики навигационных ссылок (без анимации перехода)
-            document.querySelectorAll('.sidebar-nav a').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    // Убрано e.preventDefault() для мгновенного перехода
-                    window.location.href = this.getAttribute('href');
-                });
-            });
-            
-            // Функция загрузки контента правил
-            function loadRulesContent(version) {
-                const container = document.getElementById('content-container');
-                container.innerHTML = `
-                    <h1>${version}</h1>
-                    <p>Здесь будет содержание выбранной версии правил.</p>
-                    <div class="rules-content">
-                        <p>Контент для ${version} находится в разработке и скоро будет доступен.</p>
+            // Функции загрузки контента
+            function loadDefaultContent() {
+                document.getElementById('content-container').innerHTML = `
+                    <h1>Правила Codex</h1>
+                    <p>Выберите категорию и версию правил в боковой панели.</p>
+                    <div class="version-sections">
+                        <h2>Доступные разделы:</h2>
+                        <ul>
+                            <li>Codex of Heroes - Основные правила игры</li>
+                            <li>Codex of Mortals - Боевая система</li>
+                            <li>Codex of Dust - Магическая система</li>
+                            <li>§ Параграфы - Дополнительные правила</li>
+                            <li>Предметы - Система предметов и экипировки</li>
+                        </ul>
                     </div>
                 `;
+            }
+            
+            function loadAboutContent() {
+                document.getElementById('content-container').innerHTML = `
+                    <div class="about-section">
+                        <h1>О проекте Codex</h1>
+                        <p>Codex - это инновационная система настольных ролевых игр, разработанная энтузиастами.</p>
+                        <h2>Основные принципы:</h2>
+                        <ul class="feature-list">
+                            <li>Простота изучения</li>
+                            <li>Гибкость правил</li>
+                            <li>Увлекательный геймплей</li>
+                            <li>Сбалансированность систем</li>
+                            <li>Открытость для модификаций</li>
+                        </ul>
+                        <h2>Состав системы:</h2>
+                        <ul class="feature-list">
+                            <li>Codex of Heroes - Базовые правила</li>
+                            <li>Codex of Mortals - Боевая система</li>
+                            <li>Codex of Dust - Магия и сверхъестественное</li>
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            function loadContactContent() {
+                document.getElementById('content-container').innerHTML = `
+                    <div class="contact-section">
+                        <h1>Контакты</h1>
+                        <div class="contact-info">
+                            <p><i class="fas fa-envelope"></i> Email: contact@codex-game.com</p>
+                            <p><i class="fab fa-discord"></i> Discord: community-codex</p>
+                            <p><i class="fab fa-telegram"></i> Telegram: @codex_rpg</p>
+                        </div>
+                        <div class="contact-form">
+                            <h2>Форма обратной связи</h2>
+                            <form id="feedback-form">
+                                <div class="form-group">
+                                    <label for="name">Ваше имя:</label>
+                                    <input type="text" id="name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email:</label>
+                                    <input type="email" id="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="message">Сообщение:</label>
+                                    <textarea id="message" rows="5" required></textarea>
+                                </div>
+                                <button type="submit" class="submit-btn">Отправить</button>
+                            </form>
+                        </div>
+                    </div>
+                `;
+                
+                // Обработчик формы
+                const form = document.getElementById('feedback-form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        alert('Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.');
+                        form.reset();
+                    });
+                }
             }
         });
     </script>

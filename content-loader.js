@@ -1,6 +1,5 @@
 /**
  * Класс для загрузки контента правил игры
- * Версия без анимации перехода
  */
 class ContentLoader {
     static async loadContent(url) {
@@ -22,7 +21,7 @@ class ContentLoader {
             container.innerHTML = html;
             
         } catch (error) {
-            console.error('Ошибка:', error);
+            console.error('Ошибка загрузки:', error);
             container.innerHTML = `
                 <div class="error-message">
                     <p>Ошибка загрузки: ${error.message}</p>
@@ -46,7 +45,7 @@ class ContentLoader {
     }
 }
 
-// Инициализация без анимации перехода
+// Инициализация обработчиков
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.version-content a').forEach(link => {
         link.addEventListener('click', function(e) {
@@ -57,8 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (this.textContent.includes('Введение')) {
                 ContentLoader.loadIntroduction();
             } else {
-                // Для других ссылок просто загружаем контент напрямую
-                window.location.href = contentUrl;
+                ContentLoader.loadContent(contentUrl);
             }
         });
     });
