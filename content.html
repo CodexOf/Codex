@@ -3,40 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codex - Динамический контент</title>
+    <title>Codex - Контент</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Roboto&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="page-container">
-        <nav class="sidebar">
-            <div class="nav-buttons">
-                <button class="nav-btn" data-page="home">Главная</button>
-                <button class="nav-btn" data-page="info">Основная информация</button>
-                <button class="nav-btn" data-page="about">О проекте</button>
-                <button class="nav-btn" data-page="contacts">Контакты</button>
-            </div>
+    <!-- Боковая панель навигации -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Codex</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <button class="nav-btn active" data-page="home">Главная</button>
+            <button class="nav-btn" data-page="info">Основная информация</button>
+            <button class="nav-btn" data-page="about">О проекте</button>
+            <button class="nav-btn" data-page="contacts">Контакты</button>
         </nav>
+    </div>
 
-        <main class="content">
-            <div id="content-container">
-                <p class="loading">Загрузка контента...</p>
+    <!-- Основное содержимое -->
+    <div class="main-content">
+        <div id="content-container">
+            <div class="loading-indicator">
+                <p>Загрузка контента...</p>
             </div>
-        </main>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const contentContainer = document.getElementById('content-container');
+            const navButtons = document.querySelectorAll('.nav-btn');
             
             // Определяем текущую страницу из URL
             const urlParams = new URLSearchParams(window.location.search);
             let currentPage = urlParams.get('page') || 'home';
             
-            // Загружаем контент при загрузке страницы
+            // Загружаем начальный контент
             loadContent(currentPage);
             
             // Обработчики для кнопок навигации
-            document.querySelectorAll('.nav-btn').forEach(btn => {
+            navButtons.forEach(btn => {
                 btn.addEventListener('click', function() {
                     currentPage = this.getAttribute('data-page');
                     loadContent(currentPage);
@@ -45,40 +53,49 @@
             
             // Функция загрузки контента
             function loadContent(page) {
-                contentContainer.innerHTML = '<p class="loading">Загрузка...</p>';
+                // Показываем индикатор загрузки
+                contentContainer.innerHTML = `
+                    <div class="loading-indicator">
+                        <p>Загрузка...</p>
+                    </div>
+                `;
                 
+                // Снимаем активный класс со всех кнопок
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Устанавливаем активный класс текущей кнопке
+                document.querySelector(`.nav-btn[data-page="${page}"]`).classList.add('active');
+                
+                // Загружаем контент
                 fetch(`partials/${page}.html`)
                     .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Страница не найдена');
-                        }
+                        if (!response.ok) throw new Error('Страница не найдена');
                         return response.text();
                     })
                     .then(html => {
-                        contentContainer.innerHTML = html;
-                        updateActiveButton(page);
+                        // Вставляем контент с анимацией
+                        contentContainer.style.opacity = 0;
+                        setTimeout(() => {
+                            contentContainer.innerHTML = html;
+                            contentContainer.style.opacity = 1;
+                        }, 300);
+                        
+                        // Обновляем URL
                         history.pushState({page}, null, `?page=${page}`);
                     })
                     .catch(err => {
                         contentContainer.innerHTML = `
-                            <div class="error">
+                            <div class="error-message">
                                 <h3>Ошибка загрузки</h3>
                                 <p>${err.message}</p>
-                                <button onclick="loadContent('home')">Вернуться на главную</button>
+                                <button class="retry-btn" onclick="loadContent('${page}')">Повторить</button>
+                                <button class="home-btn" onclick="loadContent('home')">На главную</button>
                             </div>
                         `;
-                        console.error('Ошибка загрузки:', err);
                     });
             }
             
-            // Обновляем активную кнопку
-            function updateActiveButton(page) {
-                document.querySelectorAll('.nav-btn').forEach(btn => {
-                    btn.classList.toggle('active', btn.getAttribute('data-page') === page);
-                });
-            }
-            
-            // Обработка кнопок назад/вперёд в браузере
+            // Обработка истории браузера
             window.addEventListener('popstate', function(event) {
                 if (event.state && event.state.page) {
                     currentPage = event.state.page;
