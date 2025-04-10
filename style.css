@@ -11,6 +11,79 @@ body {
     color: #333;
 }
 
+/* ===== ГЛАВНАЯ СТРАНИЦА ===== */
+.welcome-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                url('assets/background.jpg') center/cover no-repeat fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    z-index: 1000;
+}
+
+.welcome-content {
+    max-width: 800px;
+    padding: 20px;
+    z-index: 10;
+}
+
+.game-title {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 5rem;
+    text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
+    letter-spacing: 5px;
+    margin-bottom: 1rem;
+    animation: titleGlow 3s infinite alternate;
+}
+
+.game-subtitle {
+    font-size: 1.5rem;
+    font-weight: 300;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+    margin-bottom: 2rem;
+    animation: fadeIn 2s ease-in;
+}
+
+.start-button {
+    display: inline-block;
+    padding: 15px 30px;
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 1.2rem;
+    text-decoration: none;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+    animation: pulse 2s infinite;
+    margin-top: 20px;
+}
+
+.start-button:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-3px);
+}
+
+.main-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 15px 0;
+    background: rgba(0,0,0,0.5);
+    color: #aaa;
+    font-size: 0.9rem;
+    z-index: 100;
+}
+
 /* ===== СТРАНИЦА КОНТЕНТА ===== */
 .sidebar {
     width: 280px;
@@ -32,9 +105,11 @@ body {
     font-size: 1.8rem;
     text-align: center;
     margin-bottom: 30px;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
 }
 
-/* Кнопки навигации */
+/* Обновленные стили кнопок */
+.sidebar-nav a, 
 .nav-btn {
     display: block;
     padding: 16px 20px;
@@ -51,12 +126,14 @@ body {
     text-align: left;
 }
 
+.sidebar-nav a:hover, 
 .nav-btn:hover {
     background: #303030;
     color: #fff;
     transform: translateX(3px);
 }
 
+.sidebar-nav a.active, 
 .nav-btn.active {
     background: #1e3a57;
     color: #fff;
@@ -64,7 +141,7 @@ body {
     font-weight: 500;
 }
 
-/* Аккордеоны Codex */
+/* Стили для аккордеонов */
 .codex-accordion {
     margin: 25px 0;
     border-top: 1px solid #333;
@@ -93,6 +170,7 @@ body {
 
 .codex-btn:hover {
     background: #333;
+    color: #fff;
 }
 
 .codex-btn .arrow {
@@ -113,12 +191,12 @@ body {
     transform: rotate(180deg);
 }
 
-/* Основное содержимое */
 .main-content {
     margin-left: 280px;
     padding: 30px;
     background: #0D1A13;
     min-height: 100vh;
+    transition: margin-left 0.3s;
 }
 
 #content-container {
@@ -131,7 +209,7 @@ body {
     transition: opacity 0.3s ease;
 }
 
-/* Индикаторы */
+/* Индикаторы состояния */
 .loading-indicator {
     text-align: center;
     padding: 50px;
@@ -166,26 +244,54 @@ body {
     color: white;
 }
 
-/* Адаптивность */
+/* ===== АНИМАЦИИ ===== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes titleGlow {
+    from { text-shadow: 3px 3px 10px rgba(0,0,0,0.8); }
+    to { text-shadow: 3px 3px 15px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.5); }
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
 @media (max-width: 992px) {
     .sidebar {
         width: 100%;
         height: auto;
         position: static;
-        padding: 20px;
     }
     
     .main-content {
         margin-left: 0;
     }
     
+    .game-title {
+        font-size: 3.5rem;
+    }
+    
     .nav-btn, .codex-btn {
         padding: 14px 18px;
-        font-size: 1rem;
     }
 }
 
 @media (max-width: 576px) {
+    .game-title {
+        font-size: 2.5rem;
+        letter-spacing: 3px;
+    }
+    
+    .game-subtitle {
+        font-size: 1.1rem;
+    }
+    
     .sidebar {
         padding: 15px;
     }
