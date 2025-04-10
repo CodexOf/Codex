@@ -1,8 +1,0 @@
-# Файл: _config.yml
-markdown: kramdown
-permalink: pretty
-
-# Исключаем лишнее из сборки
-exclude:
-  - 404.html
-  - assets/js/spa.js

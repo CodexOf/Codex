@@ -3,80 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codex | Контент</title>
-    
-    <!-- Подключаем стили -->
-    <link rel="stylesheet" href="assets/css/style.css">
-    
-    <!-- Подключаем jQuery для SPA -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+    <title>Codex - Content</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* Стили для активной кнопки SPA */
-        .active {
-            color: #4CAF50;
-            font-weight: bold;
+        /* Восстановление скролла для content.html */
+        html, body {
+            overflow: auto;
+            height: auto;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Меню -->
-        <nav>
-            <!-- Эта кнопка работает как обычная ссылка (полная перезагрузка) -->
-            <a href="index.html" class="nav-link">На Главную</a>
-            
-            <!-- Эти кнопки будут SPA -->
-            <a href="#section1" class="nav-link spa-link">Раздел 1</a>
-            <a href="#section2" class="nav-link spa-link">Раздел 2</a>
-            <a href="#section3" class="nav-link spa-link">Раздел 3</a>
-        </nav>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Codex</h2>
+        </div>
         
-        <!-- Контентные секции (будут подгружаться через SPA) -->
-        <div id="content">
-            <section id="section1" class="content-section">
-                <h2>Раздел 1</h2>
-                <p>Тут контент первого раздела...</p>
-            </section>
+        <div class="sidebar-nav">
+			<a href="/Codex/index.html">Главная</a>
+			<a href="/Codex/content.html">Основная информация</a>
+			<a href="/Codex/pages/content/about.html">О проекте</a>
+			<a href="/Codex/pages/content/contact.html">Контакты</a>
+        </div>
+        
+        <div class="sidebar-version-selectors">
+            <div class="version-selector">
+                <button class="version-btn">Codex of Heroes <i class="fas fa-caret-down"></i></button>
+                <div class="version-content">
+                    <a href="#" class="load-intro">Введение</a>
+                    <a href="#">Как играть?</a>
+                    <a href="#">Игровые кости</a>
+                    <a href="#">Действия</a>
+                </div>
+            </div>
             
-            <section id="section2" class="content-section">
-                <h2>Раздел 2</h2>
-                <p>Тут контент второго раздела...</p>
-            </section>
-            
-            <section id="section3" class="content-section">
-                <h2>Раздел 3</h2>
-                <p>Тут контент третьего раздела...</p>
-            </section>
+            <div class="version-selector">
+                <button class="version-btn">Codex of Mortals <i class="fas fa-caret-down"></i></button>
+                <div class="version-content">
+                    <a href="#">Посмотришь</a>
+                    <a href="#">Поймешь</a>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Скрипт для SPA-логики -->
-    <script>
-        $(document).ready(function() {
-            // Прячем все секции, кроме первой (при загрузке страницы)
-            $(".content-section").hide();
-            $("#section1").show();
-            
-            // Обработчик для SPA-кнопок
-            $(".spa-link").click(function(e) {
-                e.preventDefault(); // Отменяем стандартное поведение ссылки
-                
-                // Получаем ID секции из атрибута href (например, "#section1")
-                const sectionId = $(this).attr("href");
-                
-                // Прячем все секции, потом показываем нужную
-                $(".content-section").hide();
-                $(sectionId).show();
-                
-                // Убираем класс 'active' у всех кнопок, добавляем текущей
-                $(".spa-link").removeClass("active");
-                $(this).addClass("active");
-            });
-            
-            // При загрузке страницы активируем первую кнопку
-            $(".spa-link").first().addClass("active");
-        });
-    </script>
+    <div class="main-content">
+        <div id="content-container">
+            <h1>Правила Codex</h1>
+            <p>Выберите категорию и версию правил в боковой панели.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="content-loader.js"></script>
 </body>
 </html>
