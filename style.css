@@ -1,159 +1,208 @@
-/* ===== БАЗОВЫЕ СТИЛИ ===== */
-
-/* Сброс стандартных стилей */
+/* ===== ГЛОБАЛЬНЫЕ НАСТРОЙКИ ===== */
 * {
-    margin: 0; /* Обнуление отступов */
-    padding: 0; /* Обнуление полей */
-    box-sizing: border-box; /* Корректный расчет размеров */
+    margin: 0;     /* Обнуление внешних отступов */
+    padding: 0;    /* Обнуление внутренних отступов */
+    box-sizing: border-box; /* Правильная модель размеров */
 }
 
-/* Основные настройки страницы */
+/* 
+  Настройки основного текста:
+  - font-family: шрифт по умолчанию
+  - line-height: межстрочный интервал (1.6 = 160%)
+  - color: цвет текста
+*/
 body {
-    font-family: 'Roboto', sans-serif; /* Основной шрифт */
-    line-height: 1.6; /* Межстрочный интервал */
-    color: #333; /* Цвет текста */
-    background-color: #f5f5f5; /* Фон страницы */
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #333;
 }
 
-/* ===== ГЛАВНАЯ СТРАНИЦА ===== */
+/* ===== ГЛАВНАЯ СТРАНИЦА (index.html) ===== */
 
-/* Приветственный экран */
+/* Контейнер приветственного экрана */
 .welcome-screen {
-    height: 100vh; /* На весь экран */
-    background: linear-gradient(
-        rgba(0,0,0,0.7), 
-        rgba(0,0,0,0.7)
-    ), url('assets/background.jpg') center/cover no-repeat;
+    height: 100vh; /* Высота на весь экран */
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                url('assets/background.jpg') center/cover no-repeat;
     display: flex;
     justify-content: center; /* Центрирование по горизонтали */
-    align-items: center; /* Центрирование по вертикали */
-    text-align: center; /* Выравнивание текста */
-    color: white; /* Цвет текста */
+    align-items: center;     /* Центрирование по вертикали */
+    text-align: center;      /* Выравнивание текста */
+    color: white;
 }
 
-/* Контент приветствия */
+/* Блок с контентом внутри приветственного экрана */
 .welcome-content {
-    max-width: 800px; /* Максимальная ширина */
-    padding: 20px; /* Внутренние отступы */
+    max-width: 800px;   /* Максимальная ширина */
+    padding: 20px;      /* Внутренние отступы */
 }
 
-/* Заголовок игры */
+/* 
+  Настройки заголовка:
+  - font-size: размер шрифта
+  - letter-spacing: расстояние между буквами
+  - margin-bottom: отступ снизу
+*/
 .game-title {
     font-family: 'Cinzel Decorative', cursive;
-    font-size: 5rem; /* Крупный размер */
-    text-shadow: 3px 3px 10px rgba(0,0,0,0.8); /* Тень текста */
-    letter-spacing: 5px; /* Расстояние между буквами */
-    margin-bottom: 1rem; /* Отступ снизу */
+    font-size: 5rem;
+    text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
+    letter-spacing: 5px;
+    margin-bottom: 1rem; /* 1rem = ~16px */
 }
 
-/* Подзаголовок */
+/* Настройки подзаголовка */
 .game-subtitle {
-    font-size: 1.5rem; /* Размер текста */
-    font-weight: 300; /* Тонкий шрифт */
-    text-shadow: 2px 2px 5px rgba(0,0,0,0.8); /* Тень текста */
-    margin-bottom: 2rem; /* Отступ снизу */
+    font-size: 1.5rem;
+    font-weight: 300;    /* Тонкость шрифта */
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+    margin-bottom: 2rem; /* Больший отступ снизу */
 }
 
-/* Кнопка старта */
+/* 
+  Кнопка "Начать приключение":
+  - padding: внутренние отступы (15px сверху/снизу, 30px слева/справа)
+  - border: рамка (2px толщина, solid стиль, white цвет)
+  - margin-top: отступ сверху
+*/
 .start-button {
-    display: inline-block; /* Строчно-блочный элемент */
-    padding: 15px 30px; /* Внутренние отступы */
-    background: transparent; /* Прозрачный фон */
-    color: white; /* Цвет текста */
-    border: 2px solid white; /* Рамка */
-    font-family: 'Cinzel Decorative', cursive; /* Шрифт */
-    font-size: 1.2rem; /* Размер текста */
-    text-decoration: none; /* Убираем подчеркивание */
-    text-transform: uppercase; /* Все буквы заглавные */
-    letter-spacing: 2px; /* Расстояние между буквами */
-    cursor: pointer; /* Курсор-указатель */
-    transition: all 0.3s; /* Анимация изменений */
-    animation: pulse 2s infinite; /* Анимация пульсации */
-    margin-top: 20px; /* Отступ сверху */
+    display: inline-block;
+    padding: 15px 30px;
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 1.2rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+    animation: pulse 2s infinite;
+    margin-top: 20px; /* Отступ от подзаголовка */
 }
 
-/* Эффекты кнопки при наведении */
+/* Эффекты при наведении на кнопку */
 .start-button:hover {
-    background: rgba(255,255,255,0.1); /* Полупрозрачный фон */
+    background: rgba(255,255,255,0.1);
     transform: translateY(-3px); /* Сдвиг вверх */
 }
 
-/* ===== СТРАНИЦА КОНТЕНТА ===== */
+/* ===== СТРАНИЦА КОНТЕНТА (content.html) ===== */
 
-/* Боковая панель */
-.sidebar {
-    width: 280px; /* Ширина панели */
-    background: #2a2a2a; /* Темный фон */
-    position: fixed; /* Фиксированное позиционирование */
-    top: 0; /* Прижимаем к верху */
-    left: 0; /* Прижимаем к левому краю */
-    height: 100vh; /* На всю высоту */
-    padding: 20px; /* Внутренние отступы */
-    overflow-y: auto; /* Прокрутка по вертикали */
-    transition: transform 0.3s ease; /* Анимация */
-    z-index: 100; /* Поверх других элементов */
+/* Основной контейнер страницы */
+.content-wrapper {
+    display: flex;
+    min-height: 100vh; /* Минимальная высота на весь экран */
 }
 
-/* Основное содержимое */
+/* 
+  Боковая панель (оглавление):
+  - width: ширина панели
+  - padding: внутренние отступы
+  - top/left: прижатие к левому верхнему углу
+*/
+.sidebar {
+    width: 280px;
+    background: #2a2a2a;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    padding: 20px; /* Внутренние отступы */
+    overflow-y: auto; /* Прокрутка при необходимости */
+}
+
+/* 
+  Основное содержимое:
+  - margin-left: отступ слева (равен ширине sidebar)
+  - padding: внутренние отступы контента
+*/
+
+/* ===== СТИЛЬ КНОПКИ "НА ГЛАВНУЮ" ===== */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #2a2a2a; /* Темный фон как у sidebar */
+    color: #ddd !important; /* Цвет текста */
+    border: 1px solid #444 !important; /* Граница */
+    border-radius: 4px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
+    margin-bottom: 20px; /* Отступ от заголовка */
+}
+
+.back-button:hover {
+    background-color: #3a3a3a !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.back-button i {
+    font-size: 0.9rem;
+}
 .main-content {
-    flex: 1; /* Занимает все доступное пространство */
-    margin-left: 280px; /* Отступ равный ширине sidebar */
-    padding: 30px; /* Внутренние отступы */
-    background-color: #fff; /* Белый фон */
-    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Тень */
-    min-height: 100vh; /* Минимальная высота */
+    flex: 1;
+    margin-left: 280px; /* Важно! Должно совпадать с width sidebar */
+    padding: 30px;      /* Внутренние отступы */
+}
+
+/* Заголовок оглавления */
+.toc-title {
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: 20px;  /* Отступ снизу */
+    padding-bottom: 10px; /* Отступ под текстом */
+    border-bottom: 1px solid #444; /* Граница снизу */
+}
+
+/* 
+  Пункты оглавления:
+  - padding: внутренние отступы (10px сверху/снизу, 15px слева/справа)
+  - margin-bottom: расстояние между пунктами
+  - border-radius: скругление углов
+*/
+.toc-link {
+    display: block;
+    color: #ddd;
+    padding: 10px 15px;
+    margin-bottom: 5px; /* Отступ между пунктами */
+    text-decoration: none;
+    transition: all 0.3s;
+    border-radius: 4px; /* Скругление углов */
+}
+
+/* Эффект при наведении на пункт */
+.toc-link:hover {
+    background: #3a3a3a;
+    color: white;
 }
 
 /* ===== АНИМАЦИИ ===== */
-
-/* Пульсация кнопки */
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.05); }
     100% { transform: scale(1); }
 }
 
-/* Появление элементов */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
 /* ===== АДАПТИВНОСТЬ ===== */
-
-/* Для экранов меньше 992px */
 @media (max-width: 992px) {
+    /* Мобильная версия: sidebar над контентом */
     .sidebar {
-        transform: translateX(-100%); /* Скрываем за экраном */
-        width: 80%; /* Ширина 80% экрана */
+        width: 100%;
+        position: static;
+        height: auto;
     }
-    
-    /* Показываем sidebar при активации */
-    .sidebar.active {
-        transform: translateX(0);
-    }
-    
-    /* Убираем отступ у основного контента */
     .main-content {
-        margin-left: 0;
+        margin-left: 0; /* Убираем отступ */
     }
     
-    /* Стили кнопки меню */
-    .menu-toggle {
-        display: block; /* Показываем кнопку */
-        position: fixed; /* Фиксируем позицию */
-        top: 20px; /* Отступ сверху */
-        left: 20px; /* Отступ слева */
-        z-index: 101; /* Поверх других элементов */
-        background: #2c3e50; /* Цвет фона */
-        color: white; /* Цвет иконки */
-        border: none; /* Без рамки */
-        padding: 10px; /* Внутренние отступы */
-        font-size: 1.2rem; /* Размер иконки */
-        cursor: pointer; /* Курсор-указатель */
-    }
-    
-    /* Уменьшаем заголовок */
+    /* Уменьшаем заголовок на мобильных */
     .game-title {
         font-size: 3rem;
     }
