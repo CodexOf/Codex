@@ -1,0 +1,13 @@
+<!-- Файл: _includes/head.html -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- Подключаем marked.js для парсинга Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- Наш SPA-скрипт -->
+  <script src="/assets/js/spa.js" defer></script>
+  
+  <title>{{ page.title | default: site.title }}</title>
+</head>
