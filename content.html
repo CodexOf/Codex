@@ -1,20 +1,45 @@
 <!DOCTYPE html>
+<!-- 
+  Основная страница контента Codex of Heroes
+  Соответствует договоренностям:
+  - Сохранена структура всех разделов
+  - Абсолютные пути для GitHub Pages
+  - SPA-навигация
+-->
 <html lang="ru">
 <head>
+    <!-- Базовые мета-теги -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Заголовок страницы -->
     <title>Codex of Heroes | Правила</title>
+    
+    <!-- Подключение стилей -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Локальные стили для плавного появления -->
+    <style>
+        body {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+            background-color: #0D1A13; /* Фиксированный цвет фона */
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+    </style>
 </head>
 <body>
-    <!-- Сайдбар (полная версия с ВСЕМИ разделами) -->
+    <!-- Боковая панель (полная оригинальная структура) -->
     <div class="sidebar">
+        <!-- Заголовок Codex -->
         <div class="sidebar-header">
             <h2>Codex</h2>
         </div>
         
-        <!-- Основное меню -->
+        <!-- Основное меню навигации -->
         <div class="sidebar-nav">
             <a href="/Codex/index.html">Главная</a>
             <a href="/Codex/content.html" class="active">Основная информация</a>
@@ -22,7 +47,7 @@
             <a href="/Codex/pages/content/contact.html">Контакты</a>
         </div>
         
-        <!-- Версии правил - ПОЛНОСТЬЮ СОХРАНЯЕМ ОБА РАЗДЕЛА -->
+        <!-- Все версии правил (полностью сохранены) -->
         <div class="sidebar-version-selectors">
             <!-- Codex of Heroes -->
             <div class="version-selector">
@@ -38,7 +63,7 @@
                 </div>
             </div>
             
-            <!-- Codex of Mortals - ВОССТАНАВЛИВАЕМ -->
+            <!-- Codex of Mortals -->
             <div class="version-selector">
                 <button class="version-btn">
                     Codex of Mortals 
@@ -53,26 +78,50 @@
         </div>
     </div>
 
-    <!-- Основной контент -->
+    <!-- Основная область контента -->
     <div class="main-content">
+        <!-- Контейнер для динамического контента -->
         <div id="content-container">
+            <!-- Fallback-контент -->
+            <noscript>
+                <div class="error-message">
+                    <h2>Требуется JavaScript</h2>
+                    <p>Для работы системы необходимо включить JavaScript.</p>
+                </div>
+            </noscript>
+            
+            <!-- Стандартное содержимое -->
             <h1>Правила Codex</h1>
             <p>Выберите категорию и версию правил в боковой панели.</p>
         </div>
     </div>
 
-    <!-- Скрипты -->
+    <!-- Подключение скриптов -->
     <script src="script.js"></script>
     <script src="content-loader.js"></script>
     
+    <!-- Инициализация с учетом GitHub Pages -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Автоматическая адаптация путей
-            const isGitHub = window.location.host.includes('github.io');
-            ContentLoader.init(isGitHub ? '/Codex/' : '/');
-            
-            // Инициализация выпадающих меню
-            PageTransitions.initVersionSelectors();
+            try {
+                // Определяем базовый URL
+                const isGitHub = window.location.host.includes('github.io');
+                const baseUrl = isGitHub ? '/Codex/' : '/';
+                
+                // Инициализация систем
+                PageTransitions.init();
+                ContentLoader.init(baseUrl);
+                
+            } catch (error) {
+                console.error('Ошибка инициализации:', error);
+                document.getElementById('content-container').innerHTML = `
+                    <div class="error-message">
+                        <h2>Ошибка загрузки</h2>
+                        <p>${error.message}</p>
+                        <button onclick="window.location.reload()">Обновить</button>
+                    </div>
+                `;
+            }
         });
     </script>
 </body>

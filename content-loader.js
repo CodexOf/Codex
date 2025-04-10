@@ -1,26 +1,43 @@
+/**
+ * Система загрузки контента (SPA)
+ * Соответствует договоренностям:
+ * - Плавные переходы без перезагрузки
+ * - Сохранение истории навигации
+ * - Обработка ошибок 404
+ */
 class ContentLoader {
     static baseUrl = '/';
     static isLoading = false;
 
+    /**
+     * Загружает контент с защитой от наложения
+     * @param {string} url - URL для загрузки
+     */
     static async loadContent(url) {
+        // Проверка состояния загрузки
         if (this.isLoading) return;
         this.isLoading = true;
-
+        
         const container = document.getElementById('content-container');
         if (!container) return;
 
-        // Нормализация URL
-        const fullUrl = url.startsWith('/') 
-            ? url 
-            : `${this.baseUrl}${url}`;
+        // Подготовка контейнера
+        container.style.opacity = '0';
+        container.style.pointerEvents = 'none';
 
         try {
-            // Показ индикатора загрузки
+            // Нормализация URL
+            const fullUrl = url.startsWith('/') 
+                ? url 
+                : `${this.baseUrl}${url}`;
+
+            // Показать индикатор загрузки
             container.innerHTML = `
                 <div class="loading-indicator">
                     <i class="fas fa-spinner fa-spin"></i>
                 </div>
             `;
+            container.style.opacity = '1';
 
             // Запрос с контролем кеширования
             const response = await fetch(fullUrl, {
@@ -28,15 +45,24 @@ class ContentLoader {
             });
             
             if (!response.ok) {
-                throw new Error(`Ошибка загрузки: ${response.status}`);
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
+            // Вставка контента
             const html = await response.text();
             container.innerHTML = html;
             history.pushState(null, '', fullUrl);
 
+            // Плавное появление
+            container.style.opacity = '0';
+            setTimeout(() => {
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+            }, 300);
+
         } catch (error) {
-            console.error('Ошибка:', error);
+            // Обработка ошибок
+            console.error('Load error:', error);
             container.innerHTML = `
                 <div class="error-message">
                     <p>${error.message}</p>
@@ -48,10 +74,14 @@ class ContentLoader {
         }
     }
 
+    /**
+     * Инициализация системы
+     * @param {string} baseUrl - Базовый URL (/Codex/ или /)
+     */
     static init(baseUrl = '/') {
         this.baseUrl = baseUrl;
         
-        // Обработчик для ссылок
+        // Обработчик для ссылок навигации
         document.querySelectorAll('.sidebar-nav a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -59,7 +89,7 @@ class ContentLoader {
             });
         });
 
-        // Обработчик истории
+        // Обработчик истории браузера
         window.addEventListener('popstate', () => {
             this.loadContent(window.location.pathname);
         });

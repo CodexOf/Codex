@@ -1,324 +1,148 @@
 /* ===== ГЛОБАЛЬНЫЕ СТИЛИ ===== */
+/* Сброс стандартных отступов и границ для всех элементов */
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Учитываем границы в размерах элементов */
 }
 
+/* Основные стили для body */
 body {
-    font-family: 'Roboto', sans-serif;
-    line-height: 1.6;
-    color: #333;
+    font-family: 'Roboto', sans-serif; /* Основной шрифт */
+    line-height: 1.6; /* Межстрочный интервал */
+    color: #e0e0e0; /* Цвет текста */
+    background-color: #0D1A13; /* Фиксированный цвет фона по договорённости */
+    overflow-x: hidden; /* Запрещаем горизонтальный скролл */
 }
 
-/* ===== ГЛАВНАЯ СТРАНИЦА ===== */
-.welcome-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                url('assets/background.jpg') center/cover no-repeat fixed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: white;
-}
-
-.welcome-content {
-    max-width: 800px;
-    padding: 20px;
-    z-index: 10;
-}
-
-.game-title {
-    font-family: 'Cinzel Decorative', cursive;
-    font-size: 5rem;
-    text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
-    letter-spacing: 5px;
-    margin-bottom: 1rem;
-    animation: titleGlow 3s infinite alternate;
-}
-
-.game-subtitle {
-    font-size: 1.5rem;
-    font-weight: 300;
-    text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
-    margin-bottom: 2rem;
-    animation: fadeIn 2s ease-in;
-}
-
-.start-button {
-    display: inline-block;
-    padding: 15px 30px;
-    background: transparent;
-    color: white;
-    border: 2px solid white;
-    font-family: 'Cinzel Decorative', cursive;
-    font-size: 1.2rem;
-    text-decoration: none;
-    letter-spacing: 2px;
-    cursor: pointer;
-    transition: all 0.3s;
-    animation: pulse 2s infinite;
-    margin-top: 20px;
-}
-
-.start-button:hover {
-    background: rgba(255,255,255,0.1);
-    transform: translateY(-3px);
-}
-
-.main-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    padding: 15px 0;
-    background: rgba(0,0,0,0.5);
-    color: #aaa;
-    font-size: 0.9rem;
-    z-index: 100;
-}
-
-/* ===== СТРАНИЦА КОНТЕНТА ===== */
+/* ===== СТИЛИ САЙДБАРА ===== */
 .sidebar {
-    width: 280px;
-    position: fixed;
+    width: 280px; /* Фиксированная ширина */
+    position: fixed; /* Фиксированное позиционирование */
     top: 0;
     left: 0;
-    height: 100vh;
-    background: #1a1a1a;
-    color: #ddd;
+    height: 100vh; /* На всю высоту экрана */
+    background: #1a1a1a; /* Темный фон */
+    color: #ddd; /* Цвет текста */
     padding: 20px;
-    overflow-y: auto;
-    z-index: 100;
-    transition: all 0.3s;
+    overflow-y: auto; /* Вертикальный скролл при необходимости */
+    z-index: 100; /* Поверх других элементов */
+    transition: all 0.3s ease; /* Плавные анимации */
 }
 
 .sidebar-header h2 {
-    color: #fff;
-    font-family: 'Cinzel Decorative', cursive;
-    font-size: 1.8rem;
-    text-align: center;
-    margin-bottom: 20px;
+    color: #fff; /* Белый цвет заголовка */
+    font-family: 'Cinzel Decorative', cursive; /* Декоративный шрифт */
+    font-size: 1.8rem; /* Размер шрифта */
+    text-align: center; /* Выравнивание по центру */
+    margin-bottom: 20px; /* Отступ снизу */
 }
 
+/* Стили навигационных ссылок */
 .sidebar-nav a {
-    display: block;
-    color: #ddd;
-    padding: 12px 15px;
-    margin: 5px 0;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: all 0.3s;
+    display: block; /* Блочное отображение */
+    color: #ddd; /* Цвет ссылок */
+    padding: 12px 15px; /* Внутренние отступы */
+    margin: 5px 0; /* Внешние отступы */
+    text-decoration: none; /* Убираем подчеркивание */
+    border-radius: 4px; /* Скругление углов */
+    transition: all 0.3s ease; /* Плавные переходы */
 }
 
-.sidebar-nav a:hover, .sidebar-nav a.active {
-    background: #2a2a2a;
-    color: #fff;
+.sidebar-nav a:hover, 
+.sidebar-nav a.active {
+    background: #2a2a2a; /* Фон при наведении/активации */
+    color: #fff; /* Цвет текста */
 }
 
 .sidebar-nav a.active {
-    border-left: 3px solid #3498db;
+    border-left: 3px solid #3498db; /* Синяя полоса для активной ссылки */
 }
 
-.version-selector {
-    margin-bottom: 15px;
-}
-
-.version-btn {
-    width: 100%;
-    padding: 12px 15px;
-    background: #2a2a2a;
-    color: #ddd;
-    border: none;
-    border-radius: 4px;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.version-btn:hover {
-    background: #333;
-    color: #fff;
-}
-
-.version-content {
-    display: none;
-    padding: 10px 0 0 15px;
-}
-
-.version-content a {
-    display: block;
-    color: #aaa;
-    padding: 8px 10px;
-    margin-bottom: 5px;
-    text-decoration: none;
-    transition: all 0.3s;
-}
-
-.version-content a:hover {
-    color: #fff;
-}
-
+/* ===== СТИЛИ ОСНОВНОГО КОНТЕНТА ===== */
 .main-content {
-    margin-left: 280px;
-    padding: 30px;
-    background: #0D1A13;
-    min-height: 100vh;
+    margin-left: 280px; /* Отступ под сайдбар */
+    padding: 30px; /* Внутренние отступы */
+    background: #0D1A13; /* Основной цвет фона */
+    min-height: 100vh; /* Минимальная высота */
 }
 
 #content-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 30px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    max-width: 900px; /* Максимальная ширина контента */
+    margin: 0 auto; /* Центрирование */
+    padding: 30px; /* Внутренние отступы */
+    background: #2a2a2a; /* Фон контейнера */
+    border-radius: 8px; /* Скругление углов */
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1); /* Тень */
+    transition: opacity 0.3s ease; /* Анимация появления */
 }
 
-#content-container {
-    transition: opacity 0.3s ease;
-}
-
+/* ===== СТИЛИ ДЛЯ ЗАГРУЗКИ И ОШИБОК ===== */
 .loading-indicator {
-    text-align: center;
-    padding: 50px;
-    color: #666;
+    text-align: center; /* Выравнивание по центру */
+    padding: 50px; /* Внутренние отступы */
+    color: #666; /* Цвет текста */
+}
+
+.loading-indicator i {
+    font-size: 2rem; /* Размер иконки */
+    margin-bottom: 1rem; /* Отступ снизу */
+    animation: spin 1s linear infinite; /* Анимация вращения */
+}
+
+.error-message {
+    padding: 20px; /* Внутренние отступы */
+    background: rgba(255, 0, 0, 0.1); /* Красный фон с прозрачностью */
+    border-radius: 5px; /* Скругление углов */
+    text-align: center; /* Выравнивание по центру */
+    color: #ff6b6b; /* Цвет текста */
+}
+
+.error-message button {
+    margin-top: 10px; /* Отступ сверху */
+    padding: 8px 16px; /* Внутренние отступы */
+    background: #3498db; /* Синий фон */
+    color: white; /* Белый текст */
+    border: none; /* Без границ */
+    border-radius: 3px; /* Скругление углов */
+    cursor: pointer; /* Курсор-указатель */
+    transition: background 0.3s ease; /* Плавное изменение фона */
+}
+
+.error-message button:hover {
+    background: #2980b9; /* Темно-синий при наведении */
 }
 
 /* ===== АНИМАЦИИ ===== */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-@keyframes titleGlow {
-    from { text-shadow: 3px 3px 10px rgba(0,0,0,0.8); }
-    to { text-shadow: 3px 3px 15px rgba(0,0,0,0.8), 0 0 20px rgba(255,255,255,0.5); }
-}
-
 /* ===== АДАПТИВНОСТЬ ===== */
 @media (max-width: 992px) {
     .sidebar {
-        width: 100%;
-        height: auto;
-        position: static;
+        width: 100%; /* На всю ширину */
+        height: auto; /* Автоматическая высота */
+        position: static; /* Стандартное позиционирование */
     }
     
     .main-content {
-        margin-left: 0;
-    }
-    
-    .game-title {
-        font-size: 3.5rem;
+        margin-left: 0; /* Без отступа */
     }
 }
 
 @media (max-width: 576px) {
-    .game-title {
-        font-size: 2.5rem;
-    }
-    
-    .game-subtitle {
-        font-size: 1.1rem;
-    }
-    
-    .sidebar {
-        padding: 15px;
-    }
-    
     .main-content {
-        padding: 15px;
+        padding: 15px; /* Меньшие отступы */
     }
-}
-
-/* Индикатор загрузки */
-.loading-indicator {
-    text-align: center;
-    padding: 2rem;
-    color: #666;
-    font-size: 1.2rem;
-}
-
-.loading-indicator i {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-/* Сообщение об ошибке */
-.error-message {
-    text-align: center;
-    padding: 2rem;
-    color: #dc3545;
-}
-
-.error-message i {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-.error-message button {
-    margin: 0.5rem;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.retry-btn {
-    background-color: #007bff;
-    color: white;
-}
-
-.home-btn {
-    background-color: #6c757d;
-    color: white;
-}
-
-/* Анимации контента */
-#content-container {
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: opacity; /* Оптимизация анимации */
-}
-
-/* Индикатор загрузки */
-.loading-indicator {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2rem;
-    color: #3498db;
-}
-
-/* Сообщение об ошибке */
-.error-message {
-    padding: 2rem;
-    text-align: center;
-    background: #ffebee;
-    border-radius: 8px;
-    margin: 1rem;
-}
-
-.error-message button {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    background: #3498db;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    
+    #content-container {
+        padding: 15px; /* Меньшие отступы */
+    }
 }
