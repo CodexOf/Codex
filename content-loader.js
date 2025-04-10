@@ -1,13 +1,9 @@
 /**
  * Класс для загрузки контента правил игры
- * Добавлены: 
- * - Подробные ошибки
- * - Кнопка обновления
- * - Индикатор загрузки
- * Убрана анимация перехода между разделами
+ * Версия без анимации перехода
  */
 class ContentLoader {
-    static async loadIntroduction() {
+    static async loadContent(url) {
         const container = document.getElementById('content-container');
         
         try {
@@ -15,39 +11,22 @@ class ContentLoader {
             container.innerHTML = `
                 <div class="loading-indicator">
                     <i class="fas fa-spinner fa-spin"></i>
-                    <p>Загрузка правил...</p>
+                    <p>Загрузка контента...</p>
                 </div>
             `;
 
-            // Загрузка HTML-файла с правилами
-            const response = await fetch('introduction.html');
+            const response = await fetch(url);
             if (!response.ok) throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
             
-            // Парсинг полученного HTML
             const html = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            
-            // Извлечение контента или сообщение об ошибке, если не найден
-            const content = doc.querySelector('.rule-section')?.innerHTML || '<p>Контент не найден</p>';
-            
-            // Вставка контента в контейнер
-            container.innerHTML = `
-                <div class="rule-section">
-                    ${content}
-                    <button class="back-to-rules" onclick="ContentLoader.showRulesList()">
-                        ← Вернуться к списку правил
-                    </button>
-                </div>
-            `;
+            container.innerHTML = html;
             
         } catch (error) {
-            // Обработка ошибок загрузки
             console.error('Ошибка:', error);
             container.innerHTML = `
                 <div class="error-message">
                     <p>Ошибка загрузки: ${error.message}</p>
-                    <button onclick="ContentLoader.loadIntroduction()">
+                    <button onclick="ContentLoader.loadContent('${url}')">
                         <i class="fas fa-sync-alt"></i> Попробовать снова
                     </button>
                 </div>
@@ -55,9 +34,10 @@ class ContentLoader {
         }
     }
 
-    /**
-     * Показывает список правил (возврат к основному виду)
-     */
+    static async loadIntroduction() {
+        await this.loadContent('introduction.html');
+    }
+
     static showRulesList() {
         document.getElementById('content-container').innerHTML = `
             <h1>Правила Codex</h1>
@@ -66,15 +46,20 @@ class ContentLoader {
     }
 }
 
-// Инициализация обработчиков событий после загрузки DOM
+// Инициализация без анимации перехода
 document.addEventListener('DOMContentLoaded', () => {
-    // Находим все ссылки на "Введение" и добавляем обработчики
     document.querySelectorAll('.version-content a').forEach(link => {
-        if (link.textContent.includes('Введение')) {
-            link.addEventListener('click', (e) => {
-                e.preventDefault(); // Отменяем стандартное поведение
-                ContentLoader.loadIntroduction(); // Загружаем контент
-            });
-        }
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const contentUrl = this.getAttribute('href');
+            if (contentUrl === '#') return;
+            
+            if (this.textContent.includes('Введение')) {
+                ContentLoader.loadIntroduction();
+            } else {
+                // Для других ссылок просто загружаем контент напрямую
+                window.location.href = contentUrl;
+            }
+        });
     });
 });
