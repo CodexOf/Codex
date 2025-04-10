@@ -1,27 +1,27 @@
 class PageTransitions {
     static init() {
-        // Не инициализируем анимации для content.html
+        // Инициализация только для не-content страниц
         if (!window.location.pathname.includes('content.html')) {
             this.setupPageTransitions();
         }
         
+        // Определение типа страницы
         if (document.querySelector('.welcome-screen')) {
             this.initHomePage();
-        } else if (document.querySelector('.content-wrapper') || document.querySelector('.main-content')) {
+        } else if (document.querySelector('.main-content')) {
             this.initContentPage();
         }
     }
 
     static setupPageTransitions() {
+        // Обработка переходов между страницами
         document.addEventListener('click', (e) => {
-            // Обрабатываем все внутренние ссылки
             const link = e.target.closest('a[href^="/"], a[href^="#"], a[href^="http"]:not([target="_blank"]), a:not([href^="mailto:"])');
             
             if (link && link.href && !link.hash) {
                 e.preventDefault();
                 const transition = document.getElementById('pageTransition');
                 
-                // Если переход на другую страницу (не якорь)
                 if (!link.href.includes('#')) {
                     transition.style.opacity = '1';
                     setTimeout(() => {
@@ -33,6 +33,7 @@ class PageTransitions {
     }
 
     static initHomePage() {
+        // Анимации для главной страницы
         const startButton = document.getElementById('startButton');
         if (startButton) {
             startButton.addEventListener('mouseenter', () => {
@@ -45,30 +46,36 @@ class PageTransitions {
     }
 
     static initContentPage() {
-        // Плавная прокрутка для оглавления
-        document.querySelectorAll('.toc-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                if (this.hash) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.hash);
-                    window.scrollTo({
-                        top: target.offsetTop - 100,
-                        behavior: 'smooth'
-                    });
-                }
+        // Инициализация функционала content.html
+        this.initVersionSelectors();
+        this.initMobileMenu();
+    }
+
+    static initVersionSelectors() {
+        // Обработка кнопок выбора версий
+        document.querySelectorAll('.version-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                content.style.display = content.style.display === 'block' ? 'none' : 'block';
             });
         });
+    }
 
-        // Меню для мобильных
-        const menuToggle = document.createElement('button');
-        menuToggle.className = 'menu-toggle';
-        menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-        document.body.appendChild(menuToggle);
-        
-        menuToggle.addEventListener('click', () => {
-            document.querySelector('.sidebar').classList.toggle('active');
-        });
+    static initMobileMenu() {
+        // Мобильное меню для маленьких экранов
+        if (window.innerWidth <= 992) {
+            const menuToggle = document.createElement('button');
+            menuToggle.className = 'mobile-menu-toggle';
+            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            document.body.appendChild(menuToggle);
+            
+            menuToggle.addEventListener('click', () => {
+                document.querySelector('.sidebar').classList.toggle('mobile-open');
+            });
+        }
     }
 }
 
+// Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', () => PageTransitions.init());
