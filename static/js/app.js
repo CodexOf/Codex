@@ -1,2 +1,6 @@
 import { router } from './router.js';
-// Можно добавить дополнительную логику при необходимости
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('Application initialized');
+});

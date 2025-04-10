@@ -1,21 +1,28 @@
 from flask import Flask, render_template, send_from_directory
+import os
 
-app = Flask(__name__, 
+app = Flask(__name__,
             template_folder='templates',
-            static_folder='static',
-            static_url_path='/static')
+            static_folder='static')
 
+# Главная страница (без изменений)
 @app.route('/')
-def home():
+def index():
     return render_template('index.html')
 
-@app.route('/content')
-def content():
-    return render_template('content.html')
+# SPA-приложение
+@app.route('/app')
+def app_route():
+    return render_template('app.html')
 
-@app.route('/static/<path:path>')
-def serve_static(path):
-    return send_from_directory('static', path)
+# Статические файлы
+@app.route('/static/css/<path:filename>')
+def serve_css(filename):
+    return send_from_directory('static/css', filename)
+
+@app.route('/static/js/<path:filename>')
+def serve_js(filename):
+    return send_from_directory('static/js', filename)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True, port=5000)
