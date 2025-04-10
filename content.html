@@ -8,6 +8,8 @@
     
     <!-- Подключение стилей и иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- ADDED: Preload для ускорения загрузки -->
+    <link rel="preload" href="introduction.html" as="document" crossorigin>
     <link rel="stylesheet" href="style.css">
     
     <!-- Основные стили документа -->
@@ -259,7 +261,7 @@
         <!-- Основная навигация -->
         <div class="sidebar-nav">
             <a href="index.html">Главная</a>
-            <a href="content.html" class="active">Codex of...</a>
+            <a href="content.html" class="active">_</a>
             <a href="about.html">О проекте</a>
             <a href="contact.html">Контакты</a>
         </div>
@@ -272,6 +274,7 @@
                 <div class="version-content">
                     <a href="#">Введение</a>
                     <a href="#">Как играть?</a>
+                    <a href="#">Версия 0.8</a>
                     <a href="#">Игровые кости</a>
                     <a href="#">Действия</a>
                     <a href="#">Сцена</a>
@@ -288,6 +291,9 @@
                     <a href="#">Развитие персонажа</a>
                     <a href="#">Награды за активности</a>
                     <a href="#">Эффекты</a>
+                    <a href="#">Урон</a>
+                    <a href="#">Приказы</a>
+                    <a href="#">Состояния</a>
                 </div>
             </div>
             
@@ -295,8 +301,9 @@
             <div class="version-selector">
                 <button class="version-btn">Codex of Mortals <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
-                    <a href="#">Увидишь</a>
-                    <a href="#">Поймешь</a>
+                    <a href="#">Версия 1.2 (текущая)</a>
+                    <a href="#">Версия 1.1</a>
+                    <a href="#">Версия 1.0</a>
                 </div>
             </div>
             
@@ -304,8 +311,9 @@
             <div class="version-selector">
                 <button class="version-btn">Codex of Dust <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
-                    <a href="#">Подмаешь</a>
-                    <a href="#">Сыграешь</a>
+                    <a href="#">Версия 0.9 (бета)</a>
+                    <a href="#">Версия 0.8</a>
+                    <a href="#">Версия 0.7</a>
                 </div>
             </div>
             
@@ -313,8 +321,8 @@
             <div class="version-selector">
                 <button class="version-btn">§ Параграфы <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
-                    <a href="#">§ 1</a>
-                    <a href="#">§ 2</a>
+                    <a href="#">Версия 1.1 (текущая)</a>
+                    <a href="#">Версия 1.0</a>
                 </div>
             </div>
             
@@ -322,8 +330,8 @@
             <div class="version-selector">
                 <button class="version-btn">Примечания <i class="fas fa-caret-down"></i></button>
                 <div class="version-content">
-                    <a href="#">Примечание 1</a>
-                    <a href="#">Примечание 2</a>
+                    <a href="#">Версия 0.8 (альфа)</a>
+                    <a href="#">Версия 0.7</a>
                 </div>
             </div>
         </div>
@@ -341,7 +349,8 @@
 
     <!-- Скрипты для работы страницы -->
     <script src="script.js"></script>
-    <script src="content-loader.js"></script> <!-- Добавленный скрипт -->
+    <!-- ADDED: Новый загрузчик контента -->
+    <script src="content-loader.js"></script>
     <script>
         // Обработчик загрузки DOM
         document.addEventListener('DOMContentLoaded', function() {
@@ -409,8 +418,8 @@
                         container.innerHTML = `
                             <div class="about-section">
                                 <h1>О проекте Codex</h1>
-                                <p>Codex - это модульная система правил для настольных ролевых игр.</p>
-                                <p>Наша цель - создать гибкую и удобную систему, которая позволит реализовывать максимально разные сеттинги и жанры.</p>
+                                <p>Codex - это система правил для настольных ролевых игр, разрабатываемая с 2020 года.</p>
+                                <p>Наша цель - создать гибкую и удобную систему, которая позволит игрокам полностью погрузиться в игровой мир.</p>
                                 <p>Проект находится в активной разработке, и мы всегда рады новым участникам и идеям.</p>
                                 <h2>Команда разработчиков</h2>
                                 <p>Над проектом работает небольшая команда энтузиастов:</p>
@@ -428,7 +437,7 @@
                         container.innerHTML = `
                             <div class="contact-section">
                                 <h1>Свяжитесь с нами</h1>
-                                <p>Если у вас есть вопросы или предложения по проекту — напишите нам в ВК. Форма ниже пока не работает</p>
+                                <p>Если у вас есть вопросы или предложения по проекту, заполните форму ниже:</p>
                                 
                                 <form class="contact-form">
                                     <div class="form-group">
@@ -465,8 +474,8 @@
                     default:
                         // По умолчанию загружаем страницу правил
                         container.innerHTML = `
-                            <h1>Codex of...</h1>
-                            <p>Выберите версию Codex в боковой панели.</p>
+                            <h1>Правила Codex</h1>
+                            <p>Выберите категорию и версию правил в боковой панели.</p>
                         `;
                 }
             }

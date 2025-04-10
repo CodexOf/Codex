@@ -1,49 +1,65 @@
 /**
  * Класс для загрузки контента правил игры
- * Добавлен для работы с динамической загрузкой контента
+ * Добавлены: 
+ * - Подробные ошибки
+ * - Кнопка обновления
+ * - Индикатор загрузки
  */
 class ContentLoader {
-    /**
-     * Загружает содержимое страницы "Введение" из introduction.html
-     */
     static async loadIntroduction() {
+        const container = document.getElementById('content-container');
+        
         try {
-            // Загружаем HTML-файл с правилами
+            // Показываем индикатор загрузки
+            container.innerHTML = `
+                <div class="loading-indicator">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Загрузка правил...</p>
+                </div>
+            `;
+
             const response = await fetch('introduction.html');
-            if (!response.ok) throw new Error('Не удалось загрузить файл');
+            if (!response.ok) throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
             
-            // Парсим полученный HTML
             const html = await response.text();
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
+            const content = doc.querySelector('.rule-section')?.innerHTML || '<p>Контент не найден</p>';
             
-            // Извлекаем нужный контент
-            const content = doc.querySelector('.rule-section').innerHTML;
-            
-            // Вставляем контент в контейнер
-            document.getElementById('content-container').innerHTML = `
+            container.innerHTML = `
                 <div class="rule-section">
                     ${content}
+                    <button class="back-to-rules" onclick="ContentLoader.showRulesList()">
+                        ← Вернуться к списку правил
+                    </button>
                 </div>
             `;
-            
-            // Прокручиваем к началу контента
+
             document.querySelector('.main-content').scrollTo(0, 0);
             
         } catch (error) {
-            console.error('Ошибка загрузки:', error);
-            document.getElementById('content-container').innerHTML = `
+            console.error('Ошибка:', error);
+            container.innerHTML = `
                 <div class="error-message">
-                    <p>Не удалось загрузить правила. Пожалуйста, попробуйте позже.</p>
+                    <p>Ошибка загрузки: ${error.message}</p>
+                    <button onclick="ContentLoader.loadIntroduction()">
+                        <i class="fas fa-sync-alt"></i> Попробовать снова
+                    </button>
                 </div>
             `;
         }
     }
+
+    static showRulesList() {
+        document.getElementById('content-container').innerHTML = `
+            <h1>Правила Codex</h1>
+            <p>Выберите категорию и версию правил в боковой панели.</p>
+        `;
+    }
 }
 
-// Инициализация обработчиков после загрузки DOM
+// Инициализация (без изменений)
 document.addEventListener('DOMContentLoaded', () => {
-    // Добавляем обработчик для всех ссылок "Введение"
     document.querySelectorAll('.version-content a').forEach(link => {
         if (link.textContent.includes('Введение')) {
             link.addEventListener('click', (e) => {
