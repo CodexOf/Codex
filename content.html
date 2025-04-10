@@ -19,6 +19,45 @@
             <button class="nav-btn" data-page="info">Основная информация</button>
             <button class="nav-btn" data-page="about">О проекте</button>
             <button class="nav-btn" data-page="contacts">Контакты</button>
+
+            <!-- Аккордеоны Codex -->
+            <div class="codex-accordion">
+                <div class="codex-section">
+                    <button class="codex-btn">
+                        Codex of Heroes
+                        <span class="arrow">▼</span>
+                    </button>
+                    <div class="codex-content">
+                        <button class="nav-btn" data-page="heroes1">Герои 1</button>
+                        <button class="nav-btn" data-page="heroes2">Герои 2</button>
+                        <button class="nav-btn" data-page="heroes3">Герои 3</button>
+                    </div>
+                </div>
+
+                <div class="codex-section">
+                    <button class="codex-btn">
+                        Codex of Mortals
+                        <span class="arrow">▼</span>
+                    </button>
+                    <div class="codex-content">
+                        <button class="nav-btn" data-page="mortals1">Смертные 1</button>
+                        <button class="nav-btn" data-page="mortals2">Смертные 2</button>
+                        <button class="nav-btn" data-page="mortals3">Смертные 3</button>
+                    </div>
+                </div>
+
+                <div class="codex-section">
+                    <button class="codex-btn">
+                        Codex of Dust
+                        <span class="arrow">▼</span>
+                    </button>
+                    <div class="codex-content">
+                        <button class="nav-btn" data-page="dust1">Прах 1</button>
+                        <button class="nav-btn" data-page="dust2">Прах 2</button>
+                        <button class="nav-btn" data-page="dust3">Прах 3</button>
+                    </div>
+                </div>
+            </div>
         </nav>
     </div>
 
@@ -36,52 +75,23 @@
             const contentContainer = document.getElementById('content-container');
             const navButtons = document.querySelectorAll('.nav-btn');
             
-            // Определяем текущую страницу из URL
-            const urlParams = new URLSearchParams(window.location.search);
-            let currentPage = urlParams.get('page') || 'home';
-            
-            // Загружаем начальный контент
-            loadContent(currentPage);
-            
-            // Обработчики для кнопок навигации
-            navButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    currentPage = this.getAttribute('data-page');
-                    loadContent(currentPage);
-                });
-            });
-            
-            // Функция загрузки контента
+            // Загрузка контента
             function loadContent(page) {
-                // Показываем индикатор загрузки
-                contentContainer.innerHTML = `
-                    <div class="loading-indicator">
-                        <p>Загрузка...</p>
-                    </div>
-                `;
+                contentContainer.innerHTML = '<div class="loading-indicator"><p>Загрузка...</p></div>';
                 
-                // Снимаем активный класс со всех кнопок
-                navButtons.forEach(btn => btn.classList.remove('active'));
-                
-                // Устанавливаем активный класс текущей кнопке
-                document.querySelector(`.nav-btn[data-page="${page}"]`).classList.add('active');
-                
-                // Загружаем контент
                 fetch(`partials/${page}.html`)
                     .then(response => {
                         if (!response.ok) throw new Error('Страница не найдена');
                         return response.text();
                     })
                     .then(html => {
-                        // Вставляем контент с анимацией
                         contentContainer.style.opacity = 0;
                         setTimeout(() => {
                             contentContainer.innerHTML = html;
                             contentContainer.style.opacity = 1;
+                            updateActiveButton(page);
+                            history.pushState({page}, null, `?page=${page}`);
                         }, 300);
-                        
-                        // Обновляем URL
-                        history.pushState({page}, null, `?page=${page}`);
                     })
                     .catch(err => {
                         contentContainer.innerHTML = `
@@ -94,12 +104,41 @@
                         `;
                     });
             }
-            
+
+            // Обновление активной кнопки
+            function updateActiveButton(page) {
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`.nav-btn[data-page="${page}"]`)?.classList.add('active');
+            }
+
+            // Обработчики кнопок навигации
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    loadContent(this.getAttribute('data-page'));
+                });
+            });
+
+            // Обработчики аккордеонов
+            document.querySelectorAll('.codex-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const section = this.parentElement;
+                    section.classList.toggle('active');
+                    
+                    // Закрываем другие секции
+                    document.querySelectorAll('.codex-section').forEach(s => {
+                        if (s !== section) s.classList.remove('active');
+                    });
+                });
+            });
+
+            // Загрузка начальной страницы
+            const urlParams = new URLSearchParams(window.location.search);
+            loadContent(urlParams.get('page') || 'home');
+
             // Обработка истории браузера
             window.addEventListener('popstate', function(event) {
-                if (event.state && event.state.page) {
-                    currentPage = event.state.page;
-                    loadContent(currentPage);
+                if (event.state?.page) {
+                    loadContent(event.state.page);
                 }
             });
         });
