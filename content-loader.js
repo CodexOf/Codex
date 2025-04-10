@@ -1,87 +1,68 @@
-/**
- * Система загрузки контента (SPA)
- * Соответствует договоренностям:
- * - Плавные переходы без перезагрузки
- * - Сохранение истории навигации
- * - Обработка ошибок 404
- */
 class ContentLoader {
-    static baseUrl = '/';
-    static isLoading = false;
-
-    /**
-     * Загружает контент с защитой от наложения
-     * @param {string} url - URL для загрузки
-     */
     static async loadContent(url) {
-        // Проверка состояния загрузки
-        if (this.isLoading) return;
-        this.isLoading = true;
-        
         const container = document.getElementById('content-container');
         if (!container) return;
 
-        // Подготовка контейнера
-        container.style.opacity = '0';
-        container.style.pointerEvents = 'none';
+        // Показываем индикатор загрузки
+        container.style.opacity = '0.5';
+        container.innerHTML = `
+            <div class="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Загрузка...</p>
+            </div>
+        `;
 
         try {
-            // Нормализация URL
-            const fullUrl = url.startsWith('/') 
-                ? url 
-                : `${this.baseUrl}${url}`;
-
-            // Показать индикатор загрузки
-            container.innerHTML = `
-                <div class="loading-indicator">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-            `;
-            container.style.opacity = '1';
-
-            // Запрос с контролем кеширования
-            const response = await fetch(fullUrl, {
-                headers: { 'Cache-Control': 'no-cache' }
-            });
+            // Нормализация URL для GitHub Pages и локального сервера
+            let normalizedUrl = url;
             
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            // Если это GitHub Pages
+            if (window.location.host.includes('github.io')) {
+                // Удаляем возможные дублирования /Codex/
+                normalizedUrl = url.replace('/Codex/', '').replace('Codex/', '');
+                // Добавляем базовый путь
+                normalizedUrl = `/Codex/${normalizedUrl}`;
             }
-
-            // Вставка контента
+            
+            // Для локального сервера оставляем как есть
+            const response = await fetch(normalizedUrl);
+            
+            if (!response.ok) throw new Error(`Ошибка ${response.status}`);
+            
             const html = await response.text();
+            
+            // Плавное появление контента
             container.innerHTML = html;
-            history.pushState(null, '', fullUrl);
-
-            // Плавное появление
             container.style.opacity = '0';
             setTimeout(() => {
                 container.style.opacity = '1';
-                container.style.pointerEvents = 'auto';
-            }, 300);
-
+            }, 50);
+            
+            // Обновляем URL в адресной строке
+            history.pushState(null, '', normalizedUrl);
+            
+            // Прокрутка вверх
+            window.scrollTo(0, 0);
+            
         } catch (error) {
-            // Обработка ошибок
-            console.error('Load error:', error);
             container.innerHTML = `
                 <div class="error-message">
-                    <p>${error.message}</p>
-                    <button onclick="window.location.reload()">Обновить</button>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Не удалось загрузить страницу: ${error.message}</p>
+                    <button class="retry-btn" onclick="ContentLoader.loadContent('${url}')">
+                        <i class="fas fa-sync-alt"></i> Попробовать снова
+                    </button>
+                    <button class="home-btn" onclick="ContentLoader.loadContent('/Codex/index.html')">
+                        <i class="fas fa-home"></i> На главную
+                    </button>
                 </div>
             `;
-        } finally {
-            this.isLoading = false;
+            container.style.opacity = '1';
         }
     }
 
-    /**
-     * Инициализация системы
-     * @param {string} baseUrl - Базовый URL (/Codex/ или /)
-     */
-    static init(baseUrl = '/') {
-        this.baseUrl = baseUrl;
-        
-        // Обработчик для ссылок навигации
+    static init() {
+        // Обработка всех ссылок в сайдбаре
         document.querySelectorAll('.sidebar-nav a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -89,9 +70,19 @@ class ContentLoader {
             });
         });
 
-        // Обработчик истории браузера
+        // Обработка кнопок назад/вперед
         window.addEventListener('popstate', () => {
             this.loadContent(window.location.pathname);
         });
+
+        // Загрузка контента при первом открытии
+        if (!window.location.pathname.endsWith('content.html')) {
+            this.loadContent(window.location.pathname);
+        }
     }
 }
+
+// Инициализация после загрузки DOM
+document.addEventListener('DOMContentLoaded', () => {
+    ContentLoader.init();
+});
