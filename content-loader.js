@@ -1,88 +1,93 @@
+/**
+ * Класс для загрузки контента с защитой от наложения
+ */
 class ContentLoader {
+    static isLoading = false; // Флаг блокировки параллельных загрузок
+
+    /**
+     * Загружает контент с защитой от наложения
+     * @param {string} url - URL для загрузки
+     */
     static async loadContent(url) {
         const container = document.getElementById('content-container');
-        if (!container) return;
+        if (!container || this.isLoading) return;
 
-        // Показываем индикатор загрузки
-        container.style.opacity = '0.5';
-        container.innerHTML = `
+        // Блокируем повторные вызовы
+        this.isLoading = true;
+        
+        // 1. Подготовка контейнера
+        container.style.opacity = '0'; // Плавное исчезновение
+        container.style.pointerEvents = 'none'; // Блокируем взаимодействие
+        
+        // 2. Показываем индикатор загрузки
+        const loaderHtml = `
             <div class="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
-                <p>Загрузка...</p>
             </div>
         `;
+        container.innerHTML = loaderHtml;
+        container.style.opacity = '1';
 
         try {
-            // Нормализация URL для GitHub Pages и локального сервера
-            let normalizedUrl = url;
+            // 3. Загрузка данных с защитой от кеширования
+            const response = await fetch(url, {
+                headers: { 'Cache-Control': 'no-cache' }
+            });
             
-            // Если это GitHub Pages
-            if (window.location.host.includes('github.io')) {
-                // Удаляем возможные дублирования /Codex/
-                normalizedUrl = url.replace('/Codex/', '').replace('Codex/', '');
-                // Добавляем базовый путь
-                normalizedUrl = `/Codex/${normalizedUrl}`;
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             
-            // Для локального сервера оставляем как есть
-            const response = await fetch(normalizedUrl);
-            
-            if (!response.ok) throw new Error(`Ошибка ${response.status}`);
-            
+            // 4. Полная очистка перед вставкой
             const html = await response.text();
+            container.replaceChildren(); // Важно: полная очистка DOM
             
-            // Плавное появление контента
+            // 5. Безопасная вставка нового контента
             container.innerHTML = html;
-            container.style.opacity = '0';
-            setTimeout(() => {
-                container.style.opacity = '1';
-            }, 50);
             
-            // Обновляем URL в адресной строке
-            history.pushState(null, '', normalizedUrl);
+            // 6. Плавное появление с requestAnimationFrame
+            requestAnimationFrame(() => {
+                container.style.opacity = '0';
+                requestAnimationFrame(() => {
+                    container.style.opacity = '1';
+                    container.style.pointerEvents = 'auto';
+                });
+            });
             
-            // Прокрутка вверх
-            window.scrollTo(0, 0);
+            // 7. Обновляем историю браузера
+            history.pushState(null, '', url);
             
         } catch (error) {
+            // 8. Обработка ошибок с восстановлением
+            console.error('Load error:', error);
             container.innerHTML = `
                 <div class="error-message">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <p>Не удалось загрузить страницу: ${error.message}</p>
-                    <button class="retry-btn" onclick="ContentLoader.loadContent('${url}')">
-                        <i class="fas fa-sync-alt"></i> Попробовать снова
-                    </button>
-                    <button class="home-btn" onclick="ContentLoader.loadContent('/Codex/index.html')">
-                        <i class="fas fa-home"></i> На главную
-                    </button>
+                    <p>Ошибка загрузки: ${error.message}</p>
+                    <button onclick="window.location.reload()">Обновить</button>
                 </div>
             `;
-            container.style.opacity = '1';
+        } finally {
+            // 9. Всегда снимаем блокировку
+            this.isLoading = false;
         }
     }
 
+    /**
+     * Инициализация обработчиков событий
+     */
     static init() {
-        // Обработка всех ссылок в сайдбаре
+        // Обработчик для ссылок в сайдбаре
         document.querySelectorAll('.sidebar-nav a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.loadContent(link.getAttribute('href'));
+                this.loadContent(link.href);
             });
         });
 
-        // Обработка кнопок назад/вперед
+        // Обработчик кнопок назад/вперед
         window.addEventListener('popstate', () => {
             this.loadContent(window.location.pathname);
         });
-
-        // Загрузка контента при первом открытии
-        if (!window.location.pathname.endsWith('content.html')) {
-            this.loadContent(window.location.pathname);
-        }
     }
 }
 
-// Инициализация после загрузки DOM
-document.addEventListener('DOMContentLoaded', () => {
-    ContentLoader.init();
-});
+// Автоматическая инициализация после загрузки DOM
+document.addEventListener('DOMContentLoaded', () => ContentLoader.init());
