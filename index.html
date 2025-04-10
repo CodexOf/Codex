@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Название Игры | Вход</title>
+    <!-- Подключение стилей -->
     <link rel="stylesheet" href="style.css">
+    <!-- Подключение шрифтов -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <!-- Встроенные стили для анимации перехода -->
     <style>
         /* Анимация перехода */
         .page-transition {
@@ -19,6 +22,13 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        
+        /* Плавное появление страницы */
+        body {
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+            animation-delay: 0.3s;
         }
     </style>
 </head>
@@ -56,6 +66,8 @@
 
         // Анимация появления при загрузке
         document.addEventListener('DOMContentLoaded', () => {
+            // Уже есть CSS-анимация, поэтому этот код можно удалить
+            // или оставить для совместимости
             document.body.style.opacity = '0';
             setTimeout(() => {
                 document.body.style.transition = 'opacity 0.8s ease';
