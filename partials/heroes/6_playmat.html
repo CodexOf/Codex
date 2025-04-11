@@ -10,144 +10,118 @@
 <p>У каждого объекта в игре есть свой размер и это значимая геймплейная механика — она влияет на взаимодействие персонажей друг с другом.</p>
 <p><strong>Размер</strong> — это не просто рост или вес, а целый комплекс значений, которые неудобно считать по отдельности, но надо как-то описать. Это физическая значимость существа во всех его данных, указывающих на габариты. Например, байк визуально меньше, чем конь (обычно), но может весить больше, а значит оба объекта, конь и байк, будут считаться примерно одного размера (погрешности не учитываем).</p>
 <p><strong>ВАЖНО!!!</strong> Все целые объекты огромных размеров, как здания, Титаны и прочие, по которым персонажи могут перемещаться — не надо учитывать. Обвалившееся здание завалит <strong>или</strong> убьет персонажа, который не смог убежать, как и наступивший  на него же великан. Да, персонаж может выбраться из-под завала, великан может промахнуться, а тот же танк просто будет обездвижен завалом и иметь не критичные повреждения. В работе с настолько большими объектами пользуйтесь логикой вашей игры и тем, как вы ее воспринимаете. Супергерою это будет кратковременная помеха, а обычного клерка <strong>может</strong> раздавить.</p>
-<table>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0nob{background-color:#26A69A;text-align:center;vertical-align:middle}
+.tg .tg-q59s{background-color:#DDF2F0;text-align:center;vertical-align:middle}
+.tg .tg-f4yw{background-color:#FFF;text-align:center;vertical-align:middle}
+</style>
+<table class="tg"><thead>
   <tr>
-   <td>№
-   </td>
-   <td colspan="2" >Наименование
-   </td>
-   <td colspan="8" >Примеры объектов
-   </td>
+    <th class="tg-0nob"><span style="background-color:#26A69A">№</span></th>
+    <th class="tg-0nob" colspan="2"><span style="background-color:#26A69A">Наименование</span></th>
+    <th class="tg-0nob" colspan="8"><span style="background-color:#26A69A">Примеры объектов</span></th>
+  </tr></thead>
+<tbody>
+  <tr>
+    <td class="tg-f4yw"><span style="background-color:#FFF">1</span></td>
+    <td class="tg-f4yw" colspan="2"><span style="background-color:#FFF">Незначительные</span></td>
+    <td class="tg-f4yw" colspan="8"><span style="background-color:#FFF">Различные насекомые и иные объекты, чей размер уже не важен.</span></td>
   </tr>
   <tr>
-   <td>1
-   </td>
-   <td colspan="2" >Незначительные
-   </td>
-   <td colspan="8" >Различные насекомые и иные объекты, чей размер уже не важен.
-   </td>
+    <td class="tg-q59s"><span style="background-color:#DDF2F0">2</span></td>
+    <td class="tg-q59s" colspan="2"><span style="background-color:#DDF2F0">Мелкие</span></td>
+    <td class="tg-q59s" colspan="8"><span style="background-color:#DDF2F0">Мелкие существа, как крысы, змеи, большие насекомые и прочие действительно мелкие существа.</span></td>
   </tr>
   <tr>
-   <td>2
-   </td>
-   <td colspan="2" >Мелкие
-   </td>
-   <td colspan="8" >Мелкие существа, как крысы, змеи, большие насекомые и прочие действительно мелкие существа.
-   </td>
+    <td class="tg-f4yw"><span style="background-color:#FFF">3</span></td>
+    <td class="tg-f4yw" colspan="2"><span style="background-color:#FFF">Небольшие</span></td>
+    <td class="tg-f4yw" colspan="8"><span style="background-color:#FFF">Карликовые, по отношению к обычной группе, существа. Карлики, гоблины, полурослики, собаки, кошки и иные.</span></td>
   </tr>
   <tr>
-   <td>3
-   </td>
-   <td colspan="2" >Небольшие
-   </td>
-   <td colspan="8" >Карликовые, по отношению к обычной группе, существа. Карлики, гоблины, полурослики, собаки, кошки и иные.
-   </td>
+    <td class="tg-q59s"><span style="background-color:#DDF2F0">4</span></td>
+    <td class="tg-q59s" colspan="2"><span style="background-color:#DDF2F0">Обычные</span></td>
+    <td class="tg-q59s" colspan="8"><span style="background-color:#DDF2F0">От невысоких людей до двухметровых орков. В общей сумме данная категория включает тех существ, за которых вы будете играть в большинстве случаев.</span></td>
   </tr>
   <tr>
-   <td>4
-   </td>
-   <td colspan="2" >Обычные
-   </td>
-   <td colspan="8" >От невысоких людей до двухметровых орков. В общей сумме данная категория включает тех существ, за которых вы будете играть в большинстве случаев.
-   </td>
+    <td class="tg-f4yw"><span style="background-color:#FFF">5</span></td>
+    <td class="tg-f4yw" colspan="2"><span style="background-color:#FFF">Большие</span></td>
+    <td class="tg-f4yw" colspan="8"><span style="background-color:#FFF">Здесь уже категорически бОльшие существа, как большая змея, лошадь, лев. А также транспортные средства как мотоцикл и прочие “на грани” категории.</span></td>
   </tr>
   <tr>
-   <td>5
-   </td>
-   <td colspan="2" >Большие
-   </td>
-   <td colspan="8" >Здесь уже категорически бОльшие существа, как лошадь, лев. А также транспортные средства как мотоцикл и прочие “на грани” категории.
-   </td>
+    <td class="tg-q59s"><span style="background-color:#DDF2F0">6</span></td>
+    <td class="tg-q59s" colspan="2"><span style="background-color:#DDF2F0">Огромные</span></td>
+    <td class="tg-q59s" colspan="8"><span style="background-color:#DDF2F0">Автомобили, микроавтобусы, грузовики, крупные медведи, лоси, огры и вся огромная хреновина!</span></td>
   </tr>
   <tr>
-   <td>6
-   </td>
-   <td colspan="2" >Огромные
-   </td>
-   <td colspan="8" >Автомобили, микроавтобусы, грузовики, крупные медведи, лоси, огры и вся огромная хреновина!
-   </td>
+    <td class="tg-f4yw"><span style="background-color:#FFF">7</span></td>
+    <td class="tg-f4yw" colspan="2"><span style="background-color:#FFF">Громадные</span></td>
+    <td class="tg-f4yw" colspan="8"><span style="background-color:#FFF">Танк, БТР, грузовик, современный истребитель и всё то, для чего человек уже ТОЧНО не препятствие.</span></td>
   </tr>
-  <tr>
-   <td>7
-   </td>
-   <td colspan="2" >Громадные
-   </td>
-   <td colspan="8" >Танк, БТР, грузовик, современный истребитель и всё то, для чего человек уже ТОЧНО не препятствие.
-   </td>
-  </tr>
-</table>
+</tbody></table>
 
 <br> <!-- Пустая строка -->
 <h3>Размещение объектов на поле</h3>
 
 
 <p>Каждый объект занимает своё количество гексов на поле, а некоторые объекты могут находиться целой группой на одном гексе. Например, какие-нибудь мелкие существа. Здесь мы приведем таблицу с нумерацией размеров, сколько гексов они занимают на поле и занимают ли вообще, а также некоторые пояснения из наших соображений.</p>
-<table>
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0nob{background-color:#26A69A;text-align:center;vertical-align:middle}
+.tg .tg-q59s{background-color:#DDF2F0;text-align:center;vertical-align:middle}
+.tg .tg-f4yw{background-color:#FFF;text-align:center;vertical-align:middle}
+</style>
+<table class="tg"><thead>
   <tr>
-   <td>№
-   </td>
-   <td colspan="2" >Наименование
-   </td>
-   <td colspan="2" >Занимаемое пространство
-   </td>
+    <th class="tg-0nob"><span style="background-color:#26A69A">№</span></th>
+    <th class="tg-0nob" colspan="2"><span style="background-color:#26A69A">Наименование</span></th>
+    <th class="tg-0nob" colspan="2"><span style="background-color:#26A69A">Занимаемое пространство</span></th>
+  </tr></thead>
+<tbody>
+  <tr>
+    <td class="tg-f4yw"><span style="background-color:#FFF">1</span></td>
+    <td class="tg-f4yw" colspan="2"><span style="background-color:#FFF">Незначительные</span></td>
+    <td class="tg-f4yw" colspan="2"><span style="background-color:#FFF">Множество в 1 гексе</span></td>
   </tr>
   <tr>
-   <td>1
-   </td>
-   <td colspan="2" >Незначительные
-   </td>
-   <td colspan="2" >Множество в 1 гексе
-   </td>
+    <td class="tg-q59s"><span style="background-color:#DDF2F0">2</span></td>
+    <td class="tg-q59s" colspan="2"><span style="background-color:#DDF2F0">Мелкие</span></td>
+    <td class="tg-q59s" colspan="2"><span style="background-color:#DDF2F0">5 в одном гексе</span></td>
   </tr>
   <tr>
-   <td>2
-   </td>
-   <td colspan="2" >Мелкие
-   </td>
-   <td colspan="2" >5 в одном гексе
-   </td>
+    <td class="tg-f4yw"><span style="background-color:#FFF">3</span></td>
+    <td class="tg-f4yw" colspan="2"><span style="background-color:#FFF">Небольшие</span></td>
+    <td class="tg-f4yw" colspan="2"><span style="background-color:#FFF">2-3 в одном гексе</span></td>
   </tr>
   <tr>
-   <td>3
-   </td>
-   <td colspan="2" >Небольшие
-   </td>
-   <td colspan="2" >2-3 в одном гексе
-   </td>
+    <td class="tg-q59s"><span style="background-color:#DDF2F0">4</span></td>
+    <td class="tg-q59s" colspan="2"><span style="background-color:#DDF2F0">Обычные</span></td>
+    <td class="tg-q59s" colspan="2"><span style="background-color:#DDF2F0">1 гекс</span></td>
   </tr>
   <tr>
-   <td>4
-   </td>
-   <td colspan="2" >Обычные
-   </td>
-   <td colspan="2" >1 гекс
-   </td>
+    <td class="tg-f4yw"><span style="background-color:#FFF">5</span></td>
+    <td class="tg-f4yw" colspan="2"><span style="background-color:#FFF">Большие</span></td>
+    <td class="tg-f4yw" colspan="2"><span style="background-color:#FFF">2–4 гексов</span></td>
   </tr>
   <tr>
-   <td>5
-   </td>
-   <td colspan="2" >Большие
-   </td>
-   <td colspan="2" >2–3 гексов
-   </td>
+    <td class="tg-q59s"><span style="background-color:#DDF2F0">6</span></td>
+    <td class="tg-q59s" colspan="2"><span style="background-color:#DDF2F0">Огромные</span></td>
+    <td class="tg-q59s" colspan="2"><span style="background-color:#DDF2F0">5–8 гексов</span></td>
   </tr>
   <tr>
-   <td>6
-   </td>
-   <td colspan="2" >Огромные
-   </td>
-   <td colspan="2" >4–6 гексов
-   </td>
+    <td class="tg-f4yw"><span style="background-color:#FFF">7</span></td>
+    <td class="tg-f4yw" colspan="2"><span style="background-color:#FFF">Громадные</span></td>
+    <td class="tg-f4yw" colspan="2"><span style="background-color:#FFF">9–12 гексов</span></td>
   </tr>
-  <tr>
-   <td>7
-   </td>
-   <td colspan="2" >Громадные
-   </td>
-   <td colspan="2" >7–10 гексов
-   </td>
-  </tr>
-</table>
+</tbody></table>
 
 
 <p>Это примерное количество занимаемого объектом объёма. В вашей игре эти числа могут отличаться, например большая змея (небольшая анаконда или подобная) развернувшись в длину явно будет занимать больше трех гексов в длину, но останется в категории <strong>Больших</strong> существ.</p>
