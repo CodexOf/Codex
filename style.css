@@ -241,7 +241,7 @@ body {
     max-width: 900px; /* Максимальная ширина */
     margin: 0 auto; /* Центрирование */
     padding: 30px; /* Внутренние отступы */
-    background: #fff; /* Белый фон */
+    background: #DBDBDB; /* Белый фон */
     border-radius: 8px; /* Закругленные углы */
     box-shadow: 0 2px 15px rgba(0,0,0,0.1); /* Тень */
     transition: opacity 0.3s ease; /* Плавное появление */
