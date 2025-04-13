@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Codex - Контент</title>
-    <!-- Подключаем стили из новой структуры -->
+    <!-- Подключаем стили -->
     <link rel="stylesheet" href="css/main.css">
-    <!-- Шрифты Google -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        /* Локальные стили для плавного появления контента */
+        #content-container {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+    </style>
 </head>
 <body>
     <!-- Боковая панель навигации -->
@@ -17,15 +23,13 @@
         </div>
         
         <nav class="sidebar-nav">
-            <!-- Основные кнопки навигации -->
             <button class="nav-btn active" data-page="home">Главная</button>
             <button class="nav-btn" data-page="info">Основная информация</button>
             <button class="nav-btn" data-page="about">О проекте</button>
             <button class="nav-btn" data-page="contacts">Контакты</button>
 
-            <!-- Аккордеоны с разделами Codex -->
+            <!-- Аккордеоны Codex -->
             <div class="codex-accordion">
-                <!-- Раздел CORE SYSTEM -->
                 <div class="codex-section">
                     <button class="codex-btn">
                         CORE SYSTEM
@@ -45,7 +49,6 @@
                     </div>
                 </div>
                 
-                <!-- Раздел Codex of Heroes -->
                 <div class="codex-section">
                     <button class="codex-btn">
                         Codex of Heroes
@@ -60,7 +63,6 @@
                     </div>
                 </div>
 
-                <!-- Раздел Codex of Mortals -->
                 <div class="codex-section">
                     <button class="codex-btn">
                         Codex of Mortals
@@ -73,7 +75,6 @@
                     </div>
                 </div>
 
-                <!-- Раздел Codex of Dust -->
                 <div class="codex-section">
                     <button class="codex-btn">
                         Codex of Dust
@@ -89,7 +90,7 @@
         </nav>
     </div>
 
-    <!-- Основная область контента -->
+    <!-- Основное содержимое -->
     <div class="main-content">
         <div id="content-container">
             <div class="loading-indicator">
@@ -98,41 +99,34 @@
         </div>
     </div>
 
-    <!-- JavaScript для работы страницы -->
     <script>
-        // Ждем полной загрузки DOM
         document.addEventListener('DOMContentLoaded', function() {
             const contentContainer = document.getElementById('content-container');
             const navButtons = document.querySelectorAll('.nav-btn');
             
-            // Функция загрузки контента страницы
+            // Загрузка контента
             function loadContent(page) {
-                // Показываем индикатор загрузки
                 contentContainer.innerHTML = '<div class="loading-indicator"><p>Загрузка...</p></div>';
                 
-                // Загружаем содержимое страницы
                 fetch(`partials/${page}.html`)
                     .then(response => {
                         if (!response.ok) throw new Error('Страница не найдена');
                         return response.text();
                     })
                     .then(html => {
-                        // Плавное появление нового контента
                         contentContainer.style.opacity = 0;
                         setTimeout(() => {
                             contentContainer.innerHTML = html;
                             contentContainer.style.opacity = 1;
                             updateActiveButton(page);
-                            // Обновляем URL в адресной строке
                             history.pushState({page}, null, `?page=${page}`);
                         }, 300);
                     })
-                    .catch(error => {
-                        // Показываем сообщение об ошибке
+                    .catch(err => {
                         contentContainer.innerHTML = `
                             <div class="error-message">
                                 <h3>Ошибка загрузки</h3>
-                                <p>${error.message}</p>
+                                <p>${err.message}</p>
                                 <button class="retry-btn" onclick="loadContent('${page}')">Повторить</button>
                                 <button class="home-btn" onclick="loadContent('home')">На главную</button>
                             </div>
@@ -140,21 +134,20 @@
                     });
             }
 
-            // Обновление активной кнопки в навигации
+            // Обновление активной кнопки
             function updateActiveButton(page) {
                 navButtons.forEach(btn => btn.classList.remove('active'));
-                const activeBtn = document.querySelector(`.nav-btn[data-page="${page}"]`);
-                if (activeBtn) activeBtn.classList.add('active');
+                document.querySelector(`.nav-btn[data-page="${page}"]`)?.classList.add('active');
             }
 
-            // Обработчики для кнопок навигации
+            // Обработчики кнопок навигации
             navButtons.forEach(btn => {
                 btn.addEventListener('click', function() {
                     loadContent(this.getAttribute('data-page'));
                 });
             });
 
-            // Обработчики для аккордеонов
+            // Обработчики аккордеонов
             document.querySelectorAll('.codex-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const section = this.parentElement;
@@ -167,11 +160,11 @@
                 });
             });
 
-            // Загрузка начальной страницы (из URL или home по умолчанию)
+            // Загрузка начальной страницы
             const urlParams = new URLSearchParams(window.location.search);
             loadContent(urlParams.get('page') || 'home');
 
-            // Обработка кнопок назад/вперед в браузере
+            // Обработка истории браузера
             window.addEventListener('popstate', function(event) {
                 if (event.state?.page) {
                     loadContent(event.state.page);
