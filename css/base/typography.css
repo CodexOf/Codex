@@ -1,0 +1,15 @@
+/* Стили для всего текста на сайте */
+body {
+    font-family: 'Roboto', sans-serif; /* Основной шрифт */
+    line-height: 1.6; /* Расстояние между строками */
+    color: #d0d0d0; /* Цвет текста (светло-серый) */
+}
+
+/* Стили для красивого заголовка в боковой панели */
+.sidebar-header h2 {
+    font-family: 'Cinzel Decorative', cursive; /* Декоративный шрифт */
+    font-size: 1.8rem;
+    text-align: center;
+    color: white;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+}

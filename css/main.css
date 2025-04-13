@@ -1,0 +1,28 @@
+/* Главный файл, который собирает все стили вместе */
+
+/* 1. Сначала базовые стили */
+@import 'base/reset.css';
+@import 'base/typography.css';
+
+/* 2. Потом компоненты (кнопки, меню) */
+@import 'components/buttons.css';
+@import 'components/sidebar.css';
+@import 'components/accordion.css';
+
+/* 3. Макеты страниц */
+@import 'layouts/main-page.css';
+@import 'layouts/content.css';
+
+/* 4. Вспомогательные стили */
+@import 'utilities/animations.css';
+@import 'utilities/loading.css';
+@import 'utilities/error.css';
+
+/* 5. Адаптивность (мобильные устройства) */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+    /* ... остальные медиа-запросы ... */
+}

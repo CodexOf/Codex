@@ -1,0 +1,37 @@
+/* Контейнер для всех сворачиваемых блоков */
+.codex-accordion {
+    margin: 25px 0;
+    border-top: 1px solid #333;
+    padding-top: 15px;
+}
+
+/* Кнопка для сворачивания/разворачивания */
+.codex-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border: none;
+    cursor: pointer;
+}
+
+/* Стрелочка в кнопке */
+.codex-btn .arrow {
+    transition: transform 0.3s; /* Плавный поворот */
+}
+
+/* Когда блок открыт - стрелочка смотрит вниз */
+.codex-section.active .codex-btn .arrow {
+    transform: rotate(180deg);
+}
+
+/* Содержимое блока (скрыто по умолчанию) */
+.codex-content {
+    display: none;
+    padding: 8px 0 0 15px;
+}
+
+/* Показываем содержимое когда активно */
+.codex-section.active .codex-content {
+    display: block;
+}

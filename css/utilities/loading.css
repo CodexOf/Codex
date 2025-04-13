@@ -1,0 +1,11 @@
+/* Кружок загрузки */
+.loading-indicator {
+    text-align: center;
+    padding: 50px;
+    color: #666;
+}
+
+/* Иконка загрузки (Font Awesome) */
+.fa-spinner {
+    margin-bottom: 10px;
+}

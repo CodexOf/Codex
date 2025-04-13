@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <!-- Кодировка и адаптив -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Codex of Heroes | Вход</title>
-    <link rel="stylesheet" href="style.css">
+    
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="css/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    
+    <!-- Стили анимаций, которые должны быть прямо здесь -->
     <style>
         /* Отключаем скролл на всем документе */
         html, body {
@@ -15,7 +20,7 @@
             padding: 0;
         }
         
-        /* Анимация перехода */
+        /* Анимация перехода между страницами */
         .page-transition {
             position: fixed;
             top: 0;
@@ -35,15 +40,13 @@
             animation: fadeIn 1s ease-in forwards;
             animation-delay: 0.3s;
         }
-        
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
     </style>
 </head>
 <body>
+    <!-- Черный экран для анимации перехода -->
     <div class="page-transition" id="pageTransition"></div>
 
+    <!-- Главный экран -->
     <div class="welcome-screen">
         <div class="welcome-content">
             <h1 class="game-title">Codex of ...</h1>
@@ -52,10 +55,12 @@
         </div>
     </div>
 
+    <!-- Подвал -->
     <footer class="main-footer">
         <p>© 2025 Нифига не защищено! Бери, играй, распространяй!</p>
     </footer>
 
+    <!-- Скрипт для анимации кнопки -->
     <script>
         document.getElementById('startButton').addEventListener('click', function(e) {
             e.preventDefault();
