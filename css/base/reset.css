@@ -5,8 +5,8 @@
     box-sizing: border-box;
 }
 
-/* Основные настройки страницы */
-html, body {
-    height: 100%;
-    overflow-x: hidden;
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #d0d0d0;
 }
