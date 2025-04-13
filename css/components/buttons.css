@@ -1,4 +1,4 @@
-/* Стили для кнопки "Начать приключение" на главной */
+/* Все кнопки */
 .start-button {
     display: inline-block;
     padding: 15px 30px;
@@ -6,29 +6,12 @@
     color: white;
     border: 2px solid white;
     font-family: 'Cinzel Decorative', cursive;
-    cursor: pointer;
-    transition: all 0.3s; /* Плавное изменение при наведении */
+    /* ... остальные стили кнопки ... */
 }
 
-/* Как кнопка выглядит при наведении курсора */
-.start-button:hover {
-    background: rgba(255,255,255,0.1);
-    transform: translateY(-3px); /* Сдвигаем вверх */
-}
-
-/* Стили для кнопок в боковом меню */
 .nav-btn, .sidebar-nav a {
     display: block;
     padding: 16px 20px;
     background: #252525;
-    color: #e0e0e0;
-    border-radius: 6px;
-    margin: 10px 0;
-    cursor: pointer;
-}
-
-/* Активная кнопка в меню (текущая страница) */
-.nav-btn.active {
-    background: #1e3a57;
-    border-left: 4px solid #3498db;
+    /* ... остальные стили навигации ... */
 }

@@ -1,19 +1,16 @@
-/* Боковая панель (слева) */
+/* Боковая панель */
 .sidebar {
     width: 280px;
     position: fixed;
     height: 100vh;
     background: #1a1a1a;
     padding: 25px 20px;
-    overflow-y: auto; /* Прокрутка если не помещается */
+    overflow-y: auto;
+    z-index: 100;
 }
 
-/* Заголовок в боковой панели */
-.sidebar-header {
-    margin-bottom: 30px;
-}
-
-/* Навигация в боковой панели */
-.sidebar-nav {
-    /* Пусто - стили кнопок уже в buttons.css */
+.codex-accordion {
+    margin: 25px 0;
+    border-top: 1px solid #333;
+    padding-top: 15px;
 }

@@ -1,4 +1,4 @@
-/* Основная область контента (справа от боковой панели) */
+/* Основная область контента */
 .main-content {
     margin-left: 280px;
     padding: 30px;
@@ -6,11 +6,11 @@
     min-height: 100vh;
 }
 
-/* Белая "карточка" с контентом */
 #content-container {
     max-width: 900px;
     margin: 0 auto;
     padding: 30px;
     background: #404040;
     border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
 }

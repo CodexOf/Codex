@@ -1,7 +1,12 @@
-/* Сбрасываем все отступы и границы у всех элементов */
-/* Это как "обнуление" перед началом работы */
+/* Сброс стилей и базовые правила */
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box; /* Чтобы padding не ломал размеры */
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #d0d0d0;
 }
