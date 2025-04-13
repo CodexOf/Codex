@@ -4,14 +4,208 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Codex - Контент</title>
-    <!-- Подключаем стили -->
-    <link rel="stylesheet" href="css/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Roboto&display=swap" rel="stylesheet">
     <style>
-        /* Локальные стили для плавного появления контента */
+        /* ===== ГЛОБАЛЬНЫЕ СТИЛИ ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #d0d0d0;
+            overflow-x: hidden;
+        }
+        
+        /* ===== СТИЛИ САЙДБАРА ===== */
+        .sidebar {
+            width: 280px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            background: #1a1a1a;
+            color: #ddd;
+            padding: 25px 20px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .sidebar-header h2 {
+            color: #fff;
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+        
+        /* ===== СТИЛИ КНОПОК ===== */
+        .nav-btn, .sidebar-nav a {
+            display: block;
+            padding: 16px 20px;
+            margin: 10px 0;
+            font-size: 1.1rem;
+            background: #252525;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .nav-btn:hover, .sidebar-nav a:hover {
+            background: #303030;
+            color: #fff;
+            transform: translateX(3px);
+        }
+        
+        .nav-btn.active, .sidebar-nav a.active {
+            background: #1e3a57;
+            color: #fff;
+            border-left: 4px solid #3498db;
+            font-weight: 500;
+        }
+        
+        /* ===== СТИЛИ АККОРДЕОНОВ ===== */
+        .codex-accordion {
+            margin: 25px 0;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+        
+        .codex-section {
+            margin-bottom: 15px;
+        }
+        
+        .codex-btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: #2a2a2a;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 6px;
+            text-align: left;
+            font-size: 1.05rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .codex-btn:hover {
+            background: #333;
+            color: #fff;
+        }
+        
+        .codex-btn .arrow {
+            font-size: 0.9rem;
+            transition: transform 0.3s;
+        }
+        
+        .codex-content {
+            display: none;
+            padding: 8px 0 0 15px;
+        }
+        
+        .codex-section.active .codex-content {
+            display: block;
+        }
+        
+        .codex-section.active .codex-btn .arrow {
+            transform: rotate(180deg);
+        }
+        
+        /* ===== ОСНОВНОЙ КОНТЕНТ ===== */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            background: #0D1A13;
+            min-height: 100vh;
+        }
+        
         #content-container {
-            opacity: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px;
+            background: #404040;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
             transition: opacity 0.3s ease;
+        }
+        
+        /* ===== СОСТОЯНИЯ ===== */
+        .loading-indicator {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+            font-size: 1.2rem;
+        }
+        
+        .error-message {
+            text-align: center;
+            padding: 30px;
+            color: #dc3545;
+            background: #f8d7da;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .retry-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .home-btn {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        /* ===== АДАПТИВНОСТЬ ===== */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                padding: 15px;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            #content-container {
+                padding: 20px;
+            }
+            
+            .nav-btn, .codex-btn {
+                padding: 12px 15px;
+                font-size: 0.95rem;
+            }
         }
     </style>
 </head>
