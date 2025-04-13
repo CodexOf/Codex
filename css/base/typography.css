@@ -1,11 +1,8 @@
-/* Текст и заголовки */
-.sidebar-header h2 {
-    font-family: 'Cinzel Decorative', cursive;
-    font-size: 1.8rem;
-    text-align: center;
-    color: white;
-    text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-    margin-bottom: 30px;
+/* Шрифты и текст */
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #d0d0d0;
 }
 
 .game-title {
@@ -14,5 +11,11 @@
     text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
     letter-spacing: 5px;
     margin-bottom: 1rem;
-    animation: titleGlow 3s infinite alternate;
+}
+
+.sidebar-header h2 {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 1.8rem;
+    color: white;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
 }

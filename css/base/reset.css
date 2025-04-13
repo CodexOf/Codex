@@ -1,12 +1,12 @@
-/* Сброс стилей и базовые правила */
+/* Глобальный сброс */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Roboto', sans-serif;
-    line-height: 1.6;
-    color: #d0d0d0;
+/* Основные настройки страницы */
+html, body {
+    height: 100%;
+    overflow-x: hidden;
 }

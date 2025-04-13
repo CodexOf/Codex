@@ -4,20 +4,26 @@
 
 /* Компоненты */
 @import 'components/buttons.css';
-@import 'components/sidebar.css';
 
 /* Макеты */
+@import 'layouts/welcome.css';
 @import 'layouts/content.css';
 
 /* Анимации */
-@import 'utilities/animations.css';
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
 
-/* Медиа-запросы (оставьте их в конце!) */
+/* Медиазапросы */
 @media (max-width: 992px) {
     .sidebar {
         width: 100%;
         height: auto;
         position: static;
     }
-    /* ... остальные медиа-запросы ... */
+    .main-content {
+        margin-left: 0;
+    }
 }
