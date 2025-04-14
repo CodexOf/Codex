@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     
-    <!-- Стили анимаций, которые должны быть прямо здесь -->
+    <!-- Стили анимаций -->
     <style>
         /* Отключаем скролл на всем документе */
         html, body {
@@ -60,16 +60,7 @@
         <p>© 2025 Нифига не защищено! Бери, играй, распространяй!</p>
     </footer>
 
-    <!-- Скрипт для анимации кнопки -->
-    <script>
-        document.getElementById('startButton').addEventListener('click', function(e) {
-            e.preventDefault();
-            const transition = document.getElementById('pageTransition');
-            transition.style.opacity = '1';
-            setTimeout(() => {
-                window.location.href = this.getAttribute('href');
-            }, 800);
-        });
-    </script>
+    <!-- Подключение внешнего скрипта -->
+    <script src="script.js"></script>
 </body>
 </html>
