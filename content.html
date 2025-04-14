@@ -7,6 +7,7 @@
     <link rel="preload" href="partials/main.html" as="fetch" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Roboto&display=swap" rel="stylesheet">
     <style>
+        /* === ГЛОБАЛЬНЫЕ СТИЛИ === */
         * {
             margin: 0;
             padding: 0;
@@ -20,6 +21,7 @@
             overflow-x: hidden;
         }
         
+        /* === СТИЛИ САЙДБАРА === */
         .sidebar {
             width: 280px;
             position: fixed;
@@ -31,13 +33,105 @@
             padding: 25px 20px;
             overflow-y: auto;
             z-index: 100;
+            transition: all 0.3s;
         }
         
+        .sidebar-header h2 {
+            color: #fff;
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+        
+        /* === СТИЛИ КНОПОК === */
+        .nav-btn, .sidebar-nav a {
+            display: block;
+            padding: 16px 20px;
+            margin: 10px 0;
+            font-size: 1.1rem;
+            background: #252525;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .nav-btn:hover, .sidebar-nav a:hover {
+            background: #303030;
+            color: #fff;
+            transform: translateX(3px);
+        }
+        
+        .nav-btn.active, .sidebar-nav a.active {
+            background: #1e3a57;
+            color: #fff;
+            border-left: 4px solid #3498db;
+            font-weight: 500;
+        }
+        
+        /* === СТИЛИ АККОРДЕОНОВ === */
+        .codex-accordion {
+            margin: 25px 0;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+        
+        .codex-section {
+            margin-bottom: 15px;
+        }
+        
+        .codex-btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: #2a2a2a;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 6px;
+            text-align: left;
+            font-size: 1.05rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .codex-btn:hover {
+            background: #333;
+            color: #fff;
+        }
+        
+        .codex-btn .arrow {
+            font-size: 0.9rem;
+            transition: transform 0.3s;
+        }
+        
+        .codex-content {
+            display: none;
+            padding: 8px 0 0 15px;
+        }
+        
+        .codex-section.active .codex-content {
+            display: block;
+        }
+        
+        .codex-section.active .codex-btn .arrow {
+            transform: rotate(180deg);
+        }
+        
+        /* === ОСНОВНОЙ КОНТЕНТ === */
         .main-content {
             margin-left: 280px;
             padding: 30px;
             background: #0D1A13;
             min-height: 100vh;
+            transition: margin-left 0.3s;
         }
         
         #content-container {
@@ -47,8 +141,10 @@
             background: #404040;
             border-radius: 8px;
             box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            transition: opacity 0.3s ease;
         }
         
+        /* === СОСТОЯНИЯ === */
         .loading-indicator {
             text-align: center;
             padding: 50px;
@@ -83,14 +179,39 @@
             color: white;
         }
         
+        /* === АДАПТИВНОСТЬ === */
         @media (max-width: 992px) {
             .sidebar {
                 width: 100%;
                 height: auto;
                 position: static;
             }
+            
             .main-content {
                 margin-left: 0;
+            }
+            
+            .nav-btn, .codex-btn {
+                padding: 14px 18px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                padding: 15px;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            #content-container {
+                padding: 20px;
+            }
+            
+            .nav-btn, .codex-btn {
+                padding: 12px 15px;
+                font-size: 0.95rem;
             }
         }
     </style>
@@ -117,10 +238,54 @@
                     <div class="codex-content">
                         <button class="nav-btn" data-page="core/1_intro">Введение</button>
                         <button class="nav-btn" data-page="core/2_how_play">Как играть</button>
-                        <!-- Остальные кнопки -->
+                        <button class="nav-btn" data-page="core/3_dice">Игровые кости</button>
+                        <button class="nav-btn" data-page="core/4_actions">Действия</button>
+                        <button class="nav-btn" data-page="core/5_scene">Сцена</button>
+                        <button class="nav-btn" data-page="core/6_counters">Счетчики</button>
+                        <button class="nav-btn" data-page="core/7_playmat">Игровое поле</button>
+                        <button class="nav-btn" data-page="core/8_effects">Эффекты</button>
+                        <button class="nav-btn" data-page="core/9_items">Предметы</button>
+                        <button class="nav-btn" data-page="core/10_agree">Давайте договоримся</button>
                     </div>
                 </div>
-                <!-- Остальные аккордеоны -->
+                
+                <div class="codex-section">
+                    <button class="codex-btn">
+                        Codex of Heroes
+                        <span class="arrow">▼</span>
+                    </button>
+                    <div class="codex-content">
+                        <button class="nav-btn" data-page="heroes/7_char">Персонажи</button>
+                        <button class="nav-btn" data-page="heroes/9_goups_enemy">Группы и толпы</button>
+                        <button class="nav-btn" data-page="heroes/10_story_arcs">Сюжетные арки</button>
+                        <button class="nav-btn" data-page="heroes/11_create_char">Создание персонажа</button>
+                        <button class="nav-btn" data-page="heroes/12_benefits">Награды за активности</button>
+                    </div>
+                </div>
+
+                <div class="codex-section">
+                    <button class="codex-btn">
+                        Codex of Mortals
+                        <span class="arrow">▼</span>
+                    </button>
+                    <div class="codex-content">
+                        <button class="nav-btn" data-page="mortals/mortals1">Смертные 1</button>
+                        <button class="nav-btn" data-page="mortals/mortals2">Смертные 2</button>
+                        <button class="nav-btn" data-page="mortals/mortals3">Смертные 3</button>
+                    </div>
+                </div>
+
+                <div class="codex-section">
+                    <button class="codex-btn">
+                        Codex of Dust
+                        <span class="arrow">▼</span>
+                    </button>
+                    <div class="codex-content">
+                        <button class="nav-btn" data-page="dust/dust1">Прах 1</button>
+                        <button class="nav-btn" data-page="dust/dust2">Прах 2</button>
+                        <button class="nav-btn" data-page="dust/dust3">Прах 3</button>
+                    </div>
+                </div>
             </div>
         </nav>
     </div>
@@ -154,7 +319,7 @@
             
             fetch(`partials/${page}.html`)
                 .then(response => {
-                    if (!response.ok) throw new Error(`Страница "${page}" не найдена`);
+                    if (!response.ok) throw new Error(`Страница "${page}" не найдена (404)`);
                     return response.text();
                 })
                 .then(html => {
