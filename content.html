@@ -7,15 +7,125 @@
     <link rel="preload" href="partials/main.html" as="fetch" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Roboto&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Roboto', sans-serif; line-height: 1.6; color: #d0d0d0; overflow-x: hidden; }
-        /* Все остальные стили остаются без изменений */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #d0d0d0;
+            overflow-x: hidden;
+        }
+        
+        .sidebar {
+            width: 280px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            background: #1a1a1a;
+            color: #ddd;
+            padding: 25px 20px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            background: #0D1A13;
+            min-height: 100vh;
+        }
+        
+        #content-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px;
+            background: #404040;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+        
+        .loading-indicator {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+            font-size: 1.2rem;
+        }
+        
+        .error-message {
+            text-align: center;
+            padding: 30px;
+            color: #dc3545;
+            background: #f8d7da;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .error-message button {
+            margin: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .retry-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .home-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Боковая панель навигации -->
     <div class="sidebar">
-        <!-- Сайдбар без изменений -->
+        <div class="sidebar-header">
+            <h2>Codex of...</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <button class="nav-btn active" data-page="main">Главная</button>
+            <button class="nav-btn" data-page="about">О проекте</button>
+            <button class="nav-btn" data-page="contacts">Контакты</button>
+
+            <!-- Аккордеоны Codex -->
+            <div class="codex-accordion">
+                <div class="codex-section">
+                    <button class="codex-btn">
+                        CORE SYSTEM
+                        <span class="arrow">▼</span>
+                    </button>
+                    <div class="codex-content">
+                        <button class="nav-btn" data-page="core/1_intro">Введение</button>
+                        <button class="nav-btn" data-page="core/2_how_play">Как играть</button>
+                        <!-- Остальные кнопки -->
+                    </div>
+                </div>
+                <!-- Остальные аккордеоны -->
+            </div>
+        </nav>
     </div>
+
+    <!-- Основное содержимое -->
     <div class="main-content">
         <div id="content-container">
             <div class="loading-indicator">
@@ -23,7 +133,68 @@
             </div>
         </div>
     </div>
+
     <script>
+        // Функция для обновления активной кнопки
+        function updateActiveButton(page) {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-page') === page);
+            });
+        }
+
+        // Функция загрузки контента
+        function loadContent(page) {
+            const container = document.getElementById('content-container');
+            if (!container) {
+                console.error('Контейнер контента не найден');
+                return;
+            }
+
+            container.innerHTML = '<div class="loading-indicator"><p>Загрузка...</p></div>';
+            
+            fetch(`partials/${page}.html`)
+                .then(response => {
+                    if (!response.ok) throw new Error(`Страница "${page}" не найдена`);
+                    return response.text();
+                })
+                .then(html => {
+                    container.innerHTML = html;
+                    updateActiveButton(page);
+                    history.pushState({page}, null, `?page=${page}`);
+                })
+                .catch(err => {
+                    console.error('Ошибка загрузки:', err);
+                    container.innerHTML = `
+                        <div class="error-message">
+                            <h3>Ошибка загрузки</h3>
+                            <p>${err.message}</p>
+                            <button class="retry-btn">Повторить</button>
+                            <button class="home-btn">На главную</button>
+                        </div>
+                    `;
+                    
+                    // Добавляем обработчики для кнопок ошибки
+                    container.querySelector('.retry-btn').addEventListener('click', () => loadContent(page));
+                    container.querySelector('.home-btn').addEventListener('click', () => loadContent('main'));
+                });
+        }
+
+        // Обработчики аккордеонов
+        function setupAccordions() {
+            document.querySelectorAll('.codex-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const section = this.parentElement;
+                    section.classList.toggle('active');
+                    
+                    // Закрываем другие секции
+                    document.querySelectorAll('.codex-section').forEach(s => {
+                        if (s !== section) s.classList.remove('active');
+                    });
+                });
+            });
+        }
+
+        // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', () => {
             const maxAttempts = 10;
             let attempts = 0;
@@ -32,43 +203,31 @@
                 if (document.getElementById('content-container')) {
                     const urlParams = new URLSearchParams(window.location.search);
                     loadContent(urlParams.get('page') || 'main');
+                    setupAccordions();
+                    
+                    // Обработчики для кнопок навигации
+                    document.querySelectorAll('.nav-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            loadContent(this.getAttribute('data-page'));
+                        });
+                    });
                 } else if (attempts < maxAttempts) {
                     attempts++;
                     setTimeout(tryLoadContent, 50);
                 } else {
-                    console.error('Контейнер контента не найден');
+                    console.error('Контейнер контента не найден после 10 попыток');
                     setTimeout(() => window.location.reload(), 300);
                 }
             };
             
-            const loadContent = (page) => {
-                const container = document.getElementById('content-container');
-                container.innerHTML = '<div class="loading-indicator"><p>Загрузка...</p></div>';
-                
-                fetch(`partials/${page}.html`)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Страница не найдена');
-                        return response.text();
-                    })
-                    .then(html => {
-                        container.innerHTML = html;
-                        updateActiveButton(page);
-                        history.pushState({page}, null, `?page=${page}`);
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        container.innerHTML = `
-                            <div class="error-message">
-                                <h3>Ошибка загрузки</h3>
-                                <p>${err.message}</p>
-                                <button class="retry-btn" onclick="loadContent('${page}')">Повторить</button>
-                                <button class="home-btn" onclick="loadContent('main')">На главную</button>
-                            </div>
-                        `;
-                    });
-            };
-            
             tryLoadContent();
+        });
+
+        // Обработка истории браузера
+        window.addEventListener('popstate', function(event) {
+            if (event.state?.page) {
+                loadContent(event.state.page);
+            }
         });
     </script>
 </body>
