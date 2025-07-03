@@ -6,6 +6,7 @@
     <title>Codex - Контент</title>
     <link rel="preload" href="partials/main.html" as="fetch" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* === ГЛОБАЛЬНЫЕ СТИЛИ === */
         * {
@@ -152,6 +153,12 @@
             font-size: 1.2rem;
         }
         
+        .loading-indicator i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #3498db;
+        }
+        
         .error-message {
             text-align: center;
             padding: 30px;
@@ -161,12 +168,24 @@
             margin: 20px 0;
         }
         
+        .error-message i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #dc3545;
+        }
+        
         .error-message button {
             margin: 0.5rem;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.5rem;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .error-message button:hover {
+            transform: translateY(-2px);
         }
         
         .retry-btn {
@@ -174,9 +193,17 @@
             color: white;
         }
         
+        .retry-btn:hover {
+            background-color: #0056b3;
+        }
+        
         .home-btn {
             background-color: #6c757d;
             color: white;
+        }
+        
+        .home-btn:hover {
+            background-color: #545b62;
         }
         
         /* === АДАПТИВНОСТЬ === */
@@ -224,66 +251,114 @@
         </div>
         
         <nav class="sidebar-nav">
-            <button class="nav-btn active" data-page="main">Главная</button>
-            <button class="nav-btn" data-page="project">О проекте</button>
-            <button class="nav-btn" data-page="contacts">Контакты</button>
+            <a href="partials/main.html" class="nav-btn active">
+                <i class="fas fa-home"></i> Главная
+            </a>
+            <a href="partials/project.html" class="nav-btn">
+                <i class="fas fa-info-circle"></i> О проекте
+            </a>
+            <a href="partials/contacts.html" class="nav-btn">
+                <i class="fas fa-envelope"></i> Контакты
+            </a>
 
             <!-- Аккордеоны Codex -->
             <div class="codex-accordion">
                 <div class="codex-section">
                     <button class="codex-btn">
-                        CORE SYSTEM
+                        <span><i class="fas fa-cogs"></i> CORE SYSTEM</span>
                         <span class="arrow">▼</span>
                     </button>
                     <div class="codex-content">
-                        <button class="nav-btn" data-page="core/1_intro">Введение</button>
-                        <button class="nav-btn" data-page="core/2_how_play">Как играть</button>
-                        <button class="nav-btn" data-page="core/3_dice">Игровые кости</button>
-                        <button class="nav-btn" data-page="core/4_actions">Действия</button>
-                        <button class="nav-btn" data-page="core/5_scene">Сцена</button>
-                        <button class="nav-btn" data-page="core/6_counters">Счетчики</button>
-                        <button class="nav-btn" data-page="core/7_playmat">Игровое поле</button>
-                        <button class="nav-btn" data-page="core/8_effects">Эффекты</button>
-                        <button class="nav-btn" data-page="core/9_items">Предметы</button>
-                        <button class="nav-btn" data-page="core/10_agree">Давайте договоримся</button>
+                        <a href="partials/core/1_intro.html" class="nav-btn">
+                            <i class="fas fa-play"></i> Введение
+                        </a>
+                        <a href="partials/core/2_how_play.html" class="nav-btn">
+                            <i class="fas fa-question"></i> Как играть
+                        </a>
+                        <a href="partials/core/3_dice.html" class="nav-btn">
+                            <i class="fas fa-dice"></i> Игровые кости
+                        </a>
+                        <a href="partials/core/4_actions.html" class="nav-btn">
+                            <i class="fas fa-bolt"></i> Действия
+                        </a>
+                        <a href="partials/core/5_scene.html" class="nav-btn">
+                            <i class="fas fa-theater-masks"></i> Сцена
+                        </a>
+                        <a href="partials/core/6_counters.html" class="nav-btn">
+                            <i class="fas fa-calculator"></i> Счетчики
+                        </a>
+                        <a href="partials/core/7_playmat.html" class="nav-btn">
+                            <i class="fas fa-map"></i> Игровое поле
+                        </a>
+                        <a href="partials/core/8_effects.html" class="nav-btn">
+                            <i class="fas fa-magic"></i> Эффекты
+                        </a>
+                        <a href="partials/core/9_items.html" class="nav-btn">
+                            <i class="fas fa-box"></i> Предметы
+                        </a>
+                        <a href="partials/core/10_agree.html" class="nav-btn">
+                            <i class="fas fa-handshake"></i> Давайте договоримся
+                        </a>
                     </div>
                 </div>
                 
                 <div class="codex-section">
                     <button class="codex-btn">
-                        Codex of Heroes
+                        <span><i class="fas fa-mask"></i> Codex of Heroes</span>
                         <span class="arrow">▼</span>
                     </button>
                     <div class="codex-content">
-                        <button class="nav-btn" data-page="heroes/1_char">Персонажи</button>
-                        <button class="nav-btn" data-page="heroes/2_goups_enemy">Группы и толпы</button>
-                        <button class="nav-btn" data-page="heroes/3_story_arcs">Сюжетные арки</button>
-                        <button class="nav-btn" data-page="heroes/4_create_char">Создание персонажа</button>
-                        <button class="nav-btn" data-page="heroes/5_benefits">Награды за активности</button>
+                        <a href="partials/heroes/1_char.html" class="nav-btn">
+                            <i class="fas fa-user"></i> Персонажи
+                        </a>
+                        <a href="partials/heroes/2_goups_enemy.html" class="nav-btn">
+                            <i class="fas fa-users"></i> Группы и толпы
+                        </a>
+                        <a href="partials/heroes/3_story_arcs.html" class="nav-btn">
+                            <i class="fas fa-book"></i> Сюжетные арки
+                        </a>
+                        <a href="partials/heroes/4_create_char.html" class="nav-btn">
+                            <i class="fas fa-user-plus"></i> Создание персонажа
+                        </a>
+                        <a href="partials/heroes/5_benefits.html" class="nav-btn">
+                            <i class="fas fa-trophy"></i> Награды за активности
+                        </a>
                     </div>
                 </div>
 
                 <div class="codex-section">
                     <button class="codex-btn">
-                        Codex of Mortals
+                        <span><i class="fas fa-user-tie"></i> Codex of Mortals</span>
                         <span class="arrow">▼</span>
                     </button>
                     <div class="codex-content">
-                        <button class="nav-btn" data-page="mortals/mortals1">Смертные 1</button>
-                        <button class="nav-btn" data-page="mortals/mortals2">Смертные 2</button>
-                        <button class="nav-btn" data-page="mortals/mortals3">Смертные 3</button>
+                        <a href="partials/mortals/mortals1.html" class="nav-btn">
+                            <i class="fas fa-walking"></i> Смертные 1
+                        </a>
+                        <a href="partials/mortals/mortals2.html" class="nav-btn">
+                            <i class="fas fa-walking"></i> Смертные 2
+                        </a>
+                        <a href="partials/mortals/mortals3.html" class="nav-btn">
+                            <i class="fas fa-walking"></i> Смертные 3
+                        </a>
                     </div>
                 </div>
 
                 <div class="codex-section">
                     <button class="codex-btn">
-                        Codex of Dust
+                        <span><i class="fas fa-skull"></i> Codex of Dust</span>
                         <span class="arrow">▼</span>
                     </button>
                     <div class="codex-content">
-                        <button class="nav-btn" data-page="dust/dust1">Прах 1</button>
-                        <button class="nav-btn" data-page="dust/dust2">Прах 2</button>
-                        <button class="nav-btn" data-page="dust/dust3">Прах 3</button>
+                        <a href="partials/dust/dust1.html" class="nav-btn">
+                            <i class="fas fa-fire"></i> Прах 1
+                        </a>
+                        <a href="partials/dust/dust2.html" class="nav-btn">
+                            <i class="fas fa-fire"></i> Прах 2
+                        </a>
+                        <a href="partials/dust/dust3.html" class="nav-btn">
+                            <i class="fas fa-fire"></i> Прах 3
+                        </a>
                     </div>
                 </div>
             </div>
@@ -294,106 +369,13 @@
     <div class="main-content">
         <div id="content-container">
             <div class="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
                 <p>Загрузка контента...</p>
             </div>
         </div>
     </div>
 
-    <script>
-        // Функция для обновления активной кнопки
-        function updateActiveButton(page) {
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-page') === page);
-            });
-        }
-
-        // Функция загрузки контента
-        function loadContent(page) {
-            const container = document.getElementById('content-container');
-            if (!container) {
-                console.error('Контейнер контента не найден');
-                return;
-            }
-
-            container.innerHTML = '<div class="loading-indicator"><p>Загрузка...</p></div>';
-            
-            fetch(`partials/${page}.html`)
-                .then(response => {
-                    if (!response.ok) throw new Error(`Страница "${page}" не найдена (404)`);
-                    return response.text();
-                })
-                .then(html => {
-                    container.innerHTML = html;
-                    updateActiveButton(page);
-                    history.pushState({page}, null, `?page=${page}`);
-                })
-                .catch(err => {
-                    console.error('Ошибка загрузки:', err);
-                    container.innerHTML = `
-                        <div class="error-message">
-                            <h3>Ошибка загрузки</h3>
-                            <p>${err.message}</p>
-                            <button class="retry-btn">Повторить</button>
-                            <button class="home-btn">На главную</button>
-                        </div>
-                    `;
-                    
-                    // Добавляем обработчики для кнопок ошибки
-                    container.querySelector('.retry-btn').addEventListener('click', () => loadContent(page));
-                    container.querySelector('.home-btn').addEventListener('click', () => loadContent('main'));
-                });
-        }
-
-        // Обработчики аккордеонов
-        function setupAccordions() {
-            document.querySelectorAll('.codex-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const section = this.parentElement;
-                    section.classList.toggle('active');
-                    
-                    // Закрываем другие секции
-                    document.querySelectorAll('.codex-section').forEach(s => {
-                        if (s !== section) s.classList.remove('active');
-                    });
-                });
-            });
-        }
-
-        // Инициализация при загрузке
-        document.addEventListener('DOMContentLoaded', () => {
-            const maxAttempts = 10;
-            let attempts = 0;
-            
-            const tryLoadContent = () => {
-                if (document.getElementById('content-container')) {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    loadContent(urlParams.get('page') || 'main');
-                    setupAccordions();
-                    
-                    // Обработчики для кнопок навигации
-                    document.querySelectorAll('.nav-btn').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            loadContent(this.getAttribute('data-page'));
-                        });
-                    });
-                } else if (attempts < maxAttempts) {
-                    attempts++;
-                    setTimeout(tryLoadContent, 50);
-                } else {
-                    console.error('Контейнер контента не найден после 10 попыток');
-                    setTimeout(() => window.location.reload(), 300);
-                }
-            };
-            
-            tryLoadContent();
-        });
-
-        // Обработка истории браузера
-        window.addEventListener('popstate', function(event) {
-            if (event.state?.page) {
-                loadContent(event.state.page);
-            }
-        });
-    </script>
+    <!-- Подключение нашего content-loader.js -->
+    <script src="content-loader.js"></script>
 </body>
 </html>
