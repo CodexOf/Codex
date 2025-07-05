@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест анимации выхода</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=block" rel="stylesheet">
+    <style>
+        body {
+            opacity: 1;
+            animation: none;
+        }
+        .fonts-loaded .game-title,
+        .fonts-loaded .start-button {
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="fonts-loaded">
+    <div class="welcome-screen">
+        <div class="welcome-content">
+            <h1 class="game-title">Codex of Heroes</h1>
+            <p class="game-subtitle">Тест анимации выхода</p>
+            <button class="start-button" id="startButton">Тестировать анимацию</button>
+        </div>
+    </div>
+    <footer class="main-footer">
+        <p>Тестовая страница анимации</p>
+    </footer>
+    <script src="../script.js"></script>
+    <script>
+        // Переопределяем для теста
+        document.getElementById('startButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            PageTransitions.performExitAnimation('#');
+        });
+    </script>
+</body>
+</html>
