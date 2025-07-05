@@ -1,11 +1,14 @@
 class ContentLoader {
     static currentPage = null;
     static isTransitioning = false;
+    static isInitialized = false;
     static animationDuration = {
         exit: 300,
         enter: 400,
         loading: 150
     };
+    static preloadedContent = new Map();
+    static animationPrepared = false;
     
     static async loadContent(url) {
         // Предотвращаем множественные одновременные переходы
@@ -52,20 +55,32 @@ class ContentLoader {
     
     static async animateContentExit(container) {
         return new Promise((resolve) => {
-            // Добавляем класс для анимации выхода
+            // Подготавливаем анимации заранее если еще не подготовлены
+            if (!this.animationPrepared) {
+                this.prepareAnimations();
+                this.animationPrepared = true;
+            }
+            
+            // Оптимизация производительности
+            container.style.willChange = 'opacity, transform';
+            
+            // Используем CSS классы вместо inline стилей для лучшей производительности
             container.classList.add('content-exiting');
-            container.style.transition = `opacity ${this.animationDuration.exit}ms ease-in, transform ${this.animationDuration.exit}ms ease-in`;
+            
+            // Принудительный reflow для гарантии плавности
+            container.offsetHeight;
             
             // Запускаем анимацию выхода
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 container.classList.remove('content-exiting');
                 container.classList.add('content-exited');
-                container.style.opacity = '0';
-                container.style.transform = 'translateX(-20px)';
                 
                 // Завершаем анимацию
-                setTimeout(resolve, this.animationDuration.exit);
-            }, 10);
+                setTimeout(() => {
+                    container.style.willChange = 'auto';
+                    resolve();
+                }, this.animationDuration.exit);
+            });
         });
     }
     
@@ -77,7 +92,7 @@ class ContentLoader {
             </div>
         `;
         container.style.opacity = '0.7';
-        container.style.transform = 'translateX(0)';
+        container.style.transform = 'translate3d(0, 0, 0)';
     }
     
     static async fetchContent(url) {
@@ -107,30 +122,30 @@ class ContentLoader {
             // Устанавливаем новый контент
             container.innerHTML = html;
             
+            // Оптимизация производительности
+            container.style.willChange = 'opacity, transform';
+            
             // Подготавливаем для анимации входа
             container.classList.remove('content-exited');
             container.classList.add('content-entering');
-            container.style.opacity = '0';
-            container.style.transform = 'translateX(20px)';
+            
+            // Принудительный reflow
+            container.offsetHeight;
             
             // Небольшая задержка для плавности
             setTimeout(() => {
-                container.style.transition = `opacity ${this.animationDuration.enter}ms ease-out, transform ${this.animationDuration.enter}ms ease-out`;
-                
                 // Запускаем анимацию входа
-                setTimeout(() => {
+                requestAnimationFrame(() => {
                     container.classList.remove('content-entering');
                     container.classList.add('content-entered');
-                    container.style.opacity = '1';
-                    container.style.transform = 'translateX(0)';
                     
                     // Завершаем анимацию
                     setTimeout(() => {
                         container.classList.remove('content-entered');
-                        container.style.transition = '';
+                        container.style.willChange = 'auto';
                         resolve();
                     }, this.animationDuration.enter);
-                }, 10);
+                });
             }, this.animationDuration.loading);
         });
     }
@@ -153,13 +168,13 @@ class ContentLoader {
             
             // Анимация появления ошибки
             container.style.opacity = '0';
-            container.style.transform = 'translateX(0)';
+            container.style.transform = 'translate3d(0, 0, 0)';
             container.style.transition = `opacity ${this.animationDuration.enter}ms ease-out`;
             
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 container.style.opacity = '1';
                 setTimeout(resolve, this.animationDuration.enter);
-            }, 10);
+            });
         });
     }
     
@@ -211,6 +226,10 @@ class ContentLoader {
     }
 
     static init() {
+        // Подготавливаем анимации сразу
+        this.prepareAnimations();
+        this.animationPrepared = true;
+        
         // Инициализация аккордеонов
         this.initAccordions();
         
@@ -289,10 +308,57 @@ class ContentLoader {
         
         return await Promise.allSettled(preloadPromises);
     }
+    
+    // Метод для предварительной подготовки анимаций
+    static prepareAnimations() {
+        // Создаем невидимый элемент для "прогрева" CSS анимаций
+        const testElement = document.createElement('div');
+        testElement.style.cssText = `
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+            will-change: opacity, transform;
+        `;
+        document.body.appendChild(testElement);
+        
+        // Принудительно запускаем все анимации для их "прогрева"
+        const animationClasses = ['content-exiting', 'content-exited', 'content-entering', 'content-entered'];
+        
+        animationClasses.forEach((className, index) => {
+            setTimeout(() => {
+                testElement.classList.add(className);
+                // Принудительный reflow
+                testElement.offsetHeight;
+                testElement.classList.remove(className);
+            }, index * 10);
+        });
+        
+        // Очищаем тестовый элемент через некоторое время
+        setTimeout(() => {
+            if (testElement.parentNode) {
+                testElement.parentNode.removeChild(testElement);
+            }
+        }, 100);
+        
+        // Подготавливаем контейнер контента для анимаций
+        const container = document.getElementById('content-container');
+        if (container) {
+            container.style.backfaceVisibility = 'hidden';
+            container.style.perspective = '1000px';
+            container.style.transformStyle = 'preserve-3d';
+        }
+    }
 }
 
 // Инициализация после полной загрузки DOM
 document.addEventListener('DOMContentLoaded', () => {
+    // Подготавливаем анимации как можно раньше
+    ContentLoader.prepareAnimations();
+    
     // Ждем пока все элементы будут готовы
     setTimeout(() => {
         ContentLoader.init();
