@@ -1,72 +1,147 @@
 class ContentLoader {
     static currentPage = null;
+    static isTransitioning = false;
+    static animationDuration = {
+        exit: 300,
+        enter: 400,
+        loading: 150
+    };
     
     static async loadContent(url) {
+        // Предотвращаем множественные одновременные переходы
+        if (this.isTransitioning) {
+            return;
+        }
+        
         const container = document.getElementById('content-container');
         if (!container) {
             console.error('Контейнер контента не найден');
             return;
         }
 
-        // Показываем индикатор загрузки
-        container.style.opacity = '0.5';
-        container.innerHTML = `
-            <div class="loading-indicator">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Загрузка...</p>
-            </div>
-        `;
+        // Отмечаем начало перехода
+        this.isTransitioning = true;
 
         try {
-            // Нормализация URL для GitHub Pages и локального сервера
-            let normalizedUrl = url;
+            // Фаза 1: Анимация выхода старого контента
+            await this.animateContentExit(container);
             
-            // Если это GitHub Pages
-            if (window.location.host.includes('github.io')) {
-                // Удаляем возможные дублирования /Codex/
-                normalizedUrl = url.replace('/Codex/', '').replace('Codex/', '');
-                // Добавляем базовый путь
-                normalizedUrl = `/Codex/${normalizedUrl}`;
-            }
+            // Фаза 2: Показ индикатора загрузки
+            this.showLoadingIndicator(container);
             
-            // Для локального сервера оставляем как есть
-            const response = await fetch(normalizedUrl);
+            // Фаза 3: Загрузка нового контента
+            const html = await this.fetchContent(url);
             
-            if (!response.ok) {
-                throw new Error(`Страница не найдена (${response.status})`);
-            }
+            // Фаза 4: Анимация входа нового контента
+            await this.animateContentEnter(container, html);
             
-            const html = await response.text();
-            
-            // Плавное появление контента
-            container.innerHTML = html;
-            container.style.opacity = '0';
-            
-            // Анимация появления
-            setTimeout(() => {
-                container.style.opacity = '1';
-            }, 100);
-            
-            // Обновляем активную кнопку
+            // Обновляем состояние
             this.updateActiveButton(url);
-            
-            // Обновляем URL в адресной строке
-            const pageParam = url.replace('partials/', '').replace('.html', '');
-            history.pushState({ page: pageParam }, '', `?page=${pageParam}`);
-            
-            // Прокрутка вверх
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // Сохраняем текущую страницу
+            this.updateBrowserHistory(url);
+            this.scrollToTop();
             this.currentPage = url;
             
         } catch (error) {
             console.error('Ошибка загрузки контента:', error);
+            await this.showErrorMessage(container, error.message, url);
+        } finally {
+            // Сбрасываем флаг перехода
+            this.isTransitioning = false;
+        }
+    }
+    
+    static async animateContentExit(container) {
+        return new Promise((resolve) => {
+            // Добавляем класс для анимации выхода
+            container.classList.add('content-exiting');
+            container.style.transition = `opacity ${this.animationDuration.exit}ms ease-in, transform ${this.animationDuration.exit}ms ease-in`;
+            
+            // Запускаем анимацию выхода
+            setTimeout(() => {
+                container.classList.remove('content-exiting');
+                container.classList.add('content-exited');
+                container.style.opacity = '0';
+                container.style.transform = 'translateX(-20px)';
+                
+                // Завершаем анимацию
+                setTimeout(resolve, this.animationDuration.exit);
+            }, 10);
+        });
+    }
+    
+    static showLoadingIndicator(container) {
+        container.innerHTML = `
+            <div class="loading-indicator loading-pulse">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Загрузка...</p>
+            </div>
+        `;
+        container.style.opacity = '0.7';
+        container.style.transform = 'translateX(0)';
+    }
+    
+    static async fetchContent(url) {
+        // Нормализация URL для GitHub Pages и локального сервера
+        let normalizedUrl = url;
+        
+        // Если это GitHub Pages
+        if (window.location.host.includes('github.io')) {
+            // Удаляем возможные дублирования /Codex/
+            normalizedUrl = url.replace('/Codex/', '').replace('Codex/', '');
+            // Добавляем базовый путь
+            normalizedUrl = `/Codex/${normalizedUrl}`;
+        }
+        
+        // Для локального сервера оставляем как есть
+        const response = await fetch(normalizedUrl);
+        
+        if (!response.ok) {
+            throw new Error(`Страница не найдена (${response.status})`);
+        }
+        
+        return await response.text();
+    }
+    
+    static async animateContentEnter(container, html) {
+        return new Promise((resolve) => {
+            // Устанавливаем новый контент
+            container.innerHTML = html;
+            
+            // Подготавливаем для анимации входа
+            container.classList.remove('content-exited');
+            container.classList.add('content-entering');
+            container.style.opacity = '0';
+            container.style.transform = 'translateX(20px)';
+            
+            // Небольшая задержка для плавности
+            setTimeout(() => {
+                container.style.transition = `opacity ${this.animationDuration.enter}ms ease-out, transform ${this.animationDuration.enter}ms ease-out`;
+                
+                // Запускаем анимацию входа
+                setTimeout(() => {
+                    container.classList.remove('content-entering');
+                    container.classList.add('content-entered');
+                    container.style.opacity = '1';
+                    container.style.transform = 'translateX(0)';
+                    
+                    // Завершаем анимацию
+                    setTimeout(() => {
+                        container.classList.remove('content-entered');
+                        container.style.transition = '';
+                        resolve();
+                    }, this.animationDuration.enter);
+                }, 10);
+            }, this.animationDuration.loading);
+        });
+    }
+    
+    static async showErrorMessage(container, errorMessage, url) {
+        return new Promise((resolve) => {
             container.innerHTML = `
-                <div class="error-message">
+                <div class="error-message error-shake">
                     <i class="fas fa-exclamation-triangle"></i>
                     <h3>Ошибка загрузки</h3>
-                    <p>Не удалось загрузить страницу: ${error.message}</p>
+                    <p>Не удалось загрузить страницу: ${errorMessage}</p>
                     <button class="retry-btn" onclick="ContentLoader.loadContent('${url}')">
                         <i class="fas fa-sync-alt"></i> Попробовать снова
                     </button>
@@ -75,8 +150,26 @@ class ContentLoader {
                     </button>
                 </div>
             `;
-            container.style.opacity = '1';
-        }
+            
+            // Анимация появления ошибки
+            container.style.opacity = '0';
+            container.style.transform = 'translateX(0)';
+            container.style.transition = `opacity ${this.animationDuration.enter}ms ease-out`;
+            
+            setTimeout(() => {
+                container.style.opacity = '1';
+                setTimeout(resolve, this.animationDuration.enter);
+            }, 10);
+        });
+    }
+    
+    static updateBrowserHistory(url) {
+        const pageParam = url.replace('partials/', '').replace('.html', '');
+        history.pushState({ page: pageParam }, '', `?page=${pageParam}`);
+    }
+    
+    static scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     static updateActiveButton(url) {
@@ -149,6 +242,53 @@ class ContentLoader {
             this.loadContent('partials/main.html');
         }
     }
+    
+    // Добавляем метод для быстрого перехода без анимации (для внутренних нужд)
+    static async loadContentInstant(url) {
+        const container = document.getElementById('content-container');
+        if (!container) {
+            console.error('Контейнер контента не найден');
+            return;
+        }
+
+        try {
+            const html = await this.fetchContent(url);
+            container.innerHTML = html;
+            container.style.opacity = '1';
+            container.style.transform = 'translateX(0)';
+            
+            this.updateActiveButton(url);
+            this.updateBrowserHistory(url);
+            this.currentPage = url;
+            
+        } catch (error) {
+            console.error('Ошибка быстрой загрузки:', error);
+            container.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Ошибка загрузки</h3>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
+    }
+    
+    // Метод для предзагрузки контента
+    static async preloadContent(urls) {
+        const preloadPromises = urls.map(async (url) => {
+            try {
+                const html = await this.fetchContent(url);
+                // Сохраняем в кэш (можно расширить функциональность)
+                console.log(`Предзагружен контент: ${url}`);
+                return { url, html, success: true };
+            } catch (error) {
+                console.warn(`Не удалось предзагрузить: ${url}`, error);
+                return { url, error, success: false };
+            }
+        });
+        
+        return await Promise.allSettled(preloadPromises);
+    }
 }
 
 // Инициализация после полной загрузки DOM
@@ -156,6 +296,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ждем пока все элементы будут готовы
     setTimeout(() => {
         ContentLoader.init();
+        
+        // Предзагружаем основные страницы для быстрых переходов
+        ContentLoader.preloadContent([
+            'partials/main.html',
+            'partials/project.html',
+            'partials/contacts.html',
+            'partials/core/1_intro.html'
+        ]);
     }, 100);
 });
 
