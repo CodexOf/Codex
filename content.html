@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Codex - Контент</title>
     <link rel="preload" href="partials/main.html" as="fetch" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Roboto&display=swap" rel="stylesheet">
+    <!-- Предварительная загрузка критически важного шрифта -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/cinzeldecorative/v16/daaCSScvJGqLYhG8nNt8KPPswUAPnh7URs0LaCpbRzhXVrE.woff2" as="font" type="font/woff2" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=block" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* === ГЛОБАЛЬНЫЕ СТИЛИ === */
@@ -39,11 +41,17 @@
         
         .sidebar-header h2 {
             color: #fff;
-            font-family: 'Cinzel Decorative', cursive;
+            font-family: 'Cinzel Decorative', 'Times New Roman', serif;
             font-size: 1.8rem;
             text-align: center;
             margin-bottom: 30px;
             text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            font-display: block;
+            visibility: hidden;
+        }
+        
+        .fonts-loaded .sidebar-header h2 {
+            visibility: visible;
         }
         
         /* === СТИЛИ КНОПОК === */
@@ -377,5 +385,26 @@
 
     <!-- Подключение нашего content-loader.js -->
     <script src="content-loader.js"></script>
+    
+    <script>
+        // Проверка загрузки шрифтов
+        if ('fonts' in document) {
+            document.fonts.ready.then(function() {
+                console.log('Все шрифты загружены успешно');
+                document.body.classList.add('fonts-loaded');
+            });
+            
+            // Дополнительная проверка конкретного шрифта
+            document.fonts.load('700 1em "Cinzel Decorative"').then(function() {
+                console.log('Cinzel Decorative загружен');
+                document.body.classList.add('fonts-loaded');
+            });
+        }
+        
+        // Fallback для старых браузеров
+        setTimeout(function() {
+            document.body.classList.add('fonts-loaded');
+        }, 3000);
+    </script>
 </body>
 </html>

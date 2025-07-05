@@ -21,12 +21,18 @@
 }
 
 .game-title {
-    font-family: 'Cinzel Decorative', cursive;
+    font-family: 'Cinzel Decorative', 'Times New Roman', serif;
     font-size: 5rem;
     text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
     letter-spacing: 5px;
     margin-bottom: 1rem;
     animation: titleGlow 3s infinite alternate;
+    font-display: block;
+    visibility: hidden;
+}
+
+.fonts-loaded .game-title {
+    visibility: visible;
 }
 
 .game-subtitle {
@@ -43,7 +49,7 @@
     background: transparent;
     color: white;
     border: 2px solid white;
-    font-family: 'Cinzel Decorative', cursive;
+    font-family: 'Cinzel Decorative', 'Times New Roman', serif;
     font-size: 1.2rem;
     text-decoration: none;
     letter-spacing: 2px;
@@ -51,6 +57,12 @@
     transition: all 0.3s;
     animation: pulse 2s infinite;
     margin-top: 20px;
+    font-display: block;
+    visibility: hidden;
+}
+
+.fonts-loaded .start-button {
+    visibility: visible;
 }
 
 .start-button:hover {

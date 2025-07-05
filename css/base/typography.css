@@ -6,16 +6,28 @@ body {
 }
 
 .game-title {
-    font-family: 'Cinzel Decorative', cursive;
+    font-family: 'Cinzel Decorative', 'Times New Roman', serif;
     font-size: 5rem;
     text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
     letter-spacing: 5px;
     margin-bottom: 1rem;
+    font-display: block;
+    visibility: hidden;
+}
+
+.fonts-loaded .game-title {
+    visibility: visible;
 }
 
 .sidebar-header h2 {
-    font-family: 'Cinzel Decorative', cursive;
+    font-family: 'Cinzel Decorative', 'Times New Roman', serif;
     font-size: 1.8rem;
     color: white;
     text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    font-display: block;
+    visibility: hidden;
+}
+
+.fonts-loaded .sidebar-header h2 {
+    visibility: visible;
 }
