@@ -107,19 +107,13 @@ class ContentLoader {
         // Убираем начальные слэши
         let normalizedUrl = url.replace(/^\/+/, '');
         
-        // Проверяем, на GitHub Pages ли мы
-        const isGitHubPages = window.location.hostname.includes('github.io');
-        const basePath = isGitHubPages ? '/Codex/' : '';
-        
-        // Для GitHub Pages добавляем базовый путь если его нет
-        if (isGitHubPages && !normalizedUrl.startsWith('Codex/')) {
-            normalizedUrl = `Codex/${normalizedUrl}`;
+        // Проверяем относительный путь от текущей страницы
+        if (!normalizedUrl.startsWith('http') && !normalizedUrl.startsWith('/')) {
+            // Для локальных файлов просто возвращаем как есть
+            return normalizedUrl;
         }
         
-        // Убираем дублирование Codex/
-        normalizedUrl = normalizedUrl.replace(/Codex\/Codex\//, 'Codex/');
-        
-        return basePath + normalizedUrl;
+        return normalizedUrl;
     }
     
     // Показать индикатор загрузки
@@ -381,7 +375,10 @@ class ContentLoader {
         const accordionButtons = document.querySelectorAll('.codex-btn');
         
         accordionButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
                 const section = this.parentElement;
                 if (!section) return;
                 
@@ -403,26 +400,44 @@ class ContentLoader {
     }
 
     static initNavigation() {
+        // Удаляем старые обработчики событий
+        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+            link.removeEventListener('click', this.navClickHandler);
+        });
+        
         const navLinks = document.querySelectorAll('.sidebar-nav a');
         
         navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const href = link.getAttribute('href');
-                
-                if (!href) {
-                    console.warn('Ссылка без href:', link);
-                    return;
-                }
-                
-                // Определяем тип анимации в зависимости от секции
-                let animationType = this.getAnimationForSection(href);
-                
-                this.loadContent(href, animationType);
-            });
+            link.addEventListener('click', this.navClickHandler.bind(this));
         });
         
         console.log('Навигация инициализирована:', navLinks.length, 'ссылок');
+    }
+    
+    static navClickHandler(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const link = e.currentTarget;
+        const href = link.getAttribute('href');
+        
+        if (!href || href === '#') {
+            console.warn('Ссылка без href или с #:', link);
+            return;
+        }
+        
+        // Проверяем, что ссылка не является активной (чтобы избежать лишних перезагрузок)
+        if (link.classList.contains('active') && this.currentPage === href) {
+            console.log('Ссылка уже активна, пропускаем');
+            return;
+        }
+        
+        console.log('Клик по навигации:', href);
+        
+        // Определяем тип анимации в зависимости от секции
+        let animationType = this.getAnimationForSection(href);
+        
+        this.loadContent(href, animationType);
     }
     
     static getAnimationForSection(url) {
@@ -503,18 +518,15 @@ class ContentLoader {
 
     static init() {
         try {
-            if (document.readyState === 'loading') {
-                console.warn('DOM еще не готов, отложенная инициализация');
-                return;
-            }
-            
             console.log('Инициализация ContentLoader...');
+            console.log('DOM ready state:', document.readyState);
             
+            this.injectAnimationStyles();
             this.initAccordions();
             this.initNavigation();
-            this.injectAnimationStyles();
             this.createAnimationControls();
 
+            // Обработчик для кнопки "Назад" браузера
             window.addEventListener('popstate', (event) => {
                 console.log('Событие popstate:', event.state);
                 if (event.state && event.state.page) {
@@ -525,16 +537,20 @@ class ContentLoader {
                 }
             });
 
+            // Определяем начальную страницу
             const urlParams = new URLSearchParams(window.location.search);
             const page = urlParams.get('page') || 'main';
             const initialUrl = `partials/${page}.html`;
             
+            // Устанавливаем начальное состояние истории
             if (!history.state) {
                 history.replaceState({ page: page }, '', window.location.href);
             }
             
+            // Загружаем начальную страницу
             this.loadContent(initialUrl);
             
+            // Инициализируем клавиатурные сокращения
             this.initKeyboardShortcuts();
             
             console.log('ContentLoader успешно инициализирован');
@@ -587,23 +603,26 @@ class ContentLoader {
         console.log('Загрузка:', this.isLoading);
         console.log('Текущая анимация:', this.currentAnimation);
         console.log('Режим random:', this.randomMode);
+        console.log('Количество навигационных ссылок:', document.querySelectorAll('.sidebar-nav a').length);
+        console.log('Количество аккордеонов:', document.querySelectorAll('.codex-btn').length);
     }
 }
 
+// Инициализация при готовности DOM
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM готов, инициализируем ContentLoader...');
+    ContentLoader.init();
+});
+
+// Дополнительная проверка на случай, если DOM уже готов
+if (document.readyState !== 'loading') {
+    console.log('DOM уже готов, запускаем инициализацию ContentLoader');
     setTimeout(() => {
         ContentLoader.init();
     }, 100);
-});
-
-if (document.readyState !== 'loading') {
-    console.log('DOM уже готов, запускаем немедленную инициализацию');
-    setTimeout(() => {
-        ContentLoader.init();
-    }, 50);
 }
 
+// Экспортируем в глобальную область видимости
 if (typeof window !== 'undefined') {
     window.ContentLoader = ContentLoader;
 }

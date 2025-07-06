@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест навигации Codex</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Тест навигации Codex</h1>
+        
+        <div id="status" class="status warning">
+            Загрузка тестов...
+        </div>
+        
+        <h2>Быстрые тесты</h2>
+        <div>
+            <a href="#" class="test-button" onclick="testMainPage()">Главная страница</a>
+            <a href="#" class="test-button" onclick="testCoreIntro()">Core: Введение</a>
+            <a href="#" class="test-button" onclick="testHeroes()">Heroes: Персонажи</a>
+            <a href="#" class="test-button" onclick="testMortals()">Mortals</a>
+            <a href="#" class="test-button" onclick="testDust()">Dust</a>
+            <a href="#" class="test-button" onclick="testProject()">О проекте</a>
+            <a href="#" class="test-button" onclick="testContacts()">Контакты</a>
+        </div>
+        
+        <h2>Тест анимаций</h2>
+        <div>
+            <a href="#" class="test-button" onclick="setAnimation('fade')">Fade</a>
+            <a href="#" class="test-button" onclick="setAnimation('slide-left')">Slide</a>
+            <a href="#" class="test-button" onclick="setAnimation('scale')">Scale</a>
+            <a href="#" class="test-button" onclick="setAnimation('flip')">Flip</a>
+            <a href="#" class="test-button" onclick="enableRandomAnimations()">Random</a>
+        </div>
+        
+        <h2>Диагностика</h2>
+        <div>
+            <a href="#" class="test-button" onclick="runDiagnostics()">Запустить диагностику</a>
+            <a href="#" class="test-button" onclick="showDebugInfo()">Debug информация</a>
+            <a href="#" class="test-button" onclick="reloadCurrentPage()">Перезагрузить страницу</a>
+        </div>
+        
+        <h2>Результаты тестов</h2>
+        <div id="test-results">
+            <p>Тесты не запущены</p>
+        </div>
+        
+        <h2>Лог консоли</h2>
+        <div id="console-log" style="background: #f8f9fa; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto;">
+            Лог будет отображаться здесь...
+        </div>
+    </div>
+
+    <script>
+        // Перехватываем console.log для отображения в интерфейсе
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addToLog(type, message) {
+            const logElement = document.getElementById('console-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.marginBottom = '5px';
+            logEntry.style.color = type === 'error' ? '#dc3545' : type === 'warn' ? '#856404' : '#333';
+            logEntry.innerHTML = `<span style="color: #666;">[${timestamp}]</span> ${message}`;
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToLog('log', args.join(' '));
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToLog('error', '❌ ' + args.join(' '));
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToLog('warn', '⚠️ ' + args.join(' '));
+        };
+
+        // Функции тестирования
+        function updateStatus(message, type = 'warning') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        function addTestResult(name, success, details = '') {
+            const results = document.getElementById('test-results');
+            const result = document.createElement('div');
+            result.style.padding = '8px';
+            result.style.margin = '5px 0';
+            result.style.borderRadius = '4px';
+            result.style.background = success ? '#d4edda' : '#f8d7da';
+            result.style.color = success ? '#155724' : '#721c24';
+            result.innerHTML = `
+                <strong>${success ? '✅' : '❌'} ${name}</strong>
+                ${details ? `<br><small>${details}</small>` : ''}
+            `;
+            results.appendChild(result);
+        }
+
+        // Проверяем наличие ContentLoader
+        function checkContentLoader() {
+            if (typeof window.ContentLoader !== 'undefined') {
+                updateStatus('ContentLoader найден!', 'success');
+                addTestResult('ContentLoader', true, 'Класс доступен в window.ContentLoader');
+                return true;
+            } else {
+                updateStatus('ContentLoader не найден!', 'error');
+                addTestResult('ContentLoader', false, 'Класс не найден в window.ContentLoader');
+                return false;
+            }
+        }
+
+        // Тестовые функции для навигации
+        async function testMainPage() {
+            if (!checkContentLoader()) return;
+            try {
+                await window.ContentLoader.loadContent('partials/main.html');
+                addTestResult('Главная страница', true, 'Успешно загружена');
+            } catch (error) {
+                addTestResult('Главная страница', false, error.message);
+            }
+        }
+
+        async function testCoreIntro() {
+            if (!checkContentLoader()) return;
+            try {
+                await window.ContentLoader.loadContent('partials/core/1_intro.html');
+                addTestResult('Core: Введение', true, 'Успешно загружена');
+            } catch (error) {
+                addTestResult('Core: Введение', false, error.message);
+            }
+        }
+
+        async function testHeroes() {
+            if (!checkContentLoader()) return;
+            try {
+                await window.ContentLoader.loadContent('partials/heroes/1_char.html');
+                addTestResult('Heroes: Персонажи', true, 'Успешно загружена');
+            } catch (error) {
+                addTestResult('Heroes: Персонажи', false, error.message);
+            }
+        }
+
+        async function testMortals() {
+            if (!checkContentLoader()) return;
+            try {
+                await window.ContentLoader.loadContent('partials/mortals/mortals1.html');
+                addTestResult('Mortals', true, 'Успешно загружена');
+            } catch (error) {
+                addTestResult('Mortals', false, error.message);
+            }
+        }
+
+        async function testDust() {
+            if (!checkContentLoader()) return;
+            try {
+                await window.ContentLoader.loadContent('partials/dust/dust1.html');
+                addTestResult('Dust', true, 'Успешно загружена');
+            } catch (error) {
+                addTestResult('Dust', false, error.message);
+            }
+        }
+
+        async function testProject() {
+            if (!checkContentLoader()) return;
+            try {
+                await window.ContentLoader.loadContent('partials/project.html');
+                addTestResult('О проекте', true, 'Успешно загружена');
+            } catch (error) {
+                addTestResult('О проекте', false, error.message);
+            }
+        }
+
+        async function testContacts() {
+            if (!checkContentLoader()) return;
+            try {
+                await window.ContentLoader.loadContent('partials/contacts.html');
+                addTestResult('Контакты', true, 'Успешно загружена');
+            } catch (error) {
+                addTestResult('Контакты', false, error.message);
+            }
+        }
+
+        // Функции для тестирования анимаций
+        function setAnimation(type) {
+            if (!checkContentLoader()) return;
+            try {
+                window.ContentLoader.setAnimationType(type);
+                addTestResult(`Анимация: ${type}`, true, 'Тип анимации установлен');
+            } catch (error) {
+                addTestResult(`Анимация: ${type}`, false, error.message);
+            }
+        }
+
+        function enableRandomAnimations() {
+            if (!checkContentLoader()) return;
+            try {
+                window.ContentLoader.enableRandomAnimations();
+                addTestResult('Random анимации', true, 'Режим случайных анимаций включен');
+            } catch (error) {
+                addTestResult('Random анимации', false, error.message);
+            }
+        }
+
+        // Диагностические функции
+        function runDiagnostics() {
+            console.log('=== Запуск диагностики ===');
+            
+            // Проверяем ContentLoader
+            const hasContentLoader = checkContentLoader();
+            
+            // Проверяем DOM элементы
+            const container = document.getElementById('content-container');
+            addTestResult('content-container', !!container, container ? 'Элемент найден' : 'Элемент не найден');
+            
+            const navLinks = document.querySelectorAll('.sidebar-nav a');
+            addTestResult('Навигационные ссылки', navLinks.length > 0, `Найдено ${navLinks.length} ссылок`);
+            
+            const accordions = document.querySelectorAll('.codex-btn');
+            addTestResult('Аккордеоны', accordions.length > 0, `Найдено ${accordions.length} аккордеонов`);
+            
+            // Проверяем файлы
+            checkFileExists('partials/main.html');
+            checkFileExists('partials/core/1_intro.html');
+            checkFileExists('partials/heroes/1_char.html');
+            
+            console.log('=== Диагностика завершена ===');
+        }
+
+        async function checkFileExists(url) {
+            try {
+                const response = await fetch(url);
+                addTestResult(`Файл: ${url}`, response.ok, `Статус: ${response.status}`);
+            } catch (error) {
+                addTestResult(`Файл: ${url}`, false, `Ошибка: ${error.message}`);
+            }
+        }
+
+        function showDebugInfo() {
+            if (!checkContentLoader()) return;
+            window.ContentLoader.debug();
+            addTestResult('Debug информация', true, 'Информация выведена в консоль');
+        }
+
+        function reloadCurrentPage() {
+            if (!checkContentLoader()) return;
+            try {
+                window.ContentLoader.reload();
+                addTestResult('Перезагрузка', true, 'Страница перезагружена');
+            } catch (error) {
+                addTestResult('Перезагрузка', false, error.message);
+            }
+        }
+
+        // Автоматическая проверка при загрузке
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                console.log('🧪 Тестовая страница загружена');
+                checkContentLoader();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
