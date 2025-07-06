@@ -1,57 +1,409 @@
-.sidebar-nav a, 
+/* === СТИЛИ КНОПОК === */
+
+/* Базовая кнопка */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-family: inherit;
+    font-size: var(--font-size-base, 1rem);
+    font-weight: var(--font-weight-medium, 500);
+    line-height: 1;
+    text-decoration: none;
+    border: none;
+    border-radius: var(--border-radius, 6px);
+    cursor: pointer;
+    transition: all var(--transition-normal, 0.3s);
+    min-height: var(--touch-target-min, 44px);
+    user-select: none;
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--primary-color, #3498db);
+    outline-offset: 2px;
+}
+
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Размеры кнопок */
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: var(--font-size-sm, 0.875rem);
+    min-height: 36px;
+}
+
+.btn-lg {
+    padding: 1rem 2rem;
+    font-size: var(--font-size-lg, 1.125rem);
+    min-height: 52px;
+}
+
+.btn-xl {
+    padding: 1.25rem 2.5rem;
+    font-size: var(--font-size-xl, 1.25rem);
+    min-height: 60px;
+}
+
+/* Стили кнопок */
+.btn-primary {
+    background: var(--primary-color, #3498db);
+    color: var(--text-primary, #fff);
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark, #1e3a57);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-primary, 0 4px 15px rgba(52, 152, 219, 0.2));
+}
+
+.btn-secondary {
+    background: var(--secondary-color, #2c5aa0);
+    color: var(--text-primary, #fff);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-dark, #1e3a57);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-primary, 0 4px 15px rgba(52, 152, 219, 0.2));
+}
+
+.btn-success {
+    background: var(--success-color, #2ecc71);
+    color: var(--text-primary, #fff);
+}
+
+.btn-success:hover {
+    background: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-success, 0 4px 15px rgba(46, 204, 113, 0.2));
+}
+
+.btn-warning {
+    background: var(--warning-color, #f39c12);
+    color: var(--text-primary, #fff);
+}
+
+.btn-warning:hover {
+    background: #e67e22;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(243, 156, 18, 0.2);
+}
+
+.btn-error {
+    background: var(--error-color, #dc3545);
+    color: var(--text-primary, #fff);
+}
+
+.btn-error:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-error, 0 4px 15px rgba(220, 53, 69, 0.2));
+}
+
+.btn-dark {
+    background: var(--background-dark, #1a1a1a);
+    color: var(--text-primary, #fff);
+}
+
+.btn-dark:hover {
+    background: var(--text-dark, #333);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow, 0 4px 15px rgba(0,0,0,0.2));
+}
+
+.btn-light {
+    background: var(--text-secondary, #e0e0e0);
+    color: var(--text-dark, #333);
+}
+
+.btn-light:hover {
+    background: var(--text-muted, #d0d0d0);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow, 0 4px 15px rgba(0,0,0,0.1));
+}
+
+/* Outline кнопки */
+.btn-outline {
+    background: transparent;
+    border: 2px solid currentColor;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color, #3498db);
+    border-color: var(--primary-color, #3498db);
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color, #3498db);
+    color: var(--text-primary, #fff);
+}
+
+.btn-outline-secondary {
+    color: var(--secondary-color, #2c5aa0);
+    border-color: var(--secondary-color, #2c5aa0);
+}
+
+.btn-outline-secondary:hover {
+    background: var(--secondary-color, #2c5aa0);
+    color: var(--text-primary, #fff);
+}
+
+/* Ghost кнопки */
+.btn-ghost {
+    background: transparent;
+    color: var(--text-secondary, #e0e0e0);
+}
+
+.btn-ghost:hover {
+    background: var(--background-hover, #303030);
+    color: var(--text-primary, #fff);
+}
+
+/* Кнопка-ссылка */
+.btn-link {
+    background: transparent;
+    color: var(--primary-color, #3498db);
+    padding: 0.25rem 0.5rem;
+    min-height: auto;
+}
+
+.btn-link:hover {
+    color: var(--primary-light, #5dade2);
+    text-decoration: underline;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Полная ширина */
+.btn-block {
+    width: 100%;
+}
+
+/* Круглые кнопки */
+.btn-circle {
+    border-radius: var(--border-radius-round, 50%);
+    width: var(--touch-target-min, 44px);
+    height: var(--touch-target-min, 44px);
+    padding: 0;
+}
+
+.btn-circle.btn-sm {
+    width: 36px;
+    height: 36px;
+}
+
+.btn-circle.btn-lg {
+    width: 52px;
+    height: 52px;
+}
+
+/* Группы кнопок */
+.btn-group {
+    display: inline-flex;
+    border-radius: var(--border-radius, 6px);
+    overflow: hidden;
+}
+
+.btn-group .btn {
+    border-radius: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: var(--border-radius, 6px);
+    border-bottom-left-radius: var(--border-radius, 6px);
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: var(--border-radius, 6px);
+    border-bottom-right-radius: var(--border-radius, 6px);
+    border-right: none;
+}
+
+.btn-group .btn:hover {
+    transform: none;
+    z-index: 1;
+    position: relative;
+}
+
+/* Кнопки с иконками */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-icon i {
+    font-size: 1em;
+}
+
+.btn-icon-only {
+    padding: 0.75rem;
+    aspect-ratio: 1;
+}
+
+/* Анимированные кнопки */
+.btn-animated {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-animated::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+.btn-animated:hover::before {
+    left: 100%;
+}
+
+/* Кнопки загрузки */
+.btn-loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1em;
+    height: 1em;
+    margin: -0.5em 0 0 -0.5em;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: btn-loading-spin 1s linear infinite;
+}
+
+@keyframes btn-loading-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Состояния кнопок */
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-loading:active {
+    transform: none;
+}
+
+/* Специальные кнопки для проекта */
+.start-button {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    font-family: var(--font-decorative, 'Cinzel Decorative', serif);
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    padding: 15px 30px;
+    animation: pulse 2s infinite;
+}
+
+.start-button:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255,255,255,0.2);
+}
+
 .nav-btn {
-    display: block;
+    background: var(--background-sidebar, #252525);
+    color: var(--text-secondary, #e0e0e0);
+    border-radius: var(--border-radius, 6px);
     padding: 16px 20px;
     margin: 10px 0;
-    font-size: 1.1rem;
-    background: #252525;
-    color: #e0e0e0;
-    border: none;
-    border-radius: 6px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    cursor: pointer;
     width: 100%;
     text-align: left;
+    position: relative;
+    overflow: hidden;
 }
 
-.sidebar-nav a:hover, 
 .nav-btn:hover {
-    background: #303030;
-    color: #fff;
-    transform: translateX(3px);
+    background: var(--background-hover, #303030);
+    color: var(--text-primary, #fff);
+    transform: translateX(8px) scale(1.02);
+    box-shadow: var(--shadow-primary, 0 6px 20px rgba(52, 152, 219, 0.2));
 }
 
-.sidebar-nav a.active, 
 .nav-btn.active {
-    background: #1e3a57;
-    color: #fff;
-    border-left: 4px solid #3498db;
-    font-weight: 500;
+    background: var(--gradient-primary, linear-gradient(135deg, #1e3a57 0%, #2c5aa0 100%));
+    color: var(--text-primary, #fff);
+    border-left: 4px solid var(--primary-color, #3498db);
+    transform: translateX(12px);
+    box-shadow: var(--shadow-primary-lg, 0 8px 25px rgba(52, 152, 219, 0.4));
 }
 
-.codex-btn {
-    width: 100%;
-    padding: 14px 20px;
-    background: #2a2a2a;
-    color: #e0e0e0;
-    border: none;
-    border-radius: 6px;
-    text-align: left;
-    font-size: 1.05rem;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.3s;
+.retry-btn {
+    background-color: #007bff;
+    color: white;
 }
 
-.codex-btn:hover {
-    background: #333;
-    color: #fff;
+.retry-btn:hover {
+    background-color: #0056b3;
 }
 
-.codex-btn .arrow {
-    font-size: 0.9rem;
-    transition: transform 0.3s;
+.home-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.home-btn:hover {
+    background-color: #545b62;
+}
+
+/* Адаптивность */
+@media (max-width: 576px) {
+    .btn {
+        padding: 0.65rem 1.25rem;
+        font-size: var(--font-size-sm, 0.875rem);
+    }
+    
+    .btn-sm {
+        padding: 0.4rem 0.8rem;
+        font-size: var(--font-size-xs, 0.75rem);
+    }
+    
+    .btn-lg {
+        padding: 0.875rem 1.75rem;
+        font-size: var(--font-size-base, 1rem);
+    }
+    
+    .nav-btn {
+        padding: 12px 15px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Доступность */
+@media (prefers-reduced-motion: reduce) {
+    .btn {
+        transition: none;
+    }
+    
+    .btn:hover {
+        transform: none;
+    }
+    
+    .btn-animated::before {
+        transition: none;
+    }
+    
+    .start-button {
+        animation: none;
+    }
 }

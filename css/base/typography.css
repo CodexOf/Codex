@@ -1,33 +1,262 @@
-/* Шрифты и текст */
+/* === ТИПОГРАФИКА === */
+
+/* Базовые стили типографики */
 body {
-    font-family: 'Roboto', sans-serif;
-    line-height: 1.6;
-    color: #d0d0d0;
+    font-family: var(--font-primary, 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif);
+    font-size: var(--font-size-base, 1rem);
+    font-weight: var(--font-weight-normal, 400);
+    line-height: var(--line-height-normal, 1.6);
+    color: var(--text-muted, #d0d0d0);
+    letter-spacing: var(--letter-spacing-normal, 0);
+    text-rendering: optimizeSpeed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-.game-title {
-    font-family: 'Cinzel Decorative', 'Times New Roman', serif;
-    font-size: 5rem;
-    text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
-    letter-spacing: 5px;
-    margin-bottom: 1rem;
+/* Заголовки */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-primary, 'Roboto', sans-serif);
+    font-weight: var(--font-weight-bold, 700);
+    line-height: var(--line-height-tight, 1.25);
+    color: var(--text-primary, #ffffff);
+    margin-bottom: 0.5em;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+h1 {
+    font-size: var(--font-size-4xl, 2.25rem);
+    font-weight: var(--font-weight-extrabold, 800);
+    letter-spacing: var(--letter-spacing-tight, -0.025em);
+}
+
+h2 {
+    font-size: var(--font-size-3xl, 1.875rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: var(--letter-spacing-tight, -0.025em);
+}
+
+h3 {
+    font-size: var(--font-size-2xl, 1.5rem);
+    font-weight: var(--font-weight-semibold, 600);
+}
+
+h4 {
+    font-size: var(--font-size-xl, 1.25rem);
+    font-weight: var(--font-weight-semibold, 600);
+}
+
+h5 {
+    font-size: var(--font-size-lg, 1.125rem);
+    font-weight: var(--font-weight-medium, 500);
+}
+
+h6 {
+    font-size: var(--font-size-base, 1rem);
+    font-weight: var(--font-weight-medium, 500);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide, 0.025em);
+}
+
+/* Декоративные заголовки */
+.game-title,
+.decorative-title {
+    font-family: var(--font-decorative, 'Cinzel Decorative', 'Times New Roman', serif);
+    font-weight: var(--font-weight-bold, 700);
     font-display: block;
-    visibility: hidden;
 }
 
-.fonts-loaded .game-title {
-    visibility: visible;
+/* Параграфы */
+p {
+    margin-bottom: 1em;
+    overflow-wrap: break-word;
+    hyphens: auto;
 }
 
-.sidebar-header h2 {
-    font-family: 'Cinzel Decorative', 'Times New Roman', serif;
-    font-size: 1.8rem;
-    color: white;
-    text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-    font-display: block;
-    visibility: hidden;
+p:last-child {
+    margin-bottom: 0;
 }
 
-.fonts-loaded .sidebar-header h2 {
-    visibility: visible;
+/* Размеры текста */
+.text-xs { font-size: var(--font-size-xs, 0.75rem); }
+.text-sm { font-size: var(--font-size-sm, 0.875rem); }
+.text-base { font-size: var(--font-size-base, 1rem); }
+.text-lg { font-size: var(--font-size-lg, 1.125rem); }
+.text-xl { font-size: var(--font-size-xl, 1.25rem); }
+.text-2xl { font-size: var(--font-size-2xl, 1.5rem); }
+.text-3xl { font-size: var(--font-size-3xl, 1.875rem); }
+.text-4xl { font-size: var(--font-size-4xl, 2.25rem); }
+.text-5xl { font-size: var(--font-size-5xl, 3rem); }
+.text-6xl { font-size: var(--font-size-6xl, 4rem); }
+
+/* Веса шрифтов */
+.font-light { font-weight: var(--font-weight-light, 300); }
+.font-normal { font-weight: var(--font-weight-normal, 400); }
+.font-medium { font-weight: var(--font-weight-medium, 500); }
+.font-semibold { font-weight: var(--font-weight-semibold, 600); }
+.font-bold { font-weight: var(--font-weight-bold, 700); }
+.font-extrabold { font-weight: var(--font-weight-extrabold, 800); }
+
+/* Стили шрифтов */
+.font-decorative { font-family: var(--font-decorative, 'Cinzel Decorative', serif); }
+.font-mono { font-family: var(--font-monospace, 'Fira Code', monospace); }
+
+/* Цвета текста */
+.text-primary { color: var(--text-primary, #ffffff); }
+.text-secondary { color: var(--text-secondary, #e0e0e0); }
+.text-muted { color: var(--text-muted, #d0d0d0); }
+.text-gray { color: var(--text-gray, #666666); }
+
+/* Трекинг */
+.tracking-tight { letter-spacing: var(--letter-spacing-tight, -0.025em); }
+.tracking-normal { letter-spacing: var(--letter-spacing-normal, 0); }
+.tracking-wide { letter-spacing: var(--letter-spacing-wide, 0.025em); }
+.tracking-wider { letter-spacing: var(--letter-spacing-wider, 0.05em); }
+.tracking-widest { letter-spacing: var(--letter-spacing-widest, 0.1em); }
+
+/* Высота строк */
+.leading-tight { line-height: var(--line-height-tight, 1.25); }
+.leading-normal { line-height: var(--line-height-normal, 1.5); }
+.leading-relaxed { line-height: var(--line-height-relaxed, 1.75); }
+.leading-loose { line-height: var(--line-height-loose, 2); }
+
+/* Выравнивание текста */
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-justify { text-align: justify; }
+
+/* Декорации текста */
+.underline { text-decoration: underline; }
+.line-through { text-decoration: line-through; }
+.no-underline { text-decoration: none; }
+
+/* Трансформация текста */
+.uppercase { text-transform: uppercase; }
+.lowercase { text-transform: lowercase; }
+.capitalize { text-transform: capitalize; }
+.normal-case { text-transform: none; }
+
+/* Списки */
+ul, ol {
+    margin-bottom: 1em;
+    padding-left: 1.5em;
+}
+
+ul {
+    list-style-type: disc;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+li {
+    margin-bottom: 0.25em;
+}
+
+li:last-child {
+    margin-bottom: 0;
+}
+
+/* Вложенные списки */
+ul ul, ol ol, ul ol, ol ul {
+    margin-top: 0.25em;
+    margin-bottom: 0;
+}
+
+ul ul { list-style-type: circle; }
+ul ul ul { list-style-type: square; }
+
+/* Кавычки и цитаты */
+blockquote {
+    margin: 1em 0;
+    padding-left: 1em;
+    border-left: 4px solid var(--primary-color, #3498db);
+    font-style: italic;
+    color: var(--text-secondary, #e0e0e0);
+}
+
+cite {
+    font-style: normal;
+    font-size: var(--font-size-sm, 0.875rem);
+    color: var(--text-gray, #666);
+}
+
+/* Код */
+code, kbd, samp {
+    font-family: var(--font-monospace, 'Fira Code', monospace);
+    font-size: 0.875em;
+    background: var(--background-active, #2a2a2a);
+    padding: 0.125em 0.25em;
+    border-radius: var(--border-radius-sm, 4px);
+    color: var(--text-secondary, #e0e0e0);
+}
+
+pre {
+    font-family: var(--font-monospace, 'Fira Code', monospace);
+    background: var(--background-active, #2a2a2a);
+    padding: 1em;
+    border-radius: var(--border-radius, 6px);
+    overflow-x: auto;
+    margin: 1em 0;
+    color: var(--text-secondary, #e0e0e0);
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+/* Выделение текста */
+mark {
+    background: var(--warning-color, #f39c12);
+    color: var(--text-dark, #333);
+    padding: 0.125em 0.25em;
+    border-radius: var(--border-radius-sm, 4px);
+}
+
+/* Сокращения */
+abbr[title] {
+    text-decoration: underline dotted;
+    cursor: help;
+}
+
+/* Маленький текст */
+small {
+    font-size: var(--font-size-sm, 0.875rem);
+    color: var(--text-gray, #666);
+}
+
+/* Подстрочный и надстрочный текст */
+sub, sup {
+    font-size: 0.75em;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sub { bottom: -0.25em; }
+sup { top: -0.5em; }
+
+/* Адаптивная типографика */
+@media (max-width: 768px) {
+    h1 { font-size: var(--font-size-3xl, 1.875rem); }
+    h2 { font-size: var(--font-size-2xl, 1.5rem); }
+    h3 { font-size: var(--font-size-xl, 1.25rem); }
+    
+    .text-6xl { font-size: var(--font-size-4xl, 2.25rem); }
+    .text-5xl { font-size: var(--font-size-3xl, 1.875rem); }
+    .text-4xl { font-size: var(--font-size-2xl, 1.5rem); }
+}
+
+@media (max-width: 576px) {
+    body {
+        font-size: var(--font-size-sm, 0.875rem);
+    }
+    
+    h1 { font-size: var(--font-size-2xl, 1.5rem); }
+    h2 { font-size: var(--font-size-xl, 1.25rem); }
+    h3 { font-size: var(--font-size-lg, 1.125rem); }
 }

@@ -1,0 +1,137 @@
+/* === СТИЛИ ЗАГОЛОВКА === */
+
+/* Основной заголовок */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height, 60px);
+    background: var(--background-dark, #1a1a1a);
+    border-bottom: 1px solid var(--border-color, #333);
+    z-index: var(--z-fixed, 1030);
+    backdrop-filter: var(--backdrop-blur, blur(8px));
+    transition: all var(--transition-normal, 0.3s);
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 var(--spacing-lg, 24px);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Логотип */
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--text-primary, #fff);
+    font-weight: var(--font-weight-bold, 700);
+    font-size: var(--font-size-lg, 1.125rem);
+    transition: all var(--transition-normal, 0.3s);
+}
+
+.header-logo:hover {
+    color: var(--primary-color, #3498db);
+    transform: scale(1.05);
+}
+
+.header-logo i {
+    font-size: 1.5rem;
+    color: var(--primary-color, #3498db);
+}
+
+.header-logo-text {
+    font-family: var(--font-decorative, 'Cinzel Decorative', serif);
+    letter-spacing: var(--letter-spacing-wide, 0.025em);
+}
+
+/* Мобильное меню */
+.header-mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-primary, #fff);
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-left: auto;
+}
+
+.header-mobile-toggle i {
+    font-size: 1.5rem;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .header-mobile-toggle {
+        display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-container {
+        padding: 0 var(--spacing-md, 16px);
+    }
+    
+    .header-logo {
+        font-size: var(--font-size-base, 1rem);
+    }
+    
+    .header-logo i {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .header-container {
+        padding: 0 var(--spacing-sm, 8px);
+    }
+    
+    .header-logo {
+        font-size: var(--font-size-sm, 0.875rem);
+    }
+    
+    .header-logo i {
+        font-size: 1rem;
+    }
+}
+
+/* Состояния заголовка */
+.header-scrolled {
+    background: rgba(26, 26, 26, 0.95);
+    backdrop-filter: var(--backdrop-blur, blur(8px));
+    box-shadow: var(--shadow, 0 2px 8px rgba(0,0,0,0.15));
+}
+
+.header-transparent {
+    background: transparent;
+    border-bottom: none;
+}
+
+.header-compact {
+    height: 50px;
+}
+
+/* Доступность */
+@media (prefers-reduced-motion: reduce) {
+    .header,
+    .header-logo {
+        transition: none;
+    }
+    
+    .header-logo:hover {
+        transform: none;
+    }
+}
+
+/* Печать */
+@media print {
+    .header {
+        display: none;
+    }
+}

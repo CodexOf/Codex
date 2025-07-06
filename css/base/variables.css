@@ -1,0 +1,235 @@
+/* === ПЕРЕМЕННЫЕ CSS === */
+
+:root {
+    /* === ЦВЕТА === */
+    /* Основные цвета */
+    --primary-color: #3498db;
+    --primary-dark: #1e3a57;
+    --primary-light: #5dade2;
+    --secondary-color: #2c5aa0;
+    --accent-color: #e74c3c;
+    
+    /* Фоновые цвета */
+    --background-dark: #1a1a1a;
+    --background-darker: #0D1A13;
+    --background-content: #404040;
+    --background-sidebar: #252525;
+    --background-hover: #303030;
+    --background-active: #2a2a2a;
+    
+    /* Цвета текста */
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --text-muted: #d0d0d0;
+    --text-gray: #666666;
+    --text-dark: #333333;
+    
+    /* Цвета состояний */
+    --success-color: #2ecc71;
+    --success-bg: #d4edda;
+    --success-border: #c3e6cb;
+    
+    --warning-color: #f39c12;
+    --warning-bg: #fff3cd;
+    --warning-border: #ffeaa7;
+    
+    --error-color: #dc3545;
+    --error-bg: #f8d7da;
+    --error-border: #f5c6cb;
+    
+    --info-color: #17a2b8;
+    --info-bg: #d1ecf1;
+    --info-border: #bee5eb;
+    
+    /* Цвета границ */
+    --border-color: #333333;
+    --border-light: #444444;
+    --border-dark: #222222;
+    
+    /* === РАЗМЕРЫ === */
+    /* Ширина компонентов */
+    --sidebar-width: 280px;
+    --sidebar-width-mobile: 100%;
+    --content-max-width: 900px;
+    
+    /* Отступы */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
+    
+    /* Высоты */
+    --header-height: 60px;
+    --footer-height: 50px;
+    --button-height: 44px;
+    --input-height: 40px;
+    
+    /* === РАДИУСЫ === */
+    --border-radius-sm: 4px;
+    --border-radius: 6px;
+    --border-radius-lg: 8px;
+    --border-radius-xl: 12px;
+    --border-radius-round: 50%;
+    
+    /* === ТЕНИ === */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.2);
+    --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.25);
+    
+    /* Цветные тени */
+    --shadow-primary: 0 4px 15px rgba(52, 152, 219, 0.2);
+    --shadow-primary-lg: 0 8px 25px rgba(52, 152, 219, 0.4);
+    --shadow-error: 0 4px 15px rgba(220, 53, 69, 0.2);
+    --shadow-success: 0 4px 15px rgba(46, 204, 113, 0.2);
+    
+    /* === ПЕРЕХОДЫ И АНИМАЦИИ === */
+    /* Длительности */
+    --transition-fast: 0.15s;
+    --transition-normal: 0.3s;
+    --transition-slow: 0.5s;
+    --transition-very-slow: 0.8s;
+    
+    /* Функции сглаживания */
+    --ease-out: ease-out;
+    --ease-in: ease-in;
+    --ease-in-out: ease-in-out;
+    --ease-cubic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --ease-back: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Готовые переходы */
+    --transition-all: all var(--transition-normal) var(--ease-in-out);
+    --transition-transform: transform var(--transition-normal) var(--ease-cubic);
+    --transition-opacity: opacity var(--transition-normal) var(--ease-in-out);
+    --transition-colors: background-color var(--transition-normal) var(--ease-in-out), 
+                        color var(--transition-normal) var(--ease-in-out);
+    
+    /* === ТИПОГРАФИКА === */
+    /* Семейства шрифтов */
+    --font-primary: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-decorative: 'Cinzel Decorative', 'Times New Roman', serif;
+    --font-monospace: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+    
+    /* Размеры шрифтов */
+    --font-size-xs: 0.75rem;   /* 12px */
+    --font-size-sm: 0.875rem;  /* 14px */
+    --font-size-base: 1rem;    /* 16px */
+    --font-size-lg: 1.125rem;  /* 18px */
+    --font-size-xl: 1.25rem;   /* 20px */
+    --font-size-2xl: 1.5rem;   /* 24px */
+    --font-size-3xl: 1.875rem; /* 30px */
+    --font-size-4xl: 2.25rem;  /* 36px */
+    --font-size-5xl: 3rem;     /* 48px */
+    --font-size-6xl: 4rem;     /* 64px */
+    
+    /* Высота строк */
+    --line-height-tight: 1.25;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.75;
+    --line-height-loose: 2;
+    
+    /* Веса шрифтов */
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+    
+    /* Трекинг (межбуквенное расстояние) */
+    --letter-spacing-tight: -0.025em;
+    --letter-spacing-normal: 0;
+    --letter-spacing-wide: 0.025em;
+    --letter-spacing-wider: 0.05em;
+    --letter-spacing-widest: 0.1em;
+    
+    /* === Z-INDEX СЛОИ === */
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+    --z-toast: 1080;
+    
+    /* === БРЕЙКПОИНТЫ === */
+    --breakpoint-xs: 0;
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+    --breakpoint-xxl: 1400px;
+    
+    /* === СПЕЦИАЛЬНЫЕ ЗНАЧЕНИЯ === */
+    /* Фильтры */
+    --blur-sm: blur(4px);
+    --blur: blur(8px);
+    --blur-lg: blur(16px);
+    --blur-xl: blur(24px);
+    
+    /* Backdrop фильтры */
+    --backdrop-blur-sm: blur(4px);
+    --backdrop-blur: blur(8px);
+    --backdrop-blur-lg: blur(16px);
+    
+    /* Градиенты */
+    --gradient-primary: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-color) 100%);
+    --gradient-dark: linear-gradient(135deg, var(--background-dark) 0%, var(--background-darker) 100%);
+    --gradient-overlay: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7));
+    
+    /* === НАСТРОЙКИ АНИМАЦИИ КОНТЕНТА === */
+    --content-animation-duration: 600ms;
+    --content-animation-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    
+    /* === НАСТРОЙКИ ДОСТУПНОСТИ === */
+    /* Минимальные размеры для касания */
+    --touch-target-min: 44px;
+    
+    /* Контрастность */
+    --contrast-ratio-normal: 4.5;
+    --contrast-ratio-large: 3;
+}
+
+/* === ДОПОЛНИТЕЛЬНЫЕ НАСТРОЙКИ ДЛЯ ТЕМНОЙ ТЕМЫ === */
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Можно переопределить переменные для темной темы */
+        --text-primary: #ffffff;
+        --text-secondary: #e0e0e0;
+        --background-content: #404040;
+    }
+}
+
+/* === НАСТРОЙКИ ДЛЯ СОКРАЩЕННОЙ АНИМАЦИИ === */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --transition-fast: 0.01ms;
+        --transition-normal: 0.01ms;
+        --transition-slow: 0.01ms;
+        --transition-very-slow: 0.01ms;
+        --content-animation-duration: 0.01ms;
+    }
+}
+
+/* === НАСТРОЙКИ ДЛЯ ВЫСОКОЙ КОНТРАСТНОСТИ === */
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: #ffffff;
+        --text-muted: #ffffff;
+    }
+}
+
+/* === PRINT СТИЛИ === */
+@media print {
+    :root {
+        --background-dark: #ffffff;
+        --background-darker: #ffffff;
+        --background-content: #ffffff;
+        --text-primary: #000000;
+        --text-secondary: #333333;
+        --text-muted: #666666;
+    }
+}

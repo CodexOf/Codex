@@ -1,3 +1,6 @@
+/* === СТИЛИ ГЛАВНОЙ СТРАНИЦЫ === */
+
+/* Основной экран приветствия */
 .welcome-screen {
     position: fixed;
     top: 0;
@@ -11,54 +14,89 @@
     align-items: center;
     text-align: center;
     color: white;
-    z-index: 1000;
+    z-index: var(--z-modal, 1050);
+    animation: fadeIn 1s ease-in;
 }
 
 .welcome-content {
     max-width: 800px;
-    padding: 20px;
+    padding: var(--spacing-xl, 32px);
     z-index: 10;
+    animation: slideInUp 1s ease-out 0.5s both;
 }
 
+/* Заголовок игры */
 .game-title {
-    font-family: 'Cinzel Decorative', 'Times New Roman', serif;
+    font-family: var(--font-decorative, 'Cinzel Decorative', serif);
     font-size: 5rem;
+    font-weight: var(--font-weight-bold, 700);
     text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
     letter-spacing: 5px;
     margin-bottom: 1rem;
     animation: titleGlow 3s infinite alternate;
     font-display: block;
     visibility: hidden;
+    line-height: 1.1;
+    background: linear-gradient(45deg, #ffffff, #e0e0e0, #ffffff);
+    background-size: 200% 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: titleGlow 3s infinite alternate, shimmer 4s infinite;
 }
 
 .fonts-loaded .game-title {
     visibility: visible;
 }
 
+/* Подзаголовок */
 .game-subtitle {
     font-size: 1.5rem;
-    font-weight: 300;
+    font-weight: var(--font-weight-light, 300);
     text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
     margin-bottom: 2rem;
-    animation: fadeIn 2s ease-in;
+    animation: fadeIn 2s ease-in 1s both;
+    letter-spacing: var(--letter-spacing-wide, 0.025em);
+    opacity: 0.9;
 }
 
+/* Кнопка начала */
 .start-button {
     display: inline-block;
     padding: 15px 30px;
     background: transparent;
     color: white;
     border: 2px solid white;
-    font-family: 'Cinzel Decorative', 'Times New Roman', serif;
+    font-family: var(--font-decorative, 'Cinzel Decorative', serif);
     font-size: 1.2rem;
     text-decoration: none;
     letter-spacing: 2px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all var(--transition-normal, 0.3s);
     animation: pulse 2s infinite;
     margin-top: 20px;
     font-display: block;
     visibility: hidden;
+    border-radius: var(--border-radius, 6px);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.start-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s ease;
+    z-index: -1;
+}
+
+.start-button:hover::before {
+    left: 100%;
 }
 
 .fonts-loaded .start-button {
@@ -68,8 +106,16 @@
 .start-button:hover {
     background: rgba(255,255,255,0.1);
     transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255,255,255,0.2);
+    border-color: var(--primary-color, #3498db);
+    color: var(--primary-color, #3498db);
 }
 
+.start-button:active {
+    transform: translateY(-1px);
+}
+
+/* Футер главной страницы */
 .main-footer {
     position: fixed;
     bottom: 0;
@@ -77,7 +123,372 @@
     text-align: center;
     padding: 15px 0;
     background: rgba(0,0,0,0.6);
-    color: #fff;
+    color: var(--text-primary, #fff);
     font-size: 0.9rem;
     z-index: 100;
+    backdrop-filter: var(--backdrop-blur-sm, blur(4px));
+    border-top: 1px solid rgba(255,255,255,0.1);
+    animation: slideInUp 1s ease-out 2s both;
+}
+
+.main-footer p {
+    margin: 0;
+    opacity: 0.8;
+    font-weight: var(--font-weight-light, 300);
+}
+
+/* Декоративные элементы */
+.welcome-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(52, 152, 219, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(231, 76, 60, 0.1) 0%, transparent 50%);
+    z-index: 1;
+    animation: gradientShift 10s infinite alternate;
+}
+
+/* Частицы (опционально) */
+.particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: float 6s infinite linear;
+}
+
+.particle:nth-child(odd) {
+    animation-duration: 8s;
+    animation-delay: -2s;
+}
+
+.particle:nth-child(even) {
+    animation-duration: 10s;
+    animation-delay: -4s;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+@keyframes titleGlow {
+    from {
+        text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
+    }
+    to {
+        text-shadow: 3px 3px 15px rgba(0,0,0,0.8), 
+                     0 0 20px rgba(255,255,255,0.5),
+                     0 0 30px rgba(52, 152, 219, 0.3);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes gradientShift {
+    0% {
+        opacity: 0.3;
+        transform: scale(1) rotate(0deg);
+    }
+    100% {
+        opacity: 0.5;
+        transform: scale(1.1) rotate(5deg);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) translateX(0px);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) translateX(100px);
+        opacity: 0;
+    }
+}
+
+/* Анимации выхода с главной страницы */
+@keyframes exitTextFade {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes exitBackgroundFade {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(1.05);
+    }
+}
+
+.exit-text-animation {
+    animation: exitTextFade 0.4s ease-out forwards;
+}
+
+.exit-background-animation {
+    animation: exitBackgroundFade 0.4s ease-out forwards;
+}
+
+/* Вариации главной страницы */
+.welcome-screen-dark {
+    background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                var(--background-darker, #0D1A13);
+}
+
+.welcome-screen-minimal {
+    background: var(--background-darker, #0D1A13);
+}
+
+.welcome-screen-minimal .game-title {
+    font-size: 4rem;
+    animation: none;
+    text-shadow: none;
+}
+
+.welcome-screen-minimal .start-button {
+    animation: none;
+    border-color: var(--primary-color, #3498db);
+    color: var(--primary-color, #3498db);
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+    .game-title {
+        font-size: 4rem;
+        letter-spacing: 3px;
+    }
+}
+
+@media (max-width: 992px) {
+    .welcome-content {
+        padding: var(--spacing-lg, 24px);
+    }
+    
+    .game-title {
+        font-size: 3.5rem;
+        letter-spacing: 2px;
+    }
+    
+    .game-subtitle {
+        font-size: 1.3rem;
+    }
+    
+    .start-button {
+        font-size: 1.1rem;
+        padding: 12px 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome-content {
+        padding: var(--spacing-md, 16px);
+    }
+    
+    .game-title {
+        font-size: 3rem;
+        letter-spacing: 1px;
+        margin-bottom: 0.75rem;
+    }
+    
+    .game-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .start-button {
+        font-size: 1rem;
+        padding: 12px 24px;
+        letter-spacing: 1px;
+    }
+    
+    .main-footer {
+        font-size: 0.8rem;
+        padding: 12px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .welcome-content {
+        padding: var(--spacing-sm, 8px);
+    }
+    
+    .game-title {
+        font-size: 2.5rem;
+        letter-spacing: 0px;
+        line-height: 1.2;
+    }
+    
+    .game-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .start-button {
+        font-size: 0.95rem;
+        padding: 10px 20px;
+        letter-spacing: 0.5px;
+    }
+    
+    .main-footer {
+        font-size: 0.75rem;
+        padding: 10px 0;
+    }
+}
+
+@media (max-width: 400px) {
+    .game-title {
+        font-size: 2rem;
+    }
+    
+    .game-subtitle {
+        font-size: 1rem;
+    }
+    
+    .start-button {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+}
+
+/* Ориентация устройства */
+@media (orientation: landscape) and (max-height: 500px) {
+    .welcome-content {
+        padding: var(--spacing-sm, 8px);
+    }
+    
+    .game-title {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .game-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .start-button {
+        padding: 8px 16px;
+        margin-top: 10px;
+    }
+    
+    .main-footer {
+        padding: 8px 0;
+        font-size: 0.7rem;
+    }
+}
+
+/* Доступность */
+@media (prefers-reduced-motion: reduce) {
+    .welcome-screen,
+    .welcome-content,
+    .game-title,
+    .game-subtitle,
+    .start-button,
+    .main-footer,
+    .welcome-screen::before,
+    .particle {
+        animation: none;
+    }
+    
+    .start-button:hover {
+        transform: none;
+    }
+    
+    .exit-text-animation,
+    .exit-background-animation {
+        animation: none;
+        transition: opacity 0.1s ease;
+    }
+}
+
+/* Высокая контрастность */
+@media (prefers-contrast: high) {
+    .welcome-screen {
+        background: var(--background-darker, #0D1A13);
+    }
+    
+    .game-title {
+        text-shadow: none;
+        color: var(--text-primary, #fff);
+        background: none;
+        -webkit-text-fill-color: var(--text-primary, #fff);
+    }
+    
+    .start-button {
+        border-width: 3px;
+        background: var(--background-dark, #1a1a1a);
+    }
+}
+
+/* Печать */
+@media print {
+    .welcome-screen {
+        display: none;
+    }
 }

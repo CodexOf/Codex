@@ -1,12 +1,260 @@
-/* Глобальный сброс */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* === RESET CSS === */
+
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+   Modified for modern web development
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    line-height: 1.6;
-    color: #d0d0d0;
+	line-height: 1;
+}
+
+ol, ul {
+	list-style: none;
+}
+
+blockquote, q {
+	quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* Дополнительные современные сбросы */
+
+/* Делаем размеры более предсказуемыми */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Удаляем отступы по умолчанию */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* Улучшаем рендеринг текста */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+}
+
+/* Делаем изображения адаптивными по умолчанию */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Убираем стили форм по умолчанию */
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Убираем декорации с кнопок */
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Фиксируем проблемы с высотой в некоторых браузерах */
+html, body {
+  height: 100%;
+}
+
+/* Улучшаем читаемость */
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Фиксируем проблемы с flexbox в старых браузерах */
+#root, #__next {
+  isolation: isolate;
+}
+
+/* Убираем стандартные стили ссылок, но сохраняем семантику */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Улучшаем доступность для пользователей клавиатуры */
+:focus-visible {
+  outline: 2px solid var(--primary-color, #3498db);
+  outline-offset: 2px;
+}
+
+/* Скрываем outline для мыши, но оставляем для клавиатуры */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Сброс для элементов форм */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+/* Убираем стрелочки у input type="number" */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Убираем стили поиска в Safari */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+}
+
+/* Сброс для чекбоксов и радиокнопок */
+input[type="checkbox"],
+input[type="radio"] {
+  appearance: none;
+  width: 1em;
+  height: 1em;
+}
+
+/* Убираем стандартные стили для progress */
+progress {
+  appearance: none;
+}
+
+/* Сброс для meter */
+meter {
+  appearance: none;
+}
+
+/* Исправляем размеры textarea */
+textarea {
+  resize: vertical;
+}
+
+/* Убираем стандартные стили summary */
+summary {
+  display: list-item;
+  cursor: pointer;
+}
+
+/* Исправляем отображение скрытых элементов */
+[hidden] {
+  display: none !important;
+}
+
+/* Базовые стили для улучшения доступности */
+[disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+[readonly] {
+  cursor: default;
+}
+
+/* Улучшаем стили для выделения текста */
+::selection {
+  background-color: var(--primary-color, #3498db);
+  color: white;
+}
+
+::-moz-selection {
+  background-color: var(--primary-color, #3498db);
+  color: white;
+}
+
+/* Стили для скроллбара в webkit браузерах */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-dark, #1a1a1a);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color, #333);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-light, #444);
+}
+
+/* Стили для focus ring */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--primary-color, #3498db);
+  outline-offset: 2px;
+  border-radius: var(--border-radius, 6px);
+}
+
+/* Утилитарные классы для скрытия */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

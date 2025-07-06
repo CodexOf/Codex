@@ -1,9 +1,9 @@
 class ContentLoader {
     static currentPage = null;
     static isLoading = false;
-    static animationDuration = 600; // Длительность анимации в миллисекундах
+    static animationDuration = 600;
+    static randomMode = false;
     
-    // Типы анимаций переходов
     static animationTypes = {
         FADE: 'fade',
         SLIDE_LEFT: 'slide-left',
@@ -25,6 +25,7 @@ class ContentLoader {
     static async loadContent(url, animationType = null) {
         // Предотвращаем множественные одновременные загрузки
         if (this.isLoading) {
+            console.warn('Загрузка уже выполняется, пропускаем запрос');
             return;
         }
         
@@ -36,8 +37,15 @@ class ContentLoader {
 
         this.isLoading = true;
         
-        // Используем переданный тип анимации или текущий
-        const animation = animationType || this.currentAnimation;
+        // Используем переданный тип анимации, режим random или текущий
+        let animation;
+        if (animationType) {
+            animation = animationType;
+        } else if (this.randomMode) {
+            animation = this.getRandomAnimation();
+        } else {
+            animation = this.currentAnimation;
+        }
         
         // Добавляем CSS стили для анимаций если их еще нет
         this.injectAnimationStyles();
@@ -47,32 +55,24 @@ class ContentLoader {
             await this.animateOut(container, animation);
             
             // Показываем индикатор загрузки
-            container.innerHTML = `
-                <div class="loading-indicator">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Загрузка...</p>
-                </div>
-            `;
+            this.showLoadingIndicator(container);
 
-            // Нормализация URL для GitHub Pages и локального сервера
-            let normalizedUrl = url;
+            // Получаем правильный URL
+            const normalizedUrl = this.normalizeUrl(url);
+            console.log('Загружаем:', normalizedUrl);
             
-            // Если это GitHub Pages
-            if (window.location.host.includes('github.io')) {
-                // Удаляем возможные дублирования /Codex/
-                normalizedUrl = url.replace('/Codex/', '').replace('Codex/', '');
-                // Добавляем базовый путь
-                normalizedUrl = `/Codex/${normalizedUrl}`;
-            }
-            
-            // Для локального сервера оставляем как есть
             const response = await fetch(normalizedUrl);
             
             if (!response.ok) {
-                throw new Error(`Страница не найдена (${response.status})`);
+                throw new Error(`Страница не найдена (${response.status}: ${response.statusText})`);
             }
             
             const html = await response.text();
+            
+            // Проверяем, что контент не пустой
+            if (!html.trim()) {
+                throw new Error('Получен пустой контент');
+            }
             
             // Устанавливаем контент
             container.innerHTML = html;
@@ -84,8 +84,7 @@ class ContentLoader {
             this.updateActiveButton(url);
             
             // Обновляем URL в адресной строке
-            const pageParam = url.replace('partials/', '').replace('.html', '');
-            history.pushState({ page: pageParam }, '', `?page=${pageParam}`);
+            this.updateBrowserUrl(url);
             
             // Прокрутка вверх
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -93,13 +92,55 @@ class ContentLoader {
             // Сохраняем текущую страницу
             this.currentPage = url;
             
+            console.log('Контент успешно загружен:', url);
+            
         } catch (error) {
             console.error('Ошибка загрузки контента:', error);
-            container.innerHTML = `
-                <div class="error-message">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h3>Ошибка загрузки</h3>
-                    <p>Не удалось загрузить страницу: ${error.message}</p>
+            this.showErrorMessage(container, error, url);
+        } finally {
+            this.isLoading = false;
+        }
+    }
+    
+    // Нормализация URL для разных окружений
+    static normalizeUrl(url) {
+        // Убираем начальные слэши
+        let normalizedUrl = url.replace(/^\/+/, '');
+        
+        // Проверяем, на GitHub Pages ли мы
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        const basePath = isGitHubPages ? '/Codex/' : '';
+        
+        // Для GitHub Pages добавляем базовый путь если его нет
+        if (isGitHubPages && !normalizedUrl.startsWith('Codex/')) {
+            normalizedUrl = `Codex/${normalizedUrl}`;
+        }
+        
+        // Убираем дублирование Codex/
+        normalizedUrl = normalizedUrl.replace(/Codex\/Codex\//, 'Codex/');
+        
+        return basePath + normalizedUrl;
+    }
+    
+    // Показать индикатор загрузки
+    static showLoadingIndicator(container) {
+        container.innerHTML = `
+            <div class="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Загрузка контента...</p>
+            </div>
+        `;
+    }
+    
+    // Показать сообщение об ошибке
+    static showErrorMessage(container, error, url) {
+        container.innerHTML = `
+            <div class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Ошибка загрузки</h3>
+                <p>Не удалось загрузить страницу: ${error.message}</p>
+                <p><strong>URL:</strong> ${url}</p>
+                <div style="margin-top: 20px;">
                     <button class="retry-btn" onclick="ContentLoader.loadContent('${url}')">
                         <i class="fas fa-sync-alt"></i> Попробовать снова
                     </button>
@@ -107,84 +148,84 @@ class ContentLoader {
                         <i class="fas fa-home"></i> На главную
                     </button>
                 </div>
-            `;
-            await this.animateIn(container, this.animationTypes.FADE);
-        } finally {
-            this.isLoading = false;
+            </div>
+        `;
+    }
+    
+    // Обновление URL в браузере
+    static updateBrowserUrl(url) {
+        try {
+            const pageParam = url.replace('partials/', '').replace('.html', '');
+            const newUrl = `${window.location.pathname}?page=${encodeURIComponent(pageParam)}`;
+            history.pushState({ page: pageParam }, '', newUrl);
+        } catch (error) {
+            console.warn('Не удалось обновить URL браузера:', error);
         }
     }
     
     // Анимация исчезновения контента
     static async animateOut(container, animationType) {
         return new Promise((resolve) => {
+            if (!container) {
+                resolve();
+                return;
+            }
+            
             container.classList.add('content-transition');
             
             switch (animationType) {
                 case this.animationTypes.FADE:
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.SLIDE_LEFT:
                     container.style.transform = 'translateX(-100%)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.SLIDE_RIGHT:
                     container.style.transform = 'translateX(100%)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.SLIDE_UP:
                     container.style.transform = 'translateY(-100%)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.SLIDE_DOWN:
                     container.style.transform = 'translateY(100%)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.SCALE:
                     container.style.transform = 'scale(0.8)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.FLIP:
                     container.style.transform = 'rotateY(90deg)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.ROTATE:
                     container.style.transform = 'rotate(180deg) scale(0.8)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.ZOOM_IN:
                     container.style.transform = 'scale(1.5)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.ZOOM_OUT:
                     container.style.transform = 'scale(0.3)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.BLUR:
                     container.style.filter = 'blur(20px)';
                     container.style.transform = 'scale(0.9)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.ELASTIC:
                     container.style.transform = 'scale(0.1) rotate(45deg)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.BOUNCE:
                     container.style.transform = 'translateY(-100px) scale(0.8)';
                     container.style.opacity = '0';
                     break;
-                    
                 default:
                     container.style.opacity = '0';
             }
@@ -196,74 +237,66 @@ class ContentLoader {
     // Анимация появления контента
     static async animateIn(container, animationType) {
         return new Promise((resolve) => {
+            if (!container) {
+                resolve();
+                return;
+            }
+            
             // Сначала устанавливаем начальное состояние
             switch (animationType) {
                 case this.animationTypes.FADE:
                     container.style.opacity = '0';
                     container.style.transform = 'none';
                     break;
-                    
                 case this.animationTypes.SLIDE_LEFT:
                     container.style.transform = 'translateX(100%)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.SLIDE_RIGHT:
                     container.style.transform = 'translateX(-100%)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.SLIDE_UP:
                     container.style.transform = 'translateY(100%)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.SLIDE_DOWN:
                     container.style.transform = 'translateY(-100%)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.SCALE:
                     container.style.transform = 'scale(1.2)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.FLIP:
                     container.style.transform = 'rotateY(-90deg)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.ROTATE:
                     container.style.transform = 'rotate(-180deg) scale(1.2)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.ZOOM_IN:
                     container.style.transform = 'scale(0.3)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.ZOOM_OUT:
                     container.style.transform = 'scale(1.5)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.BLUR:
                     container.style.filter = 'blur(20px)';
                     container.style.transform = 'scale(1.1)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.ELASTIC:
                     container.style.transform = 'scale(1.8) rotate(-45deg)';
                     container.style.opacity = '0';
                     break;
-                    
                 case this.animationTypes.BOUNCE:
                     container.style.transform = 'translateY(100px) scale(1.2)';
                     container.style.opacity = '0';
                     break;
-                    
                 default:
                     container.style.opacity = '0';
                     container.style.transform = 'none';
@@ -278,6 +311,7 @@ class ContentLoader {
                 
                 setTimeout(() => {
                     container.classList.remove('content-transition');
+                    // Очищаем inline стили
                     container.style.removeProperty('opacity');
                     container.style.removeProperty('transform');
                     container.style.removeProperty('filter');
@@ -304,139 +338,53 @@ class ContentLoader {
                 transition: none !important;
             }
             
-            /* Дополнительные стили для плавности */
             #content-container {
                 transform-origin: center;
                 backface-visibility: hidden;
                 perspective: 1000px;
                 will-change: transform, opacity, filter;
             }
-            
-            /* Стили для индикатора загрузки */
-            .loading-indicator {
-                animation: fadeInScale 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            }
-            
-            @keyframes fadeInScale {
-                0% {
-                    opacity: 0;
-                    transform: scale(0.8) translateY(20px);
-                }
-                50% {
-                    opacity: 0.7;
-                    transform: scale(1.05) translateY(-5px);
-                }
-                100% {
-                    opacity: 1;
-                    transform: scale(1) translateY(0);
-                }
-            }
-            
-            /* Анимация для кнопок навигации */
-            .nav-btn {
-                transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .nav-btn::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-                transition: left 0.6s ease;
-            }
-            
-            .nav-btn:hover {
-                transform: translateX(8px) scale(1.02);
-                box-shadow: 0 6px 20px rgba(52, 152, 219, 0.2);
-            }
-            
-            .nav-btn:hover::before {
-                left: 100%;
-            }
-            
-            .nav-btn.active {
-                transform: translateX(12px);
-                box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
-                background: linear-gradient(135deg, #1e3a57 0%, #2c5aa0 100%);
-            }
-            
-            /* Анимация для аккордеонов */
-            .codex-btn {
-                transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            }
-            
-            .codex-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            }
-            
-            .codex-content {
-                transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-                transform-origin: top;
-            }
-            
-            .codex-section:not(.active) .codex-content {
-                transform: scaleY(0);
-                opacity: 0;
-            }
-            
-            .codex-section.active .codex-content {
-                transform: scaleY(1);
-                opacity: 1;
-            }
-            
-            /* Эффекты для специальных анимаций */
-            @keyframes elasticBounce {
-                0% { transform: scale(0.1) rotate(45deg); }
-                50% { transform: scale(1.2) rotate(0deg); }
-                70% { transform: scale(0.9) rotate(-5deg); }
-                100% { transform: scale(1) rotate(0deg); }
-            }
-            
-            @keyframes bounceIn {
-                0% { transform: translateY(-100px) scale(0.8); }
-                60% { transform: translateY(10px) scale(1.1); }
-                80% { transform: translateY(-5px) scale(0.95); }
-                100% { transform: translateY(0) scale(1); }
-            }
         `;
         
         document.head.appendChild(style);
     }
     
-    // Установка типа анимации
     static setAnimationType(type) {
         if (Object.values(this.animationTypes).includes(type)) {
             this.currentAnimation = type;
+            this.randomMode = false;
             console.log(`Тип анимации изменен на: ${type}`);
+            return true;
         } else {
             console.warn(`Неизвестный тип анимации: ${type}`);
+            return false;
         }
     }
     
-    // Случайная анимация
     static getRandomAnimation() {
         const animations = Object.values(this.animationTypes);
         return animations[Math.floor(Math.random() * animations.length)];
     }
 
     static updateActiveButton(url) {
-        document.querySelectorAll('.sidebar-nav a').forEach(link => {
-            const isActive = link.getAttribute('href') === url;
-            link.classList.toggle('active', isActive);
-        });
+        try {
+            document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                const isActive = link.getAttribute('href') === url;
+                link.classList.toggle('active', isActive);
+            });
+        } catch (error) {
+            console.warn('Ошибка при обновлении активной кнопки:', error);
+        }
     }
 
     static initAccordions() {
-        // Инициализация аккордеонов
-        document.querySelectorAll('.codex-btn').forEach(btn => {
+        const accordionButtons = document.querySelectorAll('.codex-btn');
+        
+        accordionButtons.forEach(btn => {
             btn.addEventListener('click', function() {
                 const section = this.parentElement;
+                if (!section) return;
+                
                 const isActive = section.classList.contains('active');
                 
                 // Закрываем все секции
@@ -450,14 +398,22 @@ class ContentLoader {
                 }
             });
         });
+        
+        console.log('Аккордеоны инициализированы:', accordionButtons.length);
     }
 
     static initNavigation() {
-        // Обработка всех ссылок в сайдбаре
-        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+        const navLinks = document.querySelectorAll('.sidebar-nav a');
+        
+        navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const href = link.getAttribute('href');
+                
+                if (!href) {
+                    console.warn('Ссылка без href:', link);
+                    return;
+                }
                 
                 // Определяем тип анимации в зависимости от секции
                 let animationType = this.getAnimationForSection(href);
@@ -465,9 +421,10 @@ class ContentLoader {
                 this.loadContent(href, animationType);
             });
         });
+        
+        console.log('Навигация инициализирована:', navLinks.length, 'ссылок');
     }
     
-    // Определение типа анимации для разных секций
     static getAnimationForSection(url) {
         if (url.includes('core/')) {
             return this.animationTypes.SLIDE_RIGHT;
@@ -484,25 +441,11 @@ class ContentLoader {
         } else if (url.includes('contacts.html')) {
             return this.animationTypes.ZOOM_OUT;
         } else {
-            return this.animationTypes.SLIDE_LEFT;
+            return this.animationTypes.FADE;
         }
     }
     
-    // Методы для быстрого переключения анимаций
-    static enableFadeAnimation() {
-        this.setAnimationType(this.animationTypes.FADE);
-    }
-    
-    static enableSlideAnimations() {
-        this.setAnimationType(this.animationTypes.SLIDE_LEFT);
-    }
-    
-    static enableScaleAnimation() {
-        this.setAnimationType(this.animationTypes.SCALE);
-    }
-    
     static enableRandomAnimations() {
-        // Каждый переход будет случайным
         this.randomMode = true;
         console.log('Включен режим случайных анимаций');
     }
@@ -512,72 +455,32 @@ class ContentLoader {
         console.log('Выключен режим случайных анимаций');
     }
     
-    // Показать уведомление о смене анимации
-    static showAnimationFeedback(animationType) {
-        const existingNotification = document.querySelector('.animation-notification');
-        if (existingNotification) {
-            existingNotification.remove();
+    static createAnimationControls() {
+        if (document.getElementById('animation-controls')) {
+            return;
         }
         
-        const notification = document.createElement('div');
-        notification.className = 'animation-notification';
-        notification.style.cssText = `
-            position: fixed;
-            top: 70px;
-            right: 10px;
-            background: rgba(52, 152, 219, 0.95);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 5px;
-            font-size: 12px;
-            z-index: 1001;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-        `;
-        
-        const animationName = animationType === 'random' ? 'Случайные анимации' : animationType.charAt(0).toUpperCase() + animationType.slice(1);
-        notification.textContent = `Анимация: ${animationName}`;
-        
-        document.body.appendChild(notification);
-        
-        // Анимация появления
-        setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-        }, 100);
-        
-        // Автоматическое скрытие через 2 секунды
-        setTimeout(() => {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                notification.remove();
-            }, 300);
-        }, 2000);
-    }
-    
-    // Создание панели управления анимациями (опционально)
-    static createAnimationControls() {
         const controlPanel = document.createElement('div');
         controlPanel.id = 'animation-controls';
         controlPanel.innerHTML = `
-            <div style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.9); color: white; padding: 15px; border-radius: 10px; z-index: 1000; font-size: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
+            <div style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.9); color: white; padding: 15px; border-radius: 10px; z-index: 1000; font-size: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
                 <h4 style="margin-bottom: 10px; color: #3498db;">🎬 Анимации</h4>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                    <button data-animation="fade" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Fade</button>
-                    <button data-animation="slide-left" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Slide</button>
-                    <button data-animation="scale" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #2ecc71; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Scale</button>
-                    <button data-animation="flip" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #f39c12; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Flip</button>
-                    <button data-animation="blur" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #9b59b6; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Blur</button>
-                    <button data-animation="elastic" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #1abc9c; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Elastic</button>
-                    <button data-animation="bounce" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #e67e22; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Bounce</button>
-                    <button data-animation="random" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Random</button>
+                    <button data-animation="fade" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">Fade</button>
+                    <button data-animation="slide-left" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer;">Slide</button>
+                    <button data-animation="scale" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #2ecc71; color: white; border: none; border-radius: 4px; cursor: pointer;">Scale</button>
+                    <button data-animation="flip" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #f39c12; color: white; border: none; border-radius: 4px; cursor: pointer;">Flip</button>
+                    <button data-animation="blur" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #9b59b6; color: white; border: none; border-radius: 4px; cursor: pointer;">Blur</button>
+                    <button data-animation="elastic" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #1abc9c; color: white; border: none; border-radius: 4px; cursor: pointer;">Elastic</button>
+                    <button data-animation="bounce" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #e67e22; color: white; border: none; border-radius: 4px; cursor: pointer;">Bounce</button>
+                    <button data-animation="random" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer;">Random</button>
                 </div>
-                <button id="close-controls" style="position: absolute; top: 5px; right: 5px; background: none; border: none; color: #ccc; cursor: pointer; font-size: 16px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">×</button>
+                <button id="close-controls" style="position: absolute; top: 5px; right: 5px; background: none; border: none; color: #ccc; cursor: pointer; font-size: 16px;">×</button>
             </div>
         `;
         
         document.body.appendChild(controlPanel);
         
-        // Добавляем обработчики событий для кнопок
         const buttons = controlPanel.querySelectorAll('button[data-animation]');
         buttons.forEach(button => {
             button.addEventListener('click', (e) => {
@@ -587,69 +490,62 @@ class ContentLoader {
                 } else {
                     this.setAnimationType(animationType);
                 }
-                // Визуальная обратная связь
-                this.showAnimationFeedback(animationType);
             });
         });
         
-        // Обработчик для кнопки закрытия
         const closeBtn = controlPanel.querySelector('#close-controls');
-        closeBtn.addEventListener('click', () => {
-            controlPanel.style.display = 'none';
-        });
-        
-        // Добавляем стили для hover эффектов кнопок
-        const style = document.createElement('style');
-        style.textContent = `
-            #animation-controls button:hover {
-                transform: translateY(-2px) scale(1.05);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            }
-            #animation-controls button:active {
-                transform: translateY(0) scale(0.95);
-            }
-        `;
-        document.head.appendChild(style);
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                controlPanel.style.display = 'none';
+            });
+        }
     }
 
     static init() {
-        // Инициализация аккордеонов
-        this.initAccordions();
-        
-        // Инициализация навигации
-        this.initNavigation();
-        
-        // Добавляем стили для анимаций
-        this.injectAnimationStyles();
-        
-        // Создаем панель управления анимациями (раскомментируйте если нужно)
-        this.createAnimationControls();
-
-        // Обработка кнопок назад/вперед браузера
-        window.addEventListener('popstate', (event) => {
-            if (event.state && event.state.page) {
-                const url = `partials/${event.state.page}.html`;
-                this.loadContent(url);
-            } else {
-                // Если нет состояния, загружаем главную
-                this.loadContent('partials/main.html');
+        try {
+            if (document.readyState === 'loading') {
+                console.warn('DOM еще не готов, отложенная инициализация');
+                return;
             }
-        });
+            
+            console.log('Инициализация ContentLoader...');
+            
+            this.initAccordions();
+            this.initNavigation();
+            this.injectAnimationStyles();
+            this.createAnimationControls();
 
-        // Загрузка начального контента
-        const urlParams = new URLSearchParams(window.location.search);
-        const page = urlParams.get('page') || 'main';
-        const initialUrl = `partials/${page}.html`;
-        this.loadContent(initialUrl);
-        
-        // Добавляем слушатели для клавиатурных сокращений
-        this.initKeyboardShortcuts();
+            window.addEventListener('popstate', (event) => {
+                console.log('Событие popstate:', event.state);
+                if (event.state && event.state.page) {
+                    const url = `partials/${event.state.page}.html`;
+                    this.loadContent(url);
+                } else {
+                    this.loadContent('partials/main.html');
+                }
+            });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const page = urlParams.get('page') || 'main';
+            const initialUrl = `partials/${page}.html`;
+            
+            if (!history.state) {
+                history.replaceState({ page: page }, '', window.location.href);
+            }
+            
+            this.loadContent(initialUrl);
+            
+            this.initKeyboardShortcuts();
+            
+            console.log('ContentLoader успешно инициализирован');
+            
+        } catch (error) {
+            console.error('Ошибка при инициализации ContentLoader:', error);
+        }
     }
     
-    // Клавиатурные сокращения для анимаций
     static initKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
-            // Ctrl + цифра для переключения анимаций
             if (e.ctrlKey && !e.shiftKey && !e.altKey) {
                 switch(e.key) {
                     case '1':
@@ -664,14 +560,6 @@ class ContentLoader {
                         this.setAnimationType(this.animationTypes.SCALE);
                         e.preventDefault();
                         break;
-                    case '4':
-                        this.setAnimationType(this.animationTypes.FLIP);
-                        e.preventDefault();
-                        break;
-                    case '5':
-                        this.setAnimationType(this.animationTypes.ROTATE);
-                        e.preventDefault();
-                        break;
                     case '0':
                         this.enableRandomAnimations();
                         e.preventDefault();
@@ -679,28 +567,43 @@ class ContentLoader {
                 }
             }
         });
+        
+        console.log('Клавиатурные сокращения инициализированы');
     }
 
     static reload() {
         if (this.currentPage) {
+            console.log('Перезагрузка текущей страницы:', this.currentPage);
             this.loadContent(this.currentPage);
         } else {
+            console.log('Загрузка главной страницы');
             this.loadContent('partials/main.html');
         }
     }
+    
+    static debug() {
+        console.log('=== DEBUG ContentLoader ===');
+        console.log('Текущая страница:', this.currentPage);
+        console.log('Загрузка:', this.isLoading);
+        console.log('Текущая анимация:', this.currentAnimation);
+        console.log('Режим random:', this.randomMode);
+    }
 }
 
-// Инициализация после полной загрузки DOM
 document.addEventListener('DOMContentLoaded', () => {
-    // Ждем пока все элементы будут готовы
+    console.log('DOM готов, инициализируем ContentLoader...');
     setTimeout(() => {
         ContentLoader.init();
     }, 100);
 });
 
-// Экспорт для использования в других скриптах
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = ContentLoader;
-} else if (typeof window !== 'undefined') {
+if (document.readyState !== 'loading') {
+    console.log('DOM уже готов, запускаем немедленную инициализацию');
+    setTimeout(() => {
+        ContentLoader.init();
+    }, 50);
+}
+
+if (typeof window !== 'undefined') {
     window.ContentLoader = ContentLoader;
 }

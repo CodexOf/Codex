@@ -1,55 +1,210 @@
-/* Базовые стили */
-@import 'base/reset.css';
+/* === ОСНОВНОЙ CSS ФАЙЛ === */
 
-/* Компоненты */
+/* Импорт переменных и базовых стилей */
+@import 'base/variables.css';
+@import 'base/reset.css';
+@import 'base/typography.css';
+
+/* Импорт компонентов */
 @import 'components/buttons.css';
 @import 'components/accordion.css';
+@import 'components/sidebar.css';
 
-/* Макеты */
+/* Импорт макетов */
+@import 'layouts/header.css';
 @import 'layouts/main-page.css';
 @import 'layouts/content.css';
 
-/* Утилиты */
+/* Импорт утилит */
 @import 'utilities/animations.css';
 @import 'utilities/loading.css';
+@import 'utilities/error.css';
 
-/* Адаптивность */
+/* === ОСНОВНЫЕ КОНТЕЙНЕРЫ === */
+
+/* Основной контент */
+.main-content {
+    margin-left: var(--sidebar-width, 280px);
+    padding: 30px;
+    background: var(--background-darker, #0D1A13);
+    min-height: 100vh;
+    transition: margin-left var(--transition-normal, 0.3s);
+}
+
+#content-container {
+    max-width: var(--content-max-width, 900px);
+    margin: 0 auto;
+    padding: 30px;
+    background: var(--background-content, #404040);
+    border-radius: var(--border-radius-lg, 8px);
+    box-shadow: var(--shadow, 0 2px 15px rgba(0,0,0,0.1));
+    transition: opacity var(--transition-normal, 0.3s);
+    transform-origin: center;
+    backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: transform, opacity, filter;
+}
+
+/* === ПЕРЕХОДЫ И АНИМАЦИИ === */
+
+/* Переходы для контента */
+.content-transition {
+    transition: all 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+.content-transition * {
+    transition: none !important;
+}
+
+/* === АДАПТИВНОСТЬ === */
 @media (max-width: 992px) {
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: static;
-    }
     .main-content {
         margin-left: 0;
+        padding: 20px;
     }
-    .game-title {
-        font-size: 3.5rem;
+    
+    #content-container {
+        padding: 25px;
     }
-    .nav-btn, .codex-btn {
-        padding: 14px 18px;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 15px;
+    }
+    
+    #content-container {
+        padding: 20px;
     }
 }
 
 @media (max-width: 576px) {
-    .game-title {
-        font-size: 2.5rem;
-        letter-spacing: 3px;
-    }
-    .game-subtitle {
-        font-size: 1.1rem;
-    }
-    .sidebar {
-        padding: 15px;
-    }
     .main-content {
+        padding: 10px;
+    }
+    
+    #content-container {
         padding: 15px;
     }
-    #content-container {
-        padding: 20px;
+}
+
+/* === УТИЛИТЫ === */
+
+/* Утилитарные классы */
+.fade-transition {
+    transition: opacity var(--transition-normal, 0.3s);
+}
+
+.slide-transition {
+    transition: transform var(--transition-normal, 0.3s), opacity var(--transition-normal, 0.3s);
+}
+
+.scale-transition {
+    transition: transform var(--transition-normal, 0.3s), opacity var(--transition-normal, 0.3s);
+}
+
+/* Скрытие элементов */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+/* === СОСТОЯНИЯ === */
+
+/* Отключенные элементы */
+.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+/* Интерактивные элементы */
+.interactive {
+    cursor: pointer;
+    transition: all var(--transition-normal, 0.3s);
+}
+
+.interactive:hover {
+    transform: translateY(-2px);
+}
+
+/* === ДОСТУПНОСТЬ === */
+
+/* Фокус для клавиатурной навигации */
+.focus-visible {
+    outline: 2px solid var(--primary-color, #3498db);
+    outline-offset: 2px;
+    border-radius: var(--border-radius-sm, 4px);
+}
+
+/* Уменьшение анимаций */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
-    .nav-btn, .codex-btn {
-        padding: 12px 15px;
-        font-size: 0.95rem;
+    
+    .interactive:hover {
+        transform: none;
+    }
+}
+
+/* Высокая контрастность */
+@media (prefers-contrast: high) {
+    #content-container {
+        border: 2px solid var(--border-color, #333);
+    }
+    
+    .focus-visible {
+        outline-width: 3px;
+    }
+}
+
+/* Печать */
+@media print {
+    .sidebar,
+    .sidebar-toggle,
+    .sidebar-overlay,
+    .header,
+    .loading-indicator,
+    .error-message .btn {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 0;
+        background: white;
+        color: black;
+    }
+    
+    #content-container {
+        background: white;
+        box-shadow: none;
+        padding: 0;
+        color: black;
+    }
+    
+    body {
+        background: white;
+        color: black;
     }
 }
