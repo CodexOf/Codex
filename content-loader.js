@@ -512,6 +512,48 @@ class ContentLoader {
         console.log('Выключен режим случайных анимаций');
     }
     
+    // Показать уведомление о смене анимации
+    static showAnimationFeedback(animationType) {
+        const existingNotification = document.querySelector('.animation-notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+        
+        const notification = document.createElement('div');
+        notification.className = 'animation-notification';
+        notification.style.cssText = `
+            position: fixed;
+            top: 70px;
+            right: 10px;
+            background: rgba(52, 152, 219, 0.95);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        `;
+        
+        const animationName = animationType === 'random' ? 'Случайные анимации' : animationType.charAt(0).toUpperCase() + animationType.slice(1);
+        notification.textContent = `Анимация: ${animationName}`;
+        
+        document.body.appendChild(notification);
+        
+        // Анимация появления
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Автоматическое скрытие через 2 секунды
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 2000);
+    }
+    
     // Создание панели управления анимациями (опционально)
     static createAnimationControls() {
         const controlPanel = document.createElement('div');
@@ -520,19 +562,41 @@ class ContentLoader {
             <div style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.9); color: white; padding: 15px; border-radius: 10px; z-index: 1000; font-size: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
                 <h4 style="margin-bottom: 10px; color: #3498db;">🎬 Анимации</h4>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                    <button onclick="ContentLoader.setAnimationType('fade')" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Fade</button>
-                    <button onclick="ContentLoader.setAnimationType('slide-left')" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Slide</button>
-                    <button onclick="ContentLoader.setAnimationType('scale')" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #2ecc71; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Scale</button>
-                    <button onclick="ContentLoader.setAnimationType('flip')" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #f39c12; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Flip</button>
-                    <button onclick="ContentLoader.setAnimationType('blur')" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #9b59b6; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Blur</button>
-                    <button onclick="ContentLoader.setAnimationType('elastic')" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #1abc9c; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Elastic</button>
-                    <button onclick="ContentLoader.setAnimationType('bounce')" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #e67e22; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Bounce</button>
-                    <button onclick="ContentLoader.enableRandomAnimations()" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Random</button>
+                    <button data-animation="fade" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Fade</button>
+                    <button data-animation="slide-left" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Slide</button>
+                    <button data-animation="scale" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #2ecc71; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Scale</button>
+                    <button data-animation="flip" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #f39c12; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Flip</button>
+                    <button data-animation="blur" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #9b59b6; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Blur</button>
+                    <button data-animation="elastic" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #1abc9c; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Elastic</button>
+                    <button data-animation="bounce" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #e67e22; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Bounce</button>
+                    <button data-animation="random" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s;">Random</button>
                 </div>
+                <button id="close-controls" style="position: absolute; top: 5px; right: 5px; background: none; border: none; color: #ccc; cursor: pointer; font-size: 16px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">×</button>
             </div>
         `;
         
         document.body.appendChild(controlPanel);
+        
+        // Добавляем обработчики событий для кнопок
+        const buttons = controlPanel.querySelectorAll('button[data-animation]');
+        buttons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const animationType = e.target.dataset.animation;
+                if (animationType === 'random') {
+                    this.enableRandomAnimations();
+                } else {
+                    this.setAnimationType(animationType);
+                }
+                // Визуальная обратная связь
+                this.showAnimationFeedback(animationType);
+            });
+        });
+        
+        // Обработчик для кнопки закрытия
+        const closeBtn = controlPanel.querySelector('#close-controls');
+        closeBtn.addEventListener('click', () => {
+            controlPanel.style.display = 'none';
+        });
         
         // Добавляем стили для hover эффектов кнопок
         const style = document.createElement('style');
@@ -540,6 +604,9 @@ class ContentLoader {
             #animation-controls button:hover {
                 transform: translateY(-2px) scale(1.05);
                 box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            }
+            #animation-controls button:active {
+                transform: translateY(0) scale(0.95);
             }
         `;
         document.head.appendChild(style);
