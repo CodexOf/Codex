@@ -9,6 +9,7 @@
 @import 'components/buttons.css';
 @import 'components/accordion.css';
 @import 'components/sidebar.css';
+@import 'components/calendar.css';
 
 /* Импорт макетов */
 @import 'layouts/header.css';
