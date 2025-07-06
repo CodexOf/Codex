@@ -347,6 +347,13 @@ class ContentLoader {
         if (Object.values(this.animationTypes).includes(type)) {
             this.currentAnimation = type;
             this.randomMode = false;
+            // Сохраняем выбор в localStorage
+            try {
+                localStorage.setItem('codex-animation-type', type);
+                localStorage.setItem('codex-animation-mode', 'fixed');
+            } catch (e) {
+                console.warn('Не удалось сохранить анимацию в localStorage:', e);
+            }
             console.log(`Тип анимации изменен на: ${type}`);
             return true;
         } else {
@@ -434,12 +441,11 @@ class ContentLoader {
         
         console.log('Клик по навигации:', href);
         
-        // Определяем тип анимации в зависимости от секции
-        let animationType = this.getAnimationForSection(href);
-        
-        this.loadContent(href, animationType);
+        // Загружаем контент без указания анимации - будет использована текущая или случайная
+        this.loadContent(href);
     }
     
+    // Метод больше не используется для навигации
     static getAnimationForSection(url) {
         if (url.includes('core/')) {
             return this.animationTypes.SLIDE_RIGHT;
@@ -462,6 +468,12 @@ class ContentLoader {
     
     static enableRandomAnimations() {
         this.randomMode = true;
+        // Сохраняем режим в localStorage
+        try {
+            localStorage.setItem('codex-animation-mode', 'random');
+        } catch (e) {
+            console.warn('Не удалось сохранить режим анимации в localStorage:', e);
+        }
         console.log('Включен режим случайных анимаций');
     }
     
@@ -481,14 +493,14 @@ class ContentLoader {
             <div style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.9); color: white; padding: 15px; border-radius: 10px; z-index: 1000; font-size: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
                 <h4 style="margin-bottom: 10px; color: #3498db;">🎬 Анимации</h4>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                    <button data-animation="fade" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">Fade</button>
-                    <button data-animation="slide-left" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer;">Slide</button>
-                    <button data-animation="scale" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #2ecc71; color: white; border: none; border-radius: 4px; cursor: pointer;">Scale</button>
-                    <button data-animation="flip" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #f39c12; color: white; border: none; border-radius: 4px; cursor: pointer;">Flip</button>
-                    <button data-animation="blur" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #9b59b6; color: white; border: none; border-radius: 4px; cursor: pointer;">Blur</button>
-                    <button data-animation="elastic" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #1abc9c; color: white; border: none; border-radius: 4px; cursor: pointer;">Elastic</button>
-                    <button data-animation="bounce" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #e67e22; color: white; border: none; border-radius: 4px; cursor: pointer;">Bounce</button>
-                    <button data-animation="random" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer;">Random</button>
+                    <button data-animation="fade" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; opacity: 0.7; transition: opacity 0.3s;">Fade</button>
+                    <button data-animation="slide-left" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; opacity: 0.7; transition: opacity 0.3s;">Slide</button>
+                    <button data-animation="scale" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #2ecc71; color: white; border: none; border-radius: 4px; cursor: pointer; opacity: 0.7; transition: opacity 0.3s;">Scale</button>
+                    <button data-animation="flip" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #f39c12; color: white; border: none; border-radius: 4px; cursor: pointer; opacity: 0.7; transition: opacity 0.3s;">Flip</button>
+                    <button data-animation="blur" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #9b59b6; color: white; border: none; border-radius: 4px; cursor: pointer; opacity: 0.7; transition: opacity 0.3s;">Blur</button>
+                    <button data-animation="elastic" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #1abc9c; color: white; border: none; border-radius: 4px; cursor: pointer; opacity: 0.7; transition: opacity 0.3s;">Elastic</button>
+                    <button data-animation="bounce" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #e67e22; color: white; border: none; border-radius: 4px; cursor: pointer; opacity: 0.7; transition: opacity 0.3s;">Bounce</button>
+                    <button data-animation="random" style="margin: 2px; padding: 6px 8px; font-size: 10px; background: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer; opacity: 0.7; transition: opacity 0.3s;">Random</button>
                 </div>
                 <button id="close-controls" style="position: absolute; top: 5px; right: 5px; background: none; border: none; color: #ccc; cursor: pointer; font-size: 16px;">×</button>
             </div>
@@ -497,14 +509,31 @@ class ContentLoader {
         document.body.appendChild(controlPanel);
         
         const buttons = controlPanel.querySelectorAll('button[data-animation]');
+        
+        // Подсвечиваем текущую анимацию
+        if (this.randomMode) {
+            const randomBtn = controlPanel.querySelector('button[data-animation="random"]');
+            if (randomBtn) randomBtn.style.opacity = '1';
+        } else {
+            const currentBtn = controlPanel.querySelector(`button[data-animation="${this.currentAnimation}"]`);
+            if (currentBtn) currentBtn.style.opacity = '1';
+        }
+        
         buttons.forEach(button => {
             button.addEventListener('click', (e) => {
                 const animationType = e.target.dataset.animation;
                 if (animationType === 'random') {
                     this.enableRandomAnimations();
+                    // Визуальная обратная связь
+                    buttons.forEach(btn => btn.style.opacity = '0.7');
+                    e.target.style.opacity = '1';
                 } else {
                     this.setAnimationType(animationType);
+                    // Визуальная обратная связь
+                    buttons.forEach(btn => btn.style.opacity = '0.7');
+                    e.target.style.opacity = '1';
                 }
+                console.log('Анимация изменена на:', animationType);
             });
         });
         
@@ -520,6 +549,9 @@ class ContentLoader {
         try {
             console.log('Инициализация ContentLoader...');
             console.log('DOM ready state:', document.readyState);
+            
+            // Восстанавливаем сохраненные настройки анимации
+            this.restoreAnimationSettings();
             
             this.injectAnimationStyles();
             this.initAccordions();
@@ -585,6 +617,24 @@ class ContentLoader {
         });
         
         console.log('Клавиатурные сокращения инициализированы');
+    }
+    
+    static restoreAnimationSettings() {
+        try {
+            const savedMode = localStorage.getItem('codex-animation-mode');
+            const savedType = localStorage.getItem('codex-animation-type');
+            
+            if (savedMode === 'random') {
+                this.randomMode = true;
+                console.log('Восстановлен режим случайных анимаций');
+            } else if (savedType && Object.values(this.animationTypes).includes(savedType)) {
+                this.currentAnimation = savedType;
+                this.randomMode = false;
+                console.log('Восстановлена анимация:', savedType);
+            }
+        } catch (e) {
+            console.warn('Не удалось восстановить настройки анимации:', e);
+        }
     }
 
     static reload() {
