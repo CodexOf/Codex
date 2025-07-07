@@ -163,8 +163,13 @@ setTimeout(function() {
             currentMonth: !!elements.currentMonth,
             calendarDays: !!elements.calendarDays,
             eventsList: !!elements.eventsList,
-            eventModal: !!elements.eventModal
+            eventModal: !!elements.eventModal,
+            modalTitle: !!elements.modalTitle,
+            eventForm: !!elements.eventForm
         });
+        
+        // Выводим сами элементы для отладки
+        console.log('Элемент eventModal:', elements.eventModal);
 
         // Инициализация
         function init() {
@@ -331,6 +336,14 @@ setTimeout(function() {
 
     // Открытие модального окна
     function openEventModal(date = null) {
+        console.log('Открытие модального окна...');
+        console.log('Модальное окно:', elements.eventModal);
+        
+        if (!elements.eventModal) {
+            console.error('Модальное окно не найдено!');
+            return;
+        }
+        
         editingEventId = null;
         participants = [];
         selectedColor = '#3498db';
@@ -345,7 +358,10 @@ setTimeout(function() {
         
         renderParticipants();
         updateColorPicker();
+        
+        console.log('Показываем модальное окно...');
         elements.eventModal.style.display = 'flex';
+        console.log('Модальное окно должно быть видимо');
     }
 
     // Закрытие модального окна
