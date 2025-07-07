@@ -26,6 +26,14 @@
         </div>
     </div>
 
+    <!-- Список событий -->
+    <div class="events-list-section">
+        <h3><i class="fas fa-list"></i> Ближайшие события</h3>
+        <div class="events-list" id="eventsList">
+            <p class="no-events">Нет запланированных событий</p>
+        </div>
+    </div>
+
     <!-- Сетка календаря -->
     <div class="calendar-grid" id="calendarGrid">
         <div class="calendar-weekdays">
@@ -39,14 +47,6 @@
         </div>
         <div class="calendar-days" id="calendarDays">
             <!-- Дни будут сгенерированы JavaScript -->
-        </div>
-    </div>
-
-    <!-- Список событий -->
-    <div class="events-list-section">
-        <h3><i class="fas fa-list"></i> Ближайшие события</h3>
-        <div class="events-list" id="eventsList">
-            <p class="no-events">Нет запланированных событий</p>
         </div>
     </div>
 </div>
@@ -206,6 +206,45 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    position: relative;
+}
+
+/* Всплывающая подсказка */
+.event-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 100;
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    max-width: 250px;
+    white-space: normal;
+    line-height: 1.4;
+}
+
+.event-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgba(0, 0, 0, 0.95);
+}
+
+.calendar-event:hover .event-tooltip {
+    display: block;
 }
 
 /* Панель управления */
@@ -245,6 +284,49 @@
     font-size: 1.5rem;
     min-width: 200px;
     text-align: center;
+}
+/* Список событий */
+.events-list-section {
+    background: #2a2a2a;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.events-list-section h3 {
+    color: #fff;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.event-item {
+    background: #1a1a1a;
+    border-radius: 6px;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+.event-item:hover {
+    background: #252525;
+    transform: translateX(3px);
+}
+
+.no-events {
+    text-align: center;
+    color: #666;
+    padding: 20px;
 }
 </style>
 
@@ -375,8 +457,33 @@ setTimeout(function() {
                 const eventEl = document.createElement('div');
                 eventEl.className = 'calendar-event';
                 eventEl.style.backgroundColor = event.color || '#3498db';
-                eventEl.textContent = event.title;
-                eventEl.title = event.title;
+                
+                // Текст события
+                const eventText = document.createElement('span');
+                eventText.textContent = event.title;
+                eventEl.appendChild(eventText);
+                
+                // Создаем всплывающую подсказку
+                const tooltip = document.createElement('div');
+                tooltip.className = 'event-tooltip';
+                
+                let tooltipContent = `<strong>${event.title}</strong>`;
+                if (event.timeStart) {
+                    tooltipContent += `<br>Время: ${event.timeStart}`;
+                    if (event.timeEnd) {
+                        tooltipContent += ` - ${event.timeEnd}`;
+                    }
+                }
+                if (event.description) {
+                    tooltipContent += `<br>${event.description}`;
+                }
+                if (event.participants && event.participants.length > 0) {
+                    tooltipContent += `<br>Участники: ${event.participants.join(', ')}`;
+                }
+                
+                tooltip.innerHTML = tooltipContent;
+                eventEl.appendChild(tooltip);
+                
                 dayEl.appendChild(eventEl);
             });
             
@@ -392,7 +499,9 @@ setTimeout(function() {
         // Клик по дню
         dayEl.addEventListener('click', () => {
             if (!isOtherMonth) {
-                openEventModal(date);
+                // Создаем новую дату, чтобы избежать проблем с часовыми поясами
+                const clickedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                openEventModal(clickedDate);
             }
         });
         
