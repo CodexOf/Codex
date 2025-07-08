@@ -23,6 +23,13 @@
             <button class="btn-secondary" id="todayBtn">
                 <i class="fas fa-home"></i> Сегодня
             </button>
+            <button class="btn-secondary" id="exportBtn" title="Экспортировать события">
+                <i class="fas fa-download"></i>
+            </button>
+            <button class="btn-secondary" id="importBtn" title="Импортировать события">
+                <i class="fas fa-upload"></i>
+            </button>
+            <input type="file" id="importFile" accept=".json" style="display: none;">
         </div>
     </div>
 
@@ -357,6 +364,12 @@
     justify-content: center;
     z-index: 1000;
     backdrop-filter: blur(5px);
+}
+
+/* Кнопки с только иконками */
+.btn-secondary[title] {
+    padding: 10px 15px;
+    min-width: auto;
 }
 
 .modal-content {
@@ -1018,6 +1031,50 @@ setTimeout(function() {
         }
     }
 
+    // Экспорт событий
+    function exportEvents() {
+        const dataStr = JSON.stringify(events, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        const date = new Date().toISOString().split('T')[0];
+        link.download = `calendar_events_${date}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        console.log('Экспортировано событий:', events.length);
+    }
+
+    // Импорт событий
+    function importEvents(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedEvents = JSON.parse(e.target.result);
+                if (Array.isArray(importedEvents)) {
+                    // Спрашиваем, заменить или добавить
+                    const replace = confirm('Заменить все текущие события? (Нет - добавить к существующим)');
+                    if (replace) {
+                        events = importedEvents;
+                    } else {
+                        events = [...events, ...importedEvents];
+                    }
+                    localStorage.setItem('calendarEvents', JSON.stringify(events));
+                    renderCalendar();
+                    renderEventsList();
+                    alert(`Импортировано событий: ${importedEvents.length}`);
+                } else {
+                    alert('Неверный формат файла');
+                }
+            } catch (error) {
+                alert('Ошибка при чтении файла: ' + error.message);
+            }
+        };
+        reader.readAsText(file);
+    }
+
     // Привязка обработчиков событий
     function attachEventListeners() {
         console.log('Привязка обработчиков событий...');
@@ -1066,6 +1123,36 @@ setTimeout(function() {
             addEventBtn.addEventListener('click', () => {
                 console.log('Клик на Добавить событие');
                 openEventModal();
+            });
+        }
+        
+        // Кнопка экспорта
+        const exportBtn = document.getElementById('exportBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                if (events.length === 0) {
+                    alert('Нет событий для экспорта');
+                    return;
+                }
+                exportEvents();
+            });
+        }
+        
+        // Кнопка импорта
+        const importBtn = document.getElementById('importBtn');
+        const importFile = document.getElementById('importFile');
+        if (importBtn && importFile) {
+            importBtn.addEventListener('click', () => {
+                importFile.click();
+            });
+            
+            importFile.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    importEvents(file);
+                    // Очищаем input для повторного использования
+                    e.target.value = '';
+                }
             });
         }
         
