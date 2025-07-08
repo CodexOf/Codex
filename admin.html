@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Codex</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Roboto', sans-serif; background: linear-gradient(135deg, #0D1A13 0%, #1a1a1a 100%); color: #fff; min-height: 100vh; }
+        .admin-header { background: rgba(0, 0, 0, 0.5); padding: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center; }
+        .admin-title { font-size: 1.5rem; color: #3498db; }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .role-badge { padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 500; }
+        .role-super_admin { background: #e74c3c; }
+        .role-admin { background: #f39c12; }
+        .role-moderator { background: #9b59b6; }
+        .role-user { background: #95a5a6; }
+        .admin-container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .admin-tab { padding: 15px 25px; background: transparent; border: none; color: #bbb; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.3s ease; font-size: 1rem; }
+        .admin-tab.active { color: #3498db; border-bottom-color: #3498db; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card { background: rgba(45, 45, 45, 0.9); border-radius: 10px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .card-title { font-size: 1.2rem; margin-bottom: 20px; color: #3498db; }
+        .users-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .user-card { background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .user-name { font-weight: 500; font-size: 1.1rem; }
+        .user-details { font-size: 0.9rem; color: #bbb; margin-bottom: 15px; }
+        .user-actions { display: flex; gap: 10px; }
+        .btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 0.85rem; transition: all 0.3s ease; }
+        .btn-danger { background: #e74c3c; color: white; } .btn-danger:hover { background: #c0392b; }
+        .btn-primary { background: #3498db; color: white; } .btn-primary:hover { background: #2980b9; }
+        .btn-success { background: #27ae60; color: white; } .btn-success:hover { background: #2ecc71; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 5px; color: #ddd; font-size: 0.9rem; }
+        .form-input, .form-select { width: 100%; padding: 10px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 5px; color: #fff; font-size: 0.9rem; }
+        .form-input:focus, .form-select:focus { outline: none; border-color: #3498db; }
+        .danger-zone { border: 1px solid #e74c3c; border-radius: 8px; padding: 20px; margin-top: 30px; }
+        .danger-title { color: #e74c3c; font-weight: 500; margin-bottom: 15px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 8px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .stat-number { font-size: 2rem; font-weight: 700; color: #3498db; display: block; }
+        .stat-label { font-size: 0.9rem; color: #bbb; margin-top: 5px; }
+        .alert { padding: 15px; border-radius: 5px; margin-bottom: 20px; display: none; }
+        .alert-success { background: rgba(46, 204, 113, 0.1); border: 1px solid rgba(46, 204, 113, 0.3); color: #2ecc71; }
+        .alert-error { background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231, 76, 60, 0.3); color: #e74c3c; }
+        .back-link { color: #3498db; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px; transition: color 0.3s ease; }
+        .back-link:hover { color: #fff; }
+        @media (max-width: 768px) { .admin-header { flex-direction: column; gap: 15px; text-align: center; } .admin-tabs { flex-wrap: wrap; } .form-grid { grid-template-columns: 1fr; } .users-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <h1 class="admin-title"><i class="fas fa-shield-alt"></i> Админ-панель Codex</h1>
+        <div class="user-info">
+            <span id="current-user">Загрузка...</span>
+            <span id="current-role" class="role-badge">user</span>
+            <button onclick="logout()" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Выход</button>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <a href="content.html" class="back-link"><i class="fas fa-arrow-left"></i> Вернуться к сайту</a>
+        <div id="alert-success" class="alert alert-success"></div>
+        <div id="alert-error" class="alert alert-error"></div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><span id="total-users" class="stat-number">0</span><div class="stat-label">Всего пользователей</div></div>
+            <div class="stat-card"><span id="total-admins" class="stat-number">0</span><div class="stat-label">Администраторы</div></div>
+            <div class="stat-card"><span id="total-events" class="stat-number">0</span><div class="stat-label">События</div></div>
+            <div class="stat-card"><span id="current-time" class="stat-number">--:--</span><div class="stat-label">Текущее время</div></div>
+        </div>
+
+        <div class="admin-tabs">
+            <button class="admin-tab active" onclick="switchTab('users')"><i class="fas fa-users"></i> Пользователи</button>
+            <button class="admin-tab" onclick="switchTab('create')"><i class="fas fa-user-plus"></i> Создать пользователя</button>
+            <button class="admin-tab" onclick="switchTab('system')"><i class="fas fa-cogs"></i> Система</button>
+        </div>
+
+        <div id="tab-users" class="tab-content active">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-users"></i> Управление пользователями</h2>
+                <div id="users-list" class="users-grid"></div>
+            </div>
+        </div>
+
+        <div id="tab-create" class="tab-content">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-user-plus"></i> Создать нового пользователя</h2>
+                <form id="create-user-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Имя пользователя</label>
+                            <input type="text" id="new-username" class="form-input" placeholder="Минимум 3 символа" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Пароль</label>
+                            <input type="password" id="new-password" class="form-input" placeholder="Минимум 6 символов" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Роль</label>
+                            <select id="new-role" class="form-select" required>
+                                <option value="user">Пользователь</option>
+                                <option value="moderator">Модератор</option>
+                                <option value="admin" id="admin-option">Администратор</option>
+                                <option value="super_admin" id="super-admin-option">Главный администратор</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Создать пользователя</button>
+                </form>
+            </div>
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-bolt"></i> Быстрое создание</h2>
+                <div class="form-grid">
+                    <button onclick="quickCreate('admin')" class="btn btn-primary"><i class="fas fa-user-shield"></i> Создать администратора</button>
+                    <button onclick="quickCreate('moderator')" class="btn btn-primary"><i class="fas fa-user-edit"></i> Создать модератора</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-system" class="tab-content">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-cogs"></i> Системные настройки</h2>
+                <div class="form-grid">
+                    <button onclick="clearEvents()" class="btn btn-primary"><i class="fas fa-calendar-times"></i> Очистить события</button>
+                    <button onclick="clearUsers()" class="btn btn-primary"><i class="fas fa-users-slash"></i> Очистить пользователей</button>
+                    <button onclick="exportData()" class="btn btn-success"><i class="fas fa-download"></i> Экспорт данных</button>
+                    <button onclick="showConsoleCommands()" class="btn btn-primary"><i class="fas fa-terminal"></i> Консольные команды</button>
+                </div>
+            </div>
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-key"></i> Смена пароля</h2>
+                <form id="change-password-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Текущий пароль</label>
+                            <input type="password" id="old-password" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Новый пароль</label>
+                            <input type="password" id="new-password-change" class="form-input" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Сменить пароль</button>
+                </form>
+            </div>
+            <div class="danger-zone">
+                <h3 class="danger-title"><i class="fas fa-exclamation-triangle"></i> Опасная зона</h3>
+                <p style="color: #bbb; margin-bottom: 15px;">Эти действия необратимы и могут привести к потере всех данных.</p>
+                <button onclick="confirmClearAll()" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Полная очистка системы</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth-local.js"></script>
+    <script>
+        if (!window.localAuthManager.hasRole('admin')) {
+            alert('Недостаточно прав доступа');
+            window.location.href = 'content.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserInfo(); loadStats(); loadUsers(); updateTime();
+            setInterval(updateTime, 1000);
+            if (!window.localAuthManager.hasRole('super_admin')) {
+                document.getElementById('admin-option').style.display = 'none';
+                document.getElementById('super-admin-option').style.display = 'none';
+            }
+        });
+
+        function loadUserInfo() {
+            const user = window.localAuthManager.currentUser;
+            if (user) {
+                document.getElementById('current-user').textContent = user.username;
+                const roleElement = document.getElementById('current-role');
+                roleElement.textContent = user.role;
+                roleElement.className = `role-badge role-${user.role}`;
+            }
+        }
+
+        function loadStats() {
+            const result = window.localAuthManager.getAllUsers();
+            if (result.success) {
+                const users = result.users;
+                document.getElementById('total-users').textContent = users.length;
+                const admins = users.filter(u => u.role === 'admin' || u.role === 'super_admin');
+                document.getElementById('total-admins').textContent = admins.length;
+            }
+            const events = JSON.parse(localStorage.getItem('codex_events') || '[]');
+            document.getElementById('total-events').textContent = events.length;
+        }
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleTimeString('ru-RU');
+        }
+
+        function loadUsers() {
+            const result = window.localAuthManager.getAllUsers();
+            const container = document.getElementById('users-list');
+            if (!result.success) { showError(result.error); return; }
+            container.innerHTML = '';
+            result.users.forEach(user => {
+                const userCard = document.createElement('div');
+                userCard.className = 'user-card';
+                const isCurrentUser = user.id === window.localAuthManager.currentUser.id;
+                const canDelete = !isCurrentUser && (window.localAuthManager.hasRole('super_admin') || (user.role !== 'admin' && user.role !== 'super_admin'));
+                userCard.innerHTML = `
+                    <div class="user-header">
+                        <div class="user-name">${user.username}</div>
+                        <span class="role-badge role-${user.role}">${user.role}</span>
+                    </div>
+                    <div class="user-details">
+                        <div>ID: ${user.id}</div>
+                        <div>Создан: ${new Date(user.createdAt).toLocaleDateString('ru-RU')}</div>
+                        ${user.isDefault ? '<div style="color: #f39c12;">Администратор по умолчанию</div>' : ''}
+                        ${isCurrentUser ? '<div style="color: #3498db;">Это вы</div>' : ''}
+                    </div>
+                    <div class="user-actions">
+                        ${canDelete ? `<button onclick="deleteUser('${user.id}', '${user.username}')" class="btn btn-danger"><i class="fas fa-trash"></i> Удалить</button>` : ''}
+                    </div>`;
+                container.appendChild(userCard);
+            });
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        document.getElementById('create-user-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('new-username').value.trim();
+            const password = document.getElementById('new-password').value;
+            const role = document.getElementById('new-role').value;
+            if (username.length < 3) { showError('Имя пользователя должно содержать минимум 3 символа'); return; }
+            if (password.length < 6) { showError('Пароль должен содержать минимум 6 символов'); return; }
+            const permissions = getPermissionsByRole(role);
+            const result = await window.localAuthManager.createUser({ username, password, role, permissions });
+            if (result.success) {
+                showSuccess(`Пользователь ${username} создан успешно`);
+                document.getElementById('create-user-form').reset();
+                loadUsers(); loadStats();
+            } else { showError(result.error); }
+        });
+
+        document.getElementById('change-password-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const oldPassword = document.getElementById('old-password').value;
+            const newPassword = document.getElementById('new-password-change').value;
+            const result = await window.localAuthManager.changePassword(oldPassword, newPassword);
+            if (result.success) {
+                showSuccess('Пароль успешно изменен');
+                document.getElementById('change-password-form').reset();
+            } else { showError(result.error); }
+        });
+
+        function getPermissionsByRole(role) {
+            switch(role) {
+                case 'super_admin': return ['all'];
+                case 'admin': return ['all'];
+                case 'moderator': return ['read', 'write', 'moderate'];
+                default: return ['read', 'write'];
+            }
+        }
+
+        function quickCreate(role) {
+            const username = prompt(`Введите имя пользователя для ${role}:`);
+            if (!username) return;
+            const password = prompt('Введите пароль (минимум 6 символов):');
+            if (!password || password.length < 6) { showError('Пароль должен содержать минимум 6 символов'); return; }
+            const permissions = getPermissionsByRole(role);
+            window.localAuthManager.createUser({ username: username.trim(), password, role, permissions }).then(result => {
+                if (result.success) { showSuccess(`${role} ${username} создан успешно`); loadUsers(); loadStats(); }
+                else { showError(result.error); }
+            });
+        }
+
+        async function deleteUser(userId, username) {
+            if (!confirm(`Удалить пользователя ${username}?`)) return;
+            const result = await window.localAuthManager.deleteUser(userId);
+            if (result.success) { showSuccess(`Пользователь ${username} удален`); loadUsers(); loadStats(); }
+            else { showError(result.error); }
+        }
+
+        function clearUsers() {
+            if (!confirm('Удалить всех пользователей кроме администраторов?')) return;
+            const result = window.localAuthManager.clearUsers();
+            if (result.success) { showSuccess(`Удалено пользователей: ${result.removedCount}`); loadUsers(); loadStats(); }
+            else { showError(result.error); }
+        }
+
+        function clearEvents() {
+            if (!confirm('Удалить все события?')) return;
+            const result = window.localAuthManager.clearEvents();
+            if (result.success) { showSuccess('Все события удалены'); loadStats(); }
+            else { showError(result.error); }
+        }
+
+        function confirmClearAll() {
+            const confirmation = prompt('Для подтверждения полной очистки введите "УДАЛИТЬ ВСЕ":');
+            if (confirmation === 'УДАЛИТЬ ВСЕ') {
+                const result = window.localAuthManager.clearAllData();
+                if (result.success) {
+                    alert('Все данные удалены. Создан новый администратор по умолчанию.\nUsername: admin\nPassword: admin123');
+                    window.location.href = 'auth.html';
+                } else { showError(result.error); }
+            }
+        }
+
+        function exportData() {
+            const data = {
+                users: JSON.parse(localStorage.getItem('codex_users') || '[]').map(u => ({
+                    id: u.id, username: u.username, role: u.role, createdAt: u.createdAt
+                })),
+                events: JSON.parse(localStorage.getItem('codex_events') || '[]'),
+                exportDate: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `codex-export-${new Date().toISOString().split('T')[0]}.json`; a.click();
+            showSuccess('Данные экспортированы');
+        }
+
+        function showConsoleCommands() {
+            const commands = `
+Доступные команды в консоли браузера:
+
+adminCommands.showUsers() - показать всех пользователей
+adminCommands.createAdmin("username", "password") - создать администратора
+adminCommands.createModerator("username", "password") - создать модератора
+adminCommands.clearAll() - очистить все данные
+adminCommands.clearUsers() - очистить пользователей
+adminCommands.clearEvents() - очистить события
+
+Пример:
+adminCommands.createAdmin("newadmin", "password123")`;
+            alert(commands); console.log(commands);
+        }
+
+        function showSuccess(message) {
+            const alert = document.getElementById('alert-success');
+            alert.textContent = message; alert.style.display = 'block';
+            document.getElementById('alert-error').style.display = 'none';
+            setTimeout(() => alert.style.display = 'none', 5000);
+        }
+
+        function showError(message) {
+            const alert = document.getElementById('alert-error');
+            alert.textContent = message; alert.style.display = 'block';
+            document.getElementById('alert-success').style.display = 'none';
+            setTimeout(() => alert.style.display = 'none', 5000);
+        }
+
+        function logout() { window.localAuthManager.logout(); }
+    </script>
+</body>
+</html>

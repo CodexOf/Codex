@@ -1,8 +1,9 @@
-// Система пользователей без сервера (для GitHub Pages)
+// Система пользователей без сервера (для GitHub Pages) с ролями администраторов
 class LocalAuthManager {
     constructor() {
         this.currentUser = this.getCurrentUser();
         this.initializeUsers();
+        this.createDefaultAdmin(); // Создаем администратора по умолчанию
     }
 
     initializeUsers() {
@@ -12,6 +13,34 @@ class LocalAuthManager {
         }
         if (!localStorage.getItem('codex_events')) {
             localStorage.setItem('codex_events', JSON.stringify([]));
+        }
+    }
+
+    // Создание администратора по умолчанию
+    createDefaultAdmin() {
+        const users = JSON.parse(localStorage.getItem('codex_users') || '[]');
+        
+        // Проверяем, есть ли уже главный администратор
+        const superAdmin = users.find(u => u.role === 'super_admin');
+        
+        if (!superAdmin) {
+            const defaultAdmin = {
+                id: 'admin_' + Date.now().toString(),
+                username: 'admin',
+                password: this.hashPassword('admin123'), // Пароль по умолчанию
+                role: 'super_admin', // Роли: super_admin, admin, moderator, user
+                permissions: ['all'], // Все права
+                createdAt: new Date().toISOString(),
+                isDefault: true
+            };
+            
+            users.push(defaultAdmin);
+            localStorage.setItem('codex_users', JSON.stringify(users));
+            
+            console.log('Создан администратор по умолчанию:');
+            console.log('Username: admin');
+            console.log('Password: admin123');
+            console.log('Обязательно смените пароль после первого входа!');
         }
     }
 
@@ -29,6 +58,29 @@ class LocalAuthManager {
         return !!this.currentUser;
     }
 
+    // Проверка ролей и прав доступа
+    hasRole(requiredRole) {
+        if (!this.currentUser) return false;
+        
+        const roleHierarchy = {
+            'super_admin': 4,
+            'admin': 3,
+            'moderator': 2,
+            'user': 1
+        };
+        
+        const userLevel = roleHierarchy[this.currentUser.role] || 0;
+        const requiredLevel = roleHierarchy[requiredRole] || 0;
+        
+        return userLevel >= requiredLevel;
+    }
+
+    hasPermission(permission) {
+        if (!this.currentUser) return false;
+        if (this.currentUser.permissions && this.currentUser.permissions.includes('all')) return true;
+        return this.currentUser.permissions && this.currentUser.permissions.includes(permission);
+    }
+
     async login(username, password) {
         try {
             const users = JSON.parse(localStorage.getItem('codex_users') || '[]');
@@ -37,16 +89,14 @@ class LocalAuthManager {
             console.log('=== LOGIN DEBUG ===');
             console.log('Username:', username);
             console.log('Password hash:', hashedPassword);
-            console.log('All users:', users);
+            console.log('Total users:', users.length);
             
             const user = users.find(u => {
                 const usernameMatch = u.username.toLowerCase() === username.toLowerCase();
                 const passwordMatch = u.password === hashedPassword;
                 
-                console.log(`Checking user ${u.username}:`);
+                console.log(`Checking user ${u.username} (${u.role || 'user'}):`);
                 console.log('  Username match:', usernameMatch);
-                console.log('  Stored password:', u.password);
-                console.log('  Input password hash:', hashedPassword);
                 console.log('  Password match:', passwordMatch);
                 
                 return usernameMatch && passwordMatch;
@@ -56,7 +106,10 @@ class LocalAuthManager {
                 this.currentUser = {
                     id: user.id,
                     username: user.username,
-                    createdAt: user.createdAt
+                    role: user.role || 'user',
+                    permissions: user.permissions || ['read', 'write'],
+                    createdAt: user.createdAt,
+                    isDefault: user.isDefault
                 };
                 
                 localStorage.setItem('codex_currentUser', JSON.stringify(this.currentUser));
@@ -74,7 +127,7 @@ class LocalAuthManager {
         }
     }
 
-    async register(username, password) {
+    async register(username, password, role = 'user', permissions = ['read', 'write']) {
         try {
             if (username.length < 3) {
                 return { success: false, error: 'Имя пользователя должно содержать минимум 3 символа' };
@@ -95,14 +148,16 @@ class LocalAuthManager {
             
             console.log('=== REGISTER DEBUG ===');
             console.log('Username:', username);
-            console.log('Original password:', password);
-            console.log('Hashed password:', hashedPassword);
+            console.log('Role:', role);
+            console.log('Permissions:', permissions);
 
             // Создаем нового пользователя
             const newUser = {
                 id: Date.now().toString(),
                 username: username.trim(),
                 password: hashedPassword,
+                role: role,
+                permissions: permissions,
                 createdAt: new Date().toISOString()
             };
 
@@ -110,24 +165,153 @@ class LocalAuthManager {
             localStorage.setItem('codex_users', JSON.stringify(users));
             
             console.log('User registered:', newUser);
-            console.log('All users after registration:', users);
 
-            // Автоматически входим
-            this.currentUser = {
-                id: newUser.id,
-                username: newUser.username,
-                createdAt: newUser.createdAt
-            };
-            
-            localStorage.setItem('codex_currentUser', JSON.stringify(this.currentUser));
-            localStorage.setItem('codex_loginTime', Date.now().toString());
-
-            return { success: true, user: this.currentUser };
+            return { success: true, user: newUser };
 
         } catch (error) {
             console.error('Ошибка регистрации:', error);
             return { success: false, error: 'Ошибка регистрации' };
         }
+    }
+
+    // Создание пользователя администратором
+    async createUser(userData) {
+        if (!this.hasRole('admin')) {
+            return { success: false, error: 'Недостаточно прав для создания пользователей' };
+        }
+
+        const { username, password, role, permissions } = userData;
+        
+        // Только super_admin может создавать других admin и super_admin
+        if ((role === 'admin' || role === 'super_admin') && !this.hasRole('super_admin')) {
+            return { success: false, error: 'Только главный администратор может создавать администраторов' };
+        }
+
+        return await this.register(username, password, role, permissions);
+    }
+
+    // Получение всех пользователей (только для администраторов)
+    getAllUsers() {
+        if (!this.hasRole('admin')) {
+            return { success: false, error: 'Недостаточно прав' };
+        }
+
+        const users = JSON.parse(localStorage.getItem('codex_users') || '[]');
+        // Не показываем пароли
+        const safeUsers = users.map(u => ({
+            id: u.id,
+            username: u.username,
+            role: u.role || 'user',
+            permissions: u.permissions || ['read', 'write'],
+            createdAt: u.createdAt,
+            isDefault: u.isDefault
+        }));
+
+        return { success: true, users: safeUsers };
+    }
+
+    // Удаление пользователя
+    async deleteUser(userId) {
+        if (!this.hasRole('admin')) {
+            return { success: false, error: 'Недостаточно прав' };
+        }
+
+        const users = JSON.parse(localStorage.getItem('codex_users') || '[]');
+        const userToDelete = users.find(u => u.id === userId);
+
+        if (!userToDelete) {
+            return { success: false, error: 'Пользователь не найден' };
+        }
+
+        // Нельзя удалить самого себя
+        if (userToDelete.id === this.currentUser.id) {
+            return { success: false, error: 'Нельзя удалить самого себя' };
+        }
+
+        // Только super_admin может удалять других admin
+        if (userToDelete.role === 'admin' && !this.hasRole('super_admin')) {
+            return { success: false, error: 'Только главный администратор может удалять администраторов' };
+        }
+
+        const updatedUsers = users.filter(u => u.id !== userId);
+        localStorage.setItem('codex_users', JSON.stringify(updatedUsers));
+
+        return { success: true };
+    }
+
+    // Изменение пароля
+    async changePassword(oldPassword, newPassword) {
+        if (!this.isAuthenticated()) {
+            return { success: false, error: 'Не авторизован' };
+        }
+
+        const users = JSON.parse(localStorage.getItem('codex_users') || '[]');
+        const userIndex = users.findIndex(u => u.id === this.currentUser.id);
+
+        if (userIndex === -1) {
+            return { success: false, error: 'Пользователь не найден' };
+        }
+
+        const oldPasswordHash = this.hashPassword(oldPassword);
+        if (users[userIndex].password !== oldPasswordHash) {
+            return { success: false, error: 'Неверный текущий пароль' };
+        }
+
+        if (newPassword.length < 6) {
+            return { success: false, error: 'Новый пароль должен содержать минимум 6 символов' };
+        }
+
+        users[userIndex].password = this.hashPassword(newPassword);
+        users[userIndex].isDefault = false; // Убираем флаг дефолтного пользователя
+        localStorage.setItem('codex_users', JSON.stringify(users));
+
+        return { success: true };
+    }
+
+    // Полная очистка всех данных
+    clearAllData() {
+        if (!this.hasRole('super_admin')) {
+            return { success: false, error: 'Только главный администратор может очистить все данные' };
+        }
+
+        // Очищаем все данные
+        localStorage.removeItem('codex_users');
+        localStorage.removeItem('codex_currentUser');
+        localStorage.removeItem('codex_loginTime');
+        localStorage.removeItem('codex_events');
+        localStorage.removeItem('codex_hash_fixed');
+
+        // Перезапускаем систему
+        this.currentUser = null;
+        this.initializeUsers();
+        this.createDefaultAdmin();
+
+        return { success: true };
+    }
+
+    // Очистка только пользователей (кроме администраторов)
+    clearUsers() {
+        if (!this.hasRole('admin')) {
+            return { success: false, error: 'Недостаточно прав' };
+        }
+
+        const users = JSON.parse(localStorage.getItem('codex_users') || '[]');
+        // Оставляем только администраторов
+        const adminUsers = users.filter(u => u.role === 'admin' || u.role === 'super_admin');
+        
+        localStorage.setItem('codex_users', JSON.stringify(adminUsers));
+
+        return { success: true, removedCount: users.length - adminUsers.length };
+    }
+
+    // Очистка событий
+    clearEvents() {
+        if (!this.hasRole('moderator')) {
+            return { success: false, error: 'Недостаточно прав' };
+        }
+
+        localStorage.setItem('codex_events', JSON.stringify([]));
+        return { success: true };
     }
 
     logout() {
@@ -173,14 +357,98 @@ class LocalAuthManager {
         return this.isAuthenticated();
     }
 
-    requireAuth() {
-        if (!this.isAuthenticated()) {
+    requireAuth(requiredRole = 'user') {
+        if (!this.isAuthenticated() || !this.hasRole(requiredRole)) {
             window.location.href = 'auth.html';
             return false;
         }
         return true;
     }
 }
+
+// Консольные команды для управления (только для разработки)
+window.adminCommands = {
+    // Показать всех пользователей
+    showUsers: () => {
+        const result = window.localAuthManager.getAllUsers();
+        if (result.success) {
+            console.table(result.users);
+        } else {
+            console.error(result.error);
+        }
+    },
+    
+    // Создать администратора
+    createAdmin: (username, password) => {
+        if (!username || !password) {
+            console.log('Использование: adminCommands.createAdmin("username", "password")');
+            return;
+        }
+        window.localAuthManager.createUser({
+            username,
+            password,
+            role: 'admin',
+            permissions: ['all']
+        }).then(result => {
+            if (result.success) {
+                console.log('Администратор создан:', result.user);
+            } else {
+                console.error(result.error);
+            }
+        });
+    },
+    
+    // Создать модератора
+    createModerator: (username, password) => {
+        if (!username || !password) {
+            console.log('Использование: adminCommands.createModerator("username", "password")');
+            return;
+        }
+        window.localAuthManager.createUser({
+            username,
+            password,
+            role: 'moderator',
+            permissions: ['read', 'write', 'moderate']
+        }).then(result => {
+            if (result.success) {
+                console.log('Модератор создан:', result.user);
+            } else {
+                console.error(result.error);
+            }
+        });
+    },
+    
+    // Очистить все данные
+    clearAll: () => {
+        const result = window.localAuthManager.clearAllData();
+        if (result.success) {
+            console.log('Все данные очищены. Создан новый администратор по умолчанию.');
+            console.log('Username: admin, Password: admin123');
+        } else {
+            console.error(result.error);
+        }
+    },
+    
+    // Очистить пользователей
+    clearUsers: () => {
+        const result = window.localAuthManager.clearUsers();
+        if (result.success) {
+            console.log(`Удалено пользователей: ${result.removedCount}`);
+        } else {
+            console.error(result.error);
+        }
+    },
+    
+    // Очистить события
+    clearEvents: () => {
+        const result = window.localAuthManager.clearEvents();
+        if (result.success) {
+            console.log('Все события удалены');
+        } else {
+            console.error(result.error);
+        }
+    }
+};
 
 // Система управления событиями без сервера
 class LocalEventManager {
@@ -243,7 +511,7 @@ class LocalEventManager {
             const event = this.events[eventIndex];
 
             // Проверяем права доступа
-            if (event.createdBy !== this.auth.currentUser.id) {
+            if (event.createdBy !== this.auth.currentUser.id && !this.auth.hasRole('moderator')) {
                 return { success: false, error: 'Нет прав для редактирования этого события' };
             }
 
@@ -276,7 +544,7 @@ class LocalEventManager {
             }
 
             // Проверяем права доступа
-            if (event.createdBy !== this.auth.currentUser.id) {
+            if (event.createdBy !== this.auth.currentUser.id && !this.auth.hasRole('moderator')) {
                 return { success: false, error: 'Нет прав для удаления этого события' };
             }
 
@@ -292,7 +560,8 @@ class LocalEventManager {
     }
 
     canEditEvent(event) {
-        return this.auth.currentUser && event.createdBy === this.auth.currentUser.id;
+        return this.auth.currentUser && 
+               (event.createdBy === this.auth.currentUser.id || this.auth.hasRole('moderator'));
     }
 
     getEventsByUser(userId = null) {
@@ -321,4 +590,16 @@ window.localEventManager = new LocalEventManager(window.localAuthManager);
 window.authManager = window.localAuthManager;
 window.eventManager = window.localEventManager;
 
-console.log('Локальная система пользователей инициализирована (без сервера)');
+console.log('Локальная система пользователей с ролями инициализирована');
+console.log('Роли: super_admin, admin, moderator, user');
+
+// Показываем команды для разработки
+if (window.localAuthManager.hasRole('admin')) {
+    console.log('Доступные команды администратора:');
+    console.log('adminCommands.showUsers() - показать всех пользователей');
+    console.log('adminCommands.createAdmin("username", "password") - создать администратора');
+    console.log('adminCommands.createModerator("username", "password") - создать модератора');
+    console.log('adminCommands.clearAll() - очистить все данные');
+    console.log('adminCommands.clearUsers() - очистить пользователей');
+    console.log('adminCommands.clearEvents() - очистить события');
+}
