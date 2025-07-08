@@ -367,6 +367,12 @@
             <button type="submit" class="form-button">
                 <span class="button-text">Войти</span>
             </button>
+            
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="password-recovery.html" style="color: #3498db; text-decoration: none; font-size: 0.9rem;">
+                    <i class="fas fa-question-circle"></i> Забыли пароль?
+                </a>
+            </div>
         </form>
         
         <!-- Форма регистрации -->
@@ -395,6 +401,27 @@
                     <i class="fas fa-lock"></i>
                     <input type="password" id="register-password-confirm" class="form-input" placeholder="Повторите пароль" required autocomplete="new-password">
                 </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="security-question">Секретный вопрос (для восстановления пароля)</label>
+                <select id="security-question" class="form-input" required>
+                    <option value="">Выберите вопрос</option>
+                    <option value="В каком городе вы родились?">В каком городе вы родились?</option>
+                    <option value="Как звали вашего первого питомца?">Как звали вашего первого питомца?</option>
+                    <option value="Какая ваша любимая книга?">Какая ваша любимая книга?</option>
+                    <option value="Как звали вашего лучшего друга детства?">Как звали вашего лучшего друга детства?</option>
+                    <option value="Название улицы, на которой вы выросли?">Название улицы, на которой вы выросли?</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="security-answer">Ответ на секретный вопрос</label>
+                <div class="input-icon">
+                    <i class="fas fa-key"></i>
+                    <input type="text" id="security-answer" class="form-input" placeholder="Введите ответ" required>
+                </div>
+                <div class="password-requirements">Нужен для восстановления пароля</div>
             </div>
             
             <button type="submit" class="form-button">
@@ -531,8 +558,10 @@
             const username = document.getElementById('register-username').value.trim();
             const password = document.getElementById('register-password').value;
             const passwordConfirm = document.getElementById('register-password-confirm').value;
+            const securityQuestion = document.getElementById('security-question').value;
+            const securityAnswer = document.getElementById('security-answer').value.trim();
             
-            if (!username || !password || !passwordConfirm) {
+            if (!username || !password || !passwordConfirm || !securityQuestion || !securityAnswer) {
                 showError('Заполните все поля');
                 return;
             }
@@ -552,11 +581,17 @@
                 return;
             }
             
+            if (securityAnswer.length < 2) {
+                showError('Ответ на секретный вопрос слишком короткий');
+                return;
+            }
+            
             setButtonLoading(button, true);
             hideMessages();
             
             try {
-                const result = await window.localAuthManager.register(username, password);
+                // Расширяем функцию регистрации
+                const result = await registerWithSecurity(username, password, securityQuestion, securityAnswer);
                 
                 if (result.success) {
                     showSuccess('Регистрация выполнена успешно! Перенаправление...');
@@ -574,6 +609,55 @@
                 setButtonLoading(button, false);
             }
         });
+        
+        // Расширенная функция регистрации с секретным вопросом
+        async function registerWithSecurity(username, password, securityQuestion, securityAnswer) {
+            try {
+                if (username.length < 3) {
+                    return { success: false, error: 'Имя пользователя должно содержать минимум 3 символа' };
+                }
+                
+                if (password.length < 6) {
+                    return { success: false, error: 'Пароль должен содержать минимум 6 символов' };
+                }
+
+                const users = JSON.parse(localStorage.getItem('codex_users') || '[]');
+                
+                // Проверяем, существует ли пользователь
+                if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+                    return { success: false, error: 'Пользователь с таким именем уже существует' };
+                }
+
+                // Создаем нового пользователя с секретным вопросом
+                const newUser = {
+                    id: Date.now().toString(),
+                    username: username.trim(),
+                    password: window.localAuthManager.hashPassword(password),
+                    securityQuestion: securityQuestion,
+                    securityAnswer: window.localAuthManager.hashPassword(securityAnswer.toLowerCase().trim()),
+                    createdAt: new Date().toISOString()
+                };
+
+                users.push(newUser);
+                localStorage.setItem('codex_users', JSON.stringify(users));
+
+                // Автоматически входим
+                window.localAuthManager.currentUser = {
+                    id: newUser.id,
+                    username: newUser.username,
+                    createdAt: newUser.createdAt
+                };
+                
+                localStorage.setItem('codex_currentUser', JSON.stringify(window.localAuthManager.currentUser));
+                localStorage.setItem('codex_loginTime', Date.now().toString());
+
+                return { success: true, user: window.localAuthManager.currentUser };
+
+            } catch (error) {
+                console.error('Ошибка регистрации:', error);
+                return { success: false, error: 'Ошибка регистрации' };
+            }
+        }
 
         // Проверяем, авторизован ли пользователь
         if (window.localAuthManager && window.localAuthManager.isAuthenticated()) {
