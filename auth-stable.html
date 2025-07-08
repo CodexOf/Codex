@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codex - Авторизация</title>
+    <title>Codex - Авторизация (Стабильная версия)</title>
     <link rel="preload" href="https://fonts.gstatic.com/s/cinzeldecorative/v16/daaCSScvJGqLYhG8nNt8KPPswUAPnh7URs0LaCpbRzhXVrE.woff2" as="font" type="font/woff2" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400;500&display=block" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -78,6 +78,31 @@
             margin-bottom: 20px;
             font-size: 0.85rem;
             color: #3498db;
+        }
+        
+        .debug-panel {
+            background: rgba(230, 126, 34, 0.1);
+            border: 1px solid rgba(230, 126, 34, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: #e67e22;
+        }
+        
+        .debug-button {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+        
+        .debug-button:hover {
+            background: #d35400;
         }
         
         .auth-tabs {
@@ -338,6 +363,14 @@
             Локальный режим - данные сохраняются в браузере
         </div>
         
+        <div class="debug-panel" id="debugPanel" style="display: none;">
+            <strong>🔧 Отладка:</strong><br>
+            <button class="debug-button" onclick="clearAllData()">Очистить данные</button>
+            <button class="debug-button" onclick="showStorageInfo()">Показать данные</button>
+            <button class="debug-button" onclick="createTestUser()">Тест пользователь</button>
+            <button class="debug-button" onclick="toggleDebug()">Скрыть</button>
+        </div>
+        
         <div class="auth-tabs">
             <button class="auth-tab active" onclick="switchTab('login')">Вход</button>
             <button class="auth-tab" onclick="switchTab('register')">Регистрация</button>
@@ -371,6 +404,10 @@
             <div style="text-align: center; margin-top: 15px;">
                 <a href="password-recovery.html" style="color: #3498db; text-decoration: none; font-size: 0.9rem;">
                     <i class="fas fa-question-circle"></i> Забыли пароль?
+                </a>
+                <br>
+                <a href="#" onclick="toggleDebug()" style="color: #e67e22; text-decoration: none; font-size: 0.8rem; margin-top: 5px; display: inline-block;">
+                    <i class="fas fa-cog"></i> Отладка
                 </a>
             </div>
         </form>
@@ -434,18 +471,45 @@
     <script src="js/auth-local.js"></script>
     
     <script>
-        // Автоматическое исправление проблемы с хешированием (выполняется только один раз)
-        if (localStorage.getItem('codex_users') && !localStorage.getItem('codex_hash_fixed')) {
-            console.log('Обнаружены старые данные, очищаем...');
+        // ОТКЛЮЧАЕМ автоматическое исправление для стабильности
+        
+        function toggleDebug() {
+            const panel = document.getElementById('debugPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function clearAllData() {
             localStorage.removeItem('codex_users');
             localStorage.removeItem('codex_currentUser');
             localStorage.removeItem('codex_loginTime');
-            localStorage.setItem('codex_hash_fixed', 'v2');
+            localStorage.removeItem('codex_hash_fixed');
+            showSuccess('Все данные очищены. Теперь можете зарегистрироваться заново.');
+        }
+        
+        function showStorageInfo() {
+            const users = localStorage.getItem('codex_users');
+            const currentUser = localStorage.getItem('codex_currentUser');
+            console.log('=== ДАННЫЕ ХРАНИЛИЩА ===');
+            console.log('Пользователи:', users ? JSON.parse(users) : 'Нет');
+            console.log('Текущий пользователь:', currentUser ? JSON.parse(currentUser) : 'Нет');
+            console.log('Флаг исправления:', localStorage.getItem('codex_hash_fixed'));
+            showSuccess('Данные выведены в консоль (F12)');
+        }
+        
+        function createTestUser() {
+            const testUser = {
+                id: Date.now().toString(),
+                username: 'test',
+                password: window.localAuthManager.hashPassword('123456'),
+                securityQuestion: 'В каком городе вы родились?',
+                securityAnswer: window.localAuthManager.hashPassword('москва'),
+                createdAt: new Date().toISOString()
+            };
             
-            // Показываем сообщение пользователю
-            setTimeout(() => {
-                showSuccess('Система обновлена! Пожалуйста, зарегистрируйтесь заново.');
-            }, 1000);
+            const users = JSON.parse(localStorage.getItem('codex_users') || '[]');
+            users.push(testUser);
+            localStorage.setItem('codex_users', JSON.stringify(users));
+            showSuccess('Создан тестовый пользователь: test / 123456');
         }
         
         // Проверка загрузки шрифтов
@@ -590,7 +654,6 @@
             hideMessages();
             
             try {
-                // Расширяем функцию регистрации
                 const result = await registerWithSecurity(username, password, securityQuestion, securityAnswer);
                 
                 if (result.success) {
