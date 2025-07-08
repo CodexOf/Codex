@@ -407,6 +407,20 @@
     <script src="js/auth-local.js"></script>
     
     <script>
+        // Автоматическое исправление проблемы с хешированием
+        if (localStorage.getItem('codex_users') && !localStorage.getItem('codex_hash_fixed')) {
+            console.log('Обнаружены старые данные, очищаем...');
+            localStorage.removeItem('codex_users');
+            localStorage.removeItem('codex_currentUser');
+            localStorage.removeItem('codex_loginTime');
+            localStorage.setItem('codex_hash_fixed', 'v2');
+            
+            // Показываем сообщение пользователю
+            setTimeout(() => {
+                showSuccess('Система обновлена! Пожалуйста, зарегистрируйтесь заново.');
+            }, 1000);
+        }
+        
         // Проверка загрузки шрифтов
         if ('fonts' in document) {
             document.fonts.ready.then(function() {

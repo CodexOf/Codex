@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex - Отладка</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #2c3e50; 
+            color: #ecf0f1;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: #34495e; 
+            padding: 20px; 
+            border-radius: 10px;
+        }
+        button { 
+            padding: 10px 20px; 
+            margin: 5px; 
+            cursor: pointer; 
+            background: #3498db; 
+            color: white; 
+            border: none; 
+            border-radius: 5px;
+        }
+        button:hover { background: #2980b9; }
+        .danger { background: #e74c3c !important; }
+        .danger:hover { background: #c0392b !important; }
+        pre { 
+            background: #2c3e50; 
+            padding: 15px; 
+            border-radius: 5px; 
+            white-space: pre-wrap; 
+            overflow-x: auto;
+        }
+        .success { color: #2ecc71; }
+        .error { color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Отладка системы пользователей Codex</h1>
+        
+        <div>
+            <button onclick="showAllData()">📊 Показать все данные</button>
+            <button onclick="testHashFunction()">🔑 Тест хеширования</button>
+            <button onclick="clearAllData()" class="danger">🗑️ Очистить все данные</button>
+            <button onclick="createTestUser()">👤 Создать тестового пользователя</button>
+        </div>
+        
+        <div id="output"></div>
+    </div>
+
+    <script src="js/auth-local.js"></script>
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const div = document.createElement('div');
+            div.className = type;
+            div.innerHTML = `<strong>[${new Date().toLocaleTimeString()}]</strong> ${message}`;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function showAllData() {
+            log('=== ДАННЫЕ СИСТЕМЫ ===');
+            
+            const users = localStorage.getItem('codex_users');
+            const events = localStorage.getItem('codex_events');
+            const currentUser = localStorage.getItem('codex_currentUser');
+            const loginTime = localStorage.getItem('codex_loginTime');
+            
+            log(`<pre>Пользователи: ${users || 'Нет данных'}</pre>`);
+            log(`<pre>События: ${events || 'Нет данных'}</pre>`);
+            log(`<pre>Текущий пользователь: ${currentUser || 'Нет данных'}</pre>`);
+            log(`<pre>Время входа: ${loginTime || 'Нет данных'}</pre>`);
+            
+            if (users) {
+                try {
+                    const usersArray = JSON.parse(users);
+                    log(`Всего пользователей: ${usersArray.length}`, 'success');
+                } catch (e) {
+                    log('Ошибка парсинга пользователей: ' + e.message, 'error');
+                }
+            }
+        }
+
+        function testHashFunction() {
+            log('=== ТЕСТ ХЕШИРОВАНИЯ ===');
+            
+            const testPasswords = ['123456', 'password', 'test123', 'admin'];
+            
+            testPasswords.forEach(password => {
+                const hash = window.localAuthManager.hashPassword(password);
+                log(`Пароль: "${password}" → Хеш: "${hash}"`);
+            });
+            
+            // Тест стабильности
+            const testPassword = 'test123';
+            const hash1 = window.localAuthManager.hashPassword(testPassword);
+            const hash2 = window.localAuthManager.hashPassword(testPassword);
+            
+            if (hash1 === hash2) {
+                log(`✅ Хеширование стабильно: "${testPassword}" всегда дает "${hash1}"`, 'success');
+            } else {
+                log(`❌ Хеширование нестабильно: "${hash1}" != "${hash2}"`, 'error');
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('Вы уверены, что хотите удалить ВСЕ данные пользователей и события?')) {
+                localStorage.removeItem('codex_users');
+                localStorage.removeItem('codex_events');
+                localStorage.removeItem('codex_currentUser');
+                localStorage.removeItem('codex_loginTime');
+                
+                log('🗑️ Все данные очищены', 'success');
+                log('Теперь можно заново зарегистрироваться');
+            }
+        }
+
+        async function createTestUser() {
+            const username = 'testuser';
+            const password = '123456';
+            
+            log(`Создаю тестового пользователя: "${username}" с паролем "${password}"`);
+            
+            const result = await window.localAuthManager.register(username, password);
+            
+            if (result.success) {
+                log('✅ Тестовый пользователь создан успешно', 'success');
+                log(`ID: ${result.user.id}, Username: ${result.user.username}`);
+                
+                // Выходим из системы
+                window.localAuthManager.currentUser = null;
+                localStorage.removeItem('codex_currentUser');
+                localStorage.removeItem('codex_loginTime');
+                
+                log('Теперь попробуйте войти как testuser / 123456');
+            } else {
+                log('❌ Ошибка создания тестового пользователя: ' + result.error, 'error');
+            }
+        }
+
+        // Автоматически показываем данные при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🔧 Отладочная консоль загружена');
+            showAllData();
+        });
+    </script>
+</body>
+</html>

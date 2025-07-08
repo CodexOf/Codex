@@ -1,4 +1,4 @@
-// Система пользователей без сервера (для GitHub Pages)
+// Система пользователей без сервера (для GitHub Pages) - исправленная версия
 class LocalAuthManager {
     constructor() {
         this.currentUser = this.getCurrentUser();
@@ -29,28 +29,31 @@ class LocalAuthManager {
         return !!this.currentUser;
     }
 
+    // Простая и надежная функция хеширования
+    hashPassword(password) {
+        let hash = 0;
+        if (password.length === 0) return hash.toString();
+        
+        // Используем простой, но стабильный алгоритм
+        for (let i = 0; i < password.length; i++) {
+            const char = password.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // Конвертируем в 32-битное число
+        }
+        
+        // Всегда возвращаем положительное число в виде строки
+        return Math.abs(hash).toString();
+    }
+
     async login(username, password) {
         try {
             const users = JSON.parse(localStorage.getItem('codex_users') || '[]');
             const hashedPassword = this.hashPassword(password);
             
-            console.log('=== LOGIN DEBUG ===');
-            console.log('Username:', username);
-            console.log('Password hash:', hashedPassword);
-            console.log('All users:', users);
-            
-            const user = users.find(u => {
-                const usernameMatch = u.username.toLowerCase() === username.toLowerCase();
-                const passwordMatch = u.password === hashedPassword;
-                
-                console.log(`Checking user ${u.username}:`);
-                console.log('  Username match:', usernameMatch);
-                console.log('  Stored password:', u.password);
-                console.log('  Input password hash:', hashedPassword);
-                console.log('  Password match:', passwordMatch);
-                
-                return usernameMatch && passwordMatch;
-            });
+            const user = users.find(u => 
+                u.username.toLowerCase() === username.toLowerCase() && 
+                u.password === hashedPassword
+            );
 
             if (user) {
                 this.currentUser = {
@@ -62,10 +65,8 @@ class LocalAuthManager {
                 localStorage.setItem('codex_currentUser', JSON.stringify(this.currentUser));
                 localStorage.setItem('codex_loginTime', Date.now().toString());
                 
-                console.log('Login successful:', this.currentUser);
                 return { success: true, user: this.currentUser };
             } else {
-                console.log('Login failed: user not found or password mismatch');
                 return { success: false, error: 'Неверное имя пользователя или пароль' };
             }
         } catch (error) {
@@ -91,26 +92,16 @@ class LocalAuthManager {
                 return { success: false, error: 'Пользователь с таким именем уже существует' };
             }
 
-            const hashedPassword = this.hashPassword(password);
-            
-            console.log('=== REGISTER DEBUG ===');
-            console.log('Username:', username);
-            console.log('Original password:', password);
-            console.log('Hashed password:', hashedPassword);
-
             // Создаем нового пользователя
             const newUser = {
                 id: Date.now().toString(),
                 username: username.trim(),
-                password: hashedPassword,
+                password: this.hashPassword(password),
                 createdAt: new Date().toISOString()
             };
 
             users.push(newUser);
             localStorage.setItem('codex_users', JSON.stringify(users));
-            
-            console.log('User registered:', newUser);
-            console.log('All users after registration:', users);
 
             // Автоматически входим
             this.currentUser = {
@@ -134,30 +125,7 @@ class LocalAuthManager {
         this.currentUser = null;
         localStorage.removeItem('codex_currentUser');
         localStorage.removeItem('codex_loginTime');
-        window.location.href = 'auth.html';
-    }
-
-    hashPassword(password) {
-        // Улучшенное хеширование для localStorage версии
-        let hash = 0;
-        if (password.length === 0) return hash.toString();
-        
-        for (let i = 0; i < password.length; i++) {
-            const char = password.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Конвертируем в 32-битное число
-        }
-        
-        // Добавляем соль для большей безопасности
-        const salt = 'codex_salt_2025';
-        let saltedHash = hash;
-        for (let i = 0; i < salt.length; i++) {
-            const char = salt.charCodeAt(i);
-            saltedHash = ((saltedHash << 3) - saltedHash) + char;
-            saltedHash = saltedHash & saltedHash;
-        }
-        
-        return Math.abs(saltedHash).toString();
+        window.location.href = 'auth-local.html';
     }
 
     async verifyToken() {
@@ -175,7 +143,7 @@ class LocalAuthManager {
 
     requireAuth() {
         if (!this.isAuthenticated()) {
-            window.location.href = 'auth.html';
+            window.location.href = 'auth-local.html';
             return false;
         }
         return true;
