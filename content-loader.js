@@ -570,6 +570,16 @@ class ContentLoader {
             console.log('Инициализация ContentLoader...');
             console.log('DOM ready state:', document.readyState);
             
+            // Проверяем авторизацию
+            if (!window.authManager || !window.authManager.isAuthenticated()) {
+                console.warn('Пользователь не авторизован, перенаправляем на страницу входа');
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            // Проверяем токен на сервере
+            this.verifyAuthenticationAsync();
+            
             // Восстанавливаем сохраненные настройки анимации
             this.restoreAnimationSettings();
             
@@ -637,6 +647,20 @@ class ContentLoader {
         });
         
         console.log('Клавиатурные сокращения инициализированы');
+    }
+    
+    static async verifyAuthenticationAsync() {
+        try {
+            if (window.authManager) {
+                const isValid = await window.authManager.verifyToken();
+                if (!isValid) {
+                    console.warn('Токен недействителен, перенаправляем на авторизацию');
+                    window.location.href = 'auth.html';
+                }
+            }
+        } catch (error) {
+            console.error('Ошибка проверки авторизации:', error);
+        }
     }
     
     static restoreAnimationSettings() {

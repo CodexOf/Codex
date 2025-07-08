@@ -1,8 +1,19 @@
-<!-- Календарь событий -->
+<!-- Календарь событий с системой пользователей -->
 <div class="calendar-container">
     <div class="calendar-header">
-        <h1><i class="fas fa-calendar-alt"></i> Календарь событий</h1>
-        <p class="calendar-subtitle">Планируйте и управляйте игровыми сессиями</p>
+        <div class="calendar-title-section">
+            <h1><i class="fas fa-calendar-alt"></i> Календарь событий</h1>
+            <p class="calendar-subtitle">Планируйте и управляйте игровыми сессиями</p>
+        </div>
+        <div class="user-info">
+            <span class="current-user">
+                <i class="fas fa-user"></i>
+                <span id="currentUser">Пользователь</span>
+            </span>
+            <button class="btn-logout" id="logoutBtn" title="Выйти">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
     </div>
 
     <!-- Панель управления -->
@@ -23,13 +34,9 @@
             <button class="btn-secondary" id="todayBtn">
                 <i class="fas fa-home"></i> Сегодня
             </button>
-            <button class="btn-secondary" id="exportBtn" title="Экспортировать события">
-                <i class="fas fa-download"></i>
+            <button class="btn-secondary" id="refreshBtn" title="Обновить события">
+                <i class="fas fa-sync-alt"></i>
             </button>
-            <button class="btn-secondary" id="importBtn" title="Импортировать события">
-                <i class="fas fa-upload"></i>
-            </button>
-            <input type="file" id="importFile" accept=".json" style="display: none;">
         </div>
     </div>
 
@@ -80,7 +87,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="eventTimeStart">Время начала</label>
-                    <input type="time" id="eventTimeStart" name="timeStart" required>
+                    <input type="time" id="eventTimeStart" name="timeStart">
                 </div>
                 <div class="form-group">
                     <label for="eventTimeEnd">Время окончания</label>
@@ -134,8 +141,63 @@
     </div>
 </div>
 
-<!-- Стили календаря -->
+<!-- Уведомления -->
 <style>
+/* Заголовок с информацией о пользователе */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.calendar-title-section h1 {
+    color: #fff;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.calendar-title-section .calendar-subtitle {
+    color: #bbb;
+    font-size: 1.1rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(52, 152, 219, 0.1);
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.current-user {
+    color: #3498db;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-logout {
+    background: rgba(231, 76, 60, 0.2);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    color: #e74c3c;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+}
+
+.btn-logout:hover {
+    background: rgba(231, 76, 60, 0.3);
+    color: #fff;
+}
+
 /* Основные стили для сетки календаря */
 .calendar-grid {
     background: #2a2a2a;
@@ -206,52 +268,19 @@
 .calendar-event {
     background: #3498db;
     color: white;
-    padding: 2px 6px;
+    padding: 3px 6px;
     border-radius: 4px;
     font-size: 0.75rem;
-    margin-top: 2px;
+    margin-top: 3px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     position: relative;
+    cursor: pointer;
 }
 
-/* Всплывающая подсказка */
-.event-tooltip {
-    display: none;
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.95);
-    color: white;
-    padding: 10px 15px;
-    border-radius: 6px;
-    white-space: nowrap;
-    z-index: 100;
-    font-size: 0.85rem;
-    margin-bottom: 5px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    max-width: 250px;
-    white-space: normal;
-    line-height: 1.4;
-}
-
-.event-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid rgba(0, 0, 0, 0.95);
-}
-
-.calendar-event:hover .event-tooltip {
-    display: block;
+.calendar-event.own-event {
+    border-left: 3px solid #fff;
 }
 
 /* Панель управления */
@@ -292,6 +321,13 @@
     min-width: 200px;
     text-align: center;
 }
+
+.calendar-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 /* Список событий */
 .events-list-section {
     background: #2a2a2a;
@@ -316,7 +352,6 @@
     overflow-x: hidden;
 }
 
-/* Стили для скроллбара */
 .events-list::-webkit-scrollbar {
     width: 8px;
 }
@@ -351,6 +386,64 @@
     transform: translateX(3px);
 }
 
+.event-item.own-event {
+    border-left: 4px solid #3498db;
+}
+
+.event-info {
+    flex: 1;
+}
+
+.event-title {
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.event-datetime {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.event-creator {
+    color: #999;
+    font-size: 0.8rem;
+    margin-top: 3px;
+}
+
+.event-participants {
+    color: #b0b0b0;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.event-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.event-actions button {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 5px 10px;
+    transition: all 0.3s;
+    border-radius: 4px;
+}
+
+.event-actions button:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+}
+
+.read-only-indicator {
+    color: #666;
+    font-size: 1.1rem;
+    padding: 5px 10px;
+}
+
 /* Модальное окно */
 .modal-overlay {
     position: fixed;
@@ -364,12 +457,6 @@
     justify-content: center;
     z-index: 1000;
     backdrop-filter: blur(5px);
-}
-
-/* Кнопки с только иконками */
-.btn-secondary[title] {
-    padding: 10px 15px;
-    min-width: auto;
 }
 
 .modal-content {
@@ -565,652 +652,95 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-/* Дополнительные стили для списка событий */
-.event-info {
-    flex: 1;
-}
-
-.event-title {
-    color: #fff;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.event-datetime {
-    color: #888;
-    font-size: 0.9rem;
-}
-
-.event-description {
-    color: #ccc;
-    font-size: 0.9rem;
-    margin-top: 5px;
-    line-height: 1.4;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-.event-participants {
-    color: #b0b0b0;
-    font-size: 0.85rem;
-    margin-top: 5px;
-}
-
-.event-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.event-actions button {
-    background: none;
-    border: none;
-    color: #888;
-    cursor: pointer;
-    font-size: 1.1rem;
-    padding: 5px 10px;
-    transition: all 0.3s;
-    border-radius: 4px;
-}
-
-.event-actions button:hover {
-    color: #fff;
-    background: rgba(255,255,255,0.1);
-}
-
 .no-events {
     text-align: center;
     color: #666;
     padding: 20px;
 }
+
+/* Уведомления */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #333;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 10000;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 300px;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification.error {
+    background: #e74c3c;
+}
+
+.notification.success {
+    background: #2ecc71;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .calendar-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .user-info {
+        justify-content: space-between;
+    }
+    
+    .calendar-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .calendar-nav {
+        justify-content: center;
+    }
+    
+    .calendar-actions {
+        justify-content: center;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .calendar-grid {
+        padding: 10px;
+    }
+    
+    .calendar-day {
+        min-height: 80px;
+        padding: 5px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .event-form {
+        padding: 15px;
+    }
+}
 </style>
 
-<!-- JavaScript для календаря -->
-<script>
-// Ждем небольшую задержку для полной загрузки DOM
-setTimeout(function() {
-    // Календарь событий для Codex
-    (function() {
-        'use strict';
-        
-        console.log('Инициализация календаря...');
-        
-        // Данные календаря
-        let currentDate = new Date();
-        let events = [];
-        
-        // Проверяем localStorage
-        try {
-            const savedEvents = localStorage.getItem('calendarEvents');
-            if (savedEvents) {
-                events = JSON.parse(savedEvents);
-                console.log('Загружено событий из localStorage:', events.length);
-            } else {
-                console.log('localStorage пустой');
-            }
-        } catch (e) {
-            console.error('Ошибка при чтении localStorage:', e);
-            events = [];
-        }
-        
-        let editingEventId = null;
-        let selectedColor = '#3498db';
-        let participants = [];
+<!-- Подключаем JavaScript для системы пользователей -->
+<script src="js/auth.js"></script>
 
-        // Элементы DOM
-        const elements = {
-            currentMonth: document.getElementById('currentMonth'),
-            calendarDays: document.getElementById('calendarDays'),
-            eventsList: document.getElementById('eventsList'),
-            eventModal: document.getElementById('eventModal'),
-            modalTitle: document.getElementById('modalTitle'),
-            eventForm: document.getElementById('eventForm'),
-            participantsList: document.getElementById('participantsList'),
-            participantInput: document.getElementById('participantInput')
-        };
-        
-        // Проверяем, что все элементы найдены
-        console.log('Проверка элементов:', {
-            currentMonth: !!elements.currentMonth,
-            calendarDays: !!elements.calendarDays,
-            eventsList: !!elements.eventsList,
-            eventModal: !!elements.eventModal,
-            modalTitle: !!elements.modalTitle,
-            eventForm: !!elements.eventForm
-        });
-        
-        // Выводим сами элементы для отладки
-        console.log('Элемент eventModal:', elements.eventModal);
-
-        // Инициализация
-        function init() {
-            console.log('Запуск init()...');
-            renderCalendar();
-            renderEventsList();
-            attachEventListeners();
-            console.log('Инициализация завершена');
-        }
-
-    // Отрисовка календаря
-    function renderCalendar() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        
-        // Обновляем заголовок
-        const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
-                          'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-        elements.currentMonth.textContent = `${monthNames[month]} ${year}`;
-        
-        // Очищаем сетку
-        elements.calendarDays.innerHTML = '';
-        
-        // Первый день месяца
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const prevLastDay = new Date(year, month, 0);
-        
-        // День недели первого дня (0 = воскресенье)
-        let firstDayOfWeek = firstDay.getDay();
-        // Преобразуем в понедельник = 0
-        firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
-        
-        // Добавляем дни предыдущего месяца
-        for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-            const day = prevLastDay.getDate() - i;
-            createDayElement(new Date(year, month - 1, day), true);
-        }
-        
-        // Добавляем дни текущего месяца
-        for (let day = 1; day <= lastDay.getDate(); day++) {
-            createDayElement(new Date(year, month, day), false);
-        }
-        
-        // Добавляем дни следующего месяца
-        const remainingDays = 42 - (firstDayOfWeek + lastDay.getDate());
-        for (let day = 1; day <= remainingDays; day++) {
-            createDayElement(new Date(year, month + 1, day), true);
-        }
-    }
-
-    // Создание элемента дня
-    function createDayElement(date, isOtherMonth) {
-        const dayEl = document.createElement('div');
-        dayEl.className = 'calendar-day';
-        
-        if (isOtherMonth) {
-            dayEl.classList.add('other-month');
-        }
-        
-        // Проверяем, является ли день сегодняшним
-        const today = new Date();
-        if (date.toDateString() === today.toDateString()) {
-            dayEl.classList.add('today');
-        }
-        
-        // Номер дня
-        const dayNumber = document.createElement('div');
-        dayNumber.className = 'calendar-day-number';
-        dayNumber.textContent = date.getDate();
-        dayEl.appendChild(dayNumber);
-        
-        // События дня
-        const dayEvents = events.filter(event => {
-            const eventDate = new Date(event.date);
-            return eventDate.toDateString() === date.toDateString();
-        });
-        
-        if (dayEvents.length > 0) {
-            dayEl.classList.add('has-events');
-            
-            // Показываем до 3 событий
-            dayEvents.slice(0, 3).forEach(event => {
-                const eventEl = document.createElement('div');
-                eventEl.className = 'calendar-event';
-                eventEl.style.backgroundColor = event.color || '#3498db';
-                
-                // Текст события
-                const eventText = document.createElement('span');
-                eventText.textContent = event.title;
-                eventEl.appendChild(eventText);
-                
-                // Создаем всплывающую подсказку
-                const tooltip = document.createElement('div');
-                tooltip.className = 'event-tooltip';
-                
-                let tooltipContent = `<strong>${event.title}</strong>`;
-                if (event.timeStart) {
-                    tooltipContent += `<br>Время: ${event.timeStart}`;
-                    if (event.timeEnd) {
-                        tooltipContent += ` - ${event.timeEnd}`;
-                    }
-                }
-                if (event.description) {
-                    tooltipContent += `<br>${event.description}`;
-                }
-                if (event.participants && event.participants.length > 0) {
-                    tooltipContent += `<br>Участники: ${event.participants.join(', ')}`;
-                }
-                
-                tooltip.innerHTML = tooltipContent;
-                eventEl.appendChild(tooltip);
-                
-                dayEl.appendChild(eventEl);
-            });
-            
-            if (dayEvents.length > 3) {
-                const moreEl = document.createElement('div');
-                moreEl.className = 'calendar-event';
-                moreEl.style.backgroundColor = '#666';
-                moreEl.textContent = `+${dayEvents.length - 3} ещё`;
-                dayEl.appendChild(moreEl);
-            }
-        }
-        
-        // Клик по дню
-        dayEl.addEventListener('click', () => {
-            if (!isOtherMonth) {
-                // Создаем новую дату, чтобы избежать проблем с часовыми поясами
-                const clickedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-                openEventModal(clickedDate);
-            }
-        });
-        
-        elements.calendarDays.appendChild(dayEl);
-    }
-
-    // Отрисовка списка событий
-    function renderEventsList() {
-        const sortedEvents = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
-        const upcomingEvents = sortedEvents.filter(event => new Date(event.date) >= new Date());
-        
-        if (upcomingEvents.length === 0) {
-            elements.eventsList.innerHTML = '<p class="no-events">Нет запланированных событий</p>';
-            return;
-        }
-        
-        elements.eventsList.innerHTML = '';
-        
-        upcomingEvents.forEach(event => {
-            const eventEl = document.createElement('div');
-            eventEl.className = 'event-item';
-            
-            const eventDate = new Date(event.date);
-            const dateStr = eventDate.toLocaleDateString('ru-RU', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
-            
-            let timeStr = '';
-            if (event.timeStart) {
-                timeStr = event.timeStart;
-                if (event.timeEnd) {
-                    timeStr += ` - ${event.timeEnd}`;
-                }
-            }
-            
-            eventEl.innerHTML = `
-                <div class="event-info">
-                    <div class="event-title" style="color: ${event.color || '#3498db'}">${event.title}</div>
-                    <div class="event-datetime">${dateStr}${timeStr ? ', ' + timeStr : ''}</div>
-                    ${event.description ? 
-                        `<div class="event-description">${event.description}</div>` : ''}
-                    ${event.participants && event.participants.length > 0 ? 
-                        `<div class="event-participants">
-                            <i class="fas fa-users"></i> ${event.participants.join(', ')}
-                        </div>` : ''}
-                </div>
-                <div class="event-actions">
-                    <button onclick="CalendarModule.editEvent('${event.id}')" title="Редактировать">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button onclick="CalendarModule.deleteEvent('${event.id}')" title="Удалить">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            `;
-            
-            elements.eventsList.appendChild(eventEl);
-        });
-    }
-
-    // Открытие модального окна
-    function openEventModal(date = null) {
-        console.log('Открытие модального окна...');
-        console.log('Модальное окно:', elements.eventModal);
-        
-        if (!elements.eventModal) {
-            console.error('Модальное окно не найдено!');
-            return;
-        }
-        
-        editingEventId = null;
-        participants = [];
-        selectedColor = '#3498db';
-        
-        elements.modalTitle.textContent = 'Новое событие';
-        elements.eventForm.reset();
-        
-        if (date) {
-            // Исправляем проблему с часовыми поясами
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const dateStr = `${year}-${month}-${day}`;
-            document.getElementById('eventDate').value = dateStr;
-            console.log('Установлена дата:', dateStr);
-        }
-        
-        renderParticipants();
-        updateColorPicker();
-        
-        console.log('Показываем модальное окно...');
-        elements.eventModal.style.display = 'flex';
-        console.log('Модальное окно должно быть видимо');
-    }
-
-    // Закрытие модального окна
-    function closeEventModal() {
-        elements.eventModal.style.display = 'none';
-        elements.eventForm.reset();
-        participants = [];
-        editingEventId = null;
-    }
-
-    // Добавление участника
-    function addParticipant() {
-        const name = elements.participantInput.value.trim();
-        if (name && !participants.includes(name)) {
-            participants.push(name);
-            elements.participantInput.value = '';
-            renderParticipants();
-        }
-    }
-
-    // Удаление участника
-    function removeParticipant(index) {
-        participants.splice(index, 1);
-        renderParticipants();
-    }
-
-    // Отрисовка списка участников
-    function renderParticipants() {
-        elements.participantsList.innerHTML = '';
-        participants.forEach((participant, index) => {
-            const tag = document.createElement('div');
-            tag.className = 'participant-tag';
-            tag.innerHTML = `
-                ${participant}
-                <span class="participant-remove" onclick="CalendarModule.removeParticipant(${index})">
-                    <i class="fas fa-times"></i>
-                </span>
-            `;
-            elements.participantsList.appendChild(tag);
-        });
-    }
-
-    // Обновление выбора цвета
-    function updateColorPicker() {
-        document.querySelectorAll('.color-option').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.color === selectedColor);
-        });
-    }
-
-    // Сохранение события
-    function saveEvent(formData) {
-        const eventData = {
-            id: editingEventId || Date.now().toString(),
-            title: formData.get('title'),
-            date: formData.get('date'),
-            timeStart: formData.get('timeStart'),
-            timeEnd: formData.get('timeEnd'),
-            description: formData.get('description'),
-            participants: [...participants],
-            color: selectedColor
-        };
-        
-        if (editingEventId) {
-            // Обновляем существующее событие
-            const index = events.findIndex(e => e.id === editingEventId);
-            if (index !== -1) {
-                events[index] = eventData;
-            }
-        } else {
-            // Добавляем новое событие
-            events.push(eventData);
-        }
-        
-        // Сохраняем в localStorage
-        try {
-            localStorage.setItem('calendarEvents', JSON.stringify(events));
-            console.log('События сохранены в localStorage:', events.length);
-        } catch (e) {
-            console.error('Ошибка при сохранении в localStorage:', e);
-        }
-        
-        // Обновляем интерфейс
-        renderCalendar();
-        renderEventsList();
-        closeEventModal();
-    }
-
-    // Редактирование события
-    function editEvent(eventId) {
-        const event = events.find(e => e.id === eventId);
-        if (!event) return;
-        
-        editingEventId = eventId;
-        participants = [...(event.participants || [])];
-        selectedColor = event.color || '#3498db';
-        
-        elements.modalTitle.textContent = 'Редактировать событие';
-        
-        // Заполняем форму
-        document.getElementById('eventTitle').value = event.title;
-        document.getElementById('eventDate').value = event.date;
-        document.getElementById('eventTimeStart').value = event.timeStart || '';
-        document.getElementById('eventTimeEnd').value = event.timeEnd || '';
-        document.getElementById('eventDescription').value = event.description || '';
-        
-        renderParticipants();
-        updateColorPicker();
-        elements.eventModal.style.display = 'flex';
-    }
-
-    // Удаление события
-    function deleteEvent(eventId) {
-        if (confirm('Вы уверены, что хотите удалить это событие?')) {
-            events = events.filter(e => e.id !== eventId);
-            try {
-                localStorage.setItem('calendarEvents', JSON.stringify(events));
-                console.log('События обновлены в localStorage:', events.length);
-            } catch (e) {
-                console.error('Ошибка при сохранении в localStorage:', e);
-            }
-            renderCalendar();
-            renderEventsList();
-        }
-    }
-
-    // Экспорт событий
-    function exportEvents() {
-        const dataStr = JSON.stringify(events, null, 2);
-        const dataBlob = new Blob([dataStr], {type: 'application/json'});
-        const url = URL.createObjectURL(dataBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        const date = new Date().toISOString().split('T')[0];
-        link.download = `calendar_events_${date}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        console.log('Экспортировано событий:', events.length);
-    }
-
-    // Импорт событий
-    function importEvents(file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const importedEvents = JSON.parse(e.target.result);
-                if (Array.isArray(importedEvents)) {
-                    // Спрашиваем, заменить или добавить
-                    const replace = confirm('Заменить все текущие события? (Нет - добавить к существующим)');
-                    if (replace) {
-                        events = importedEvents;
-                    } else {
-                        events = [...events, ...importedEvents];
-                    }
-                    localStorage.setItem('calendarEvents', JSON.stringify(events));
-                    renderCalendar();
-                    renderEventsList();
-                    alert(`Импортировано событий: ${importedEvents.length}`);
-                } else {
-                    alert('Неверный формат файла');
-                }
-            } catch (error) {
-                alert('Ошибка при чтении файла: ' + error.message);
-            }
-        };
-        reader.readAsText(file);
-    }
-
-    // Привязка обработчиков событий
-    function attachEventListeners() {
-        console.log('Привязка обработчиков событий...');
-        
-        // Проверяем наличие кнопок
-        const prevBtn = document.getElementById('prevMonth');
-        const nextBtn = document.getElementById('nextMonth');
-        const todayBtn = document.getElementById('todayBtn');
-        const addEventBtn = document.getElementById('addEventBtn');
-        
-        console.log('Кнопки найдены:', {
-            prevBtn: !!prevBtn,
-            nextBtn: !!nextBtn,
-            todayBtn: !!todayBtn,
-            addEventBtn: !!addEventBtn
-        });
-        
-        // Навигация по месяцам
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => {
-                console.log('Клик на предыдущий месяц');
-                currentDate.setMonth(currentDate.getMonth() - 1);
-                renderCalendar();
-            });
-        }
-        
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
-                console.log('Клик на следующий месяц');
-                currentDate.setMonth(currentDate.getMonth() + 1);
-                renderCalendar();
-            });
-        }
-        
-        // Кнопка "Сегодня"
-        if (todayBtn) {
-            todayBtn.addEventListener('click', () => {
-                console.log('Клик на Сегодня');
-                currentDate = new Date();
-                renderCalendar();
-            });
-        }
-        
-        // Кнопка добавления события
-        if (addEventBtn) {
-            addEventBtn.addEventListener('click', () => {
-                console.log('Клик на Добавить событие');
-                openEventModal();
-            });
-        }
-        
-        // Кнопка экспорта
-        const exportBtn = document.getElementById('exportBtn');
-        if (exportBtn) {
-            exportBtn.addEventListener('click', () => {
-                if (events.length === 0) {
-                    alert('Нет событий для экспорта');
-                    return;
-                }
-                exportEvents();
-            });
-        }
-        
-        // Кнопка импорта
-        const importBtn = document.getElementById('importBtn');
-        const importFile = document.getElementById('importFile');
-        if (importBtn && importFile) {
-            importBtn.addEventListener('click', () => {
-                importFile.click();
-            });
-            
-            importFile.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    importEvents(file);
-                    // Очищаем input для повторного использования
-                    e.target.value = '';
-                }
-            });
-        }
-        
-        // Закрытие модального окна
-        document.getElementById('closeModal').addEventListener('click', closeEventModal);
-        document.getElementById('cancelBtn').addEventListener('click', closeEventModal);
-        
-        // Клик вне модального окна
-        elements.eventModal.addEventListener('click', (e) => {
-            if (e.target === elements.eventModal) {
-                closeEventModal();
-            }
-        });
-        
-        // Форма события
-        elements.eventForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(elements.eventForm);
-            saveEvent(formData);
-        });
-        
-        // Добавление участника
-        document.getElementById('addParticipant').addEventListener('click', addParticipant);
-        
-        // Enter в поле участника
-        elements.participantInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addParticipant();
-            }
-        });
-        
-        // Выбор цвета
-        document.querySelectorAll('.color-option').forEach(btn => {
-            btn.addEventListener('click', () => {
-                selectedColor = btn.dataset.color;
-                updateColorPicker();
-            });
-        });
-        
-        // Клавиатурные сокращения
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && elements.eventModal.style.display === 'flex') {
-                closeEventModal();
-            }
-        });
-    }
-
-    // Экспорт функций для глобального доступа
-    window.CalendarModule = {
-        editEvent: editEvent,
-        deleteEvent: deleteEvent,
-        removeParticipant: removeParticipant
-    };
-
-    // Инициализация
-    init();
-    
-    })();
-}, 100); // Задержка 100мс для загрузки DOM
-</script>
+<!-- JavaScript для календаря с авторизацией -->
+<script src="js/calendar.js"></script>

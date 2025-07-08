@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex - Авторизация</title>
+    <link rel="preload" href="https://fonts.gstatic.com/s/cinzeldecorative/v16/daaCSScvJGqLYhG8nNt8KPPswUAPnh7URs0LaCpbRzhXVrE.woff2" as="font" type="font/woff2" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400;500&display=block" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0D1A13 0%, #1a1a1a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            overflow: hidden;
+        }
+        
+        .auth-container {
+            background: rgba(45, 45, 45, 0.95);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            animation: slideInUp 0.8s ease-out;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .auth-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-display: block;
+            visibility: hidden;
+        }
+        
+        .fonts-loaded .auth-title {
+            visibility: visible;
+        }
+        
+        .auth-subtitle {
+            color: #bbb;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 4px;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: #bbb;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .auth-tab.active {
+            background: #3498db;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ddd;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            background: rgba(0, 0, 0, 0.6);
+        }
+        
+        .form-input::placeholder {
+            color: #777;
+        }
+        
+        .input-icon {
+            position: relative;
+        }
+        
+        .input-icon i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .input-icon .form-input {
+            padding-left: 45px;
+        }
+        
+        .form-button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .form-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .form-button:active {
+            transform: translateY(0);
+        }
+        
+        .form-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .button-loading {
+            opacity: 0.8;
+        }
+        
+        .button-loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            color: #e74c3c;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .success-message {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            color: #2ecc71;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .password-requirements {
+            font-size: 0.8rem;
+            color: #777;
+            margin-top: 5px;
+            text-align: left;
+        }
+        
+        .back-to-site {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s ease;
+        }
+        
+        .back-to-site:hover {
+            color: #fff;
+        }
+        
+        .back-to-site i {
+            font-size: 0.8rem;
+        }
+        
+        .decorative-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .decorative-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(52, 152, 219, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(155, 89, 182, 0.1) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .auth-title {
+                font-size: 2rem;
+            }
+            
+            .back-to-site {
+                top: 10px;
+                left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="decorative-bg"></div>
+    
+    <a href="index.html" class="back-to-site">
+        <i class="fas fa-arrow-left"></i>
+        Вернуться на сайт
+    </a>
+    
+    <div class="auth-container">
+        <h1 class="auth-title">Codex</h1>
+        <p class="auth-subtitle">Система управления событиями</p>
+        
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchTab('login')">Вход</button>
+            <button class="auth-tab" onclick="switchTab('register')">Регистрация</button>
+        </div>
+        
+        <div id="error-message" class="error-message"></div>
+        <div id="success-message" class="success-message"></div>
+        
+        <!-- Форма входа -->
+        <form id="login-form" class="auth-form active">
+            <div class="form-group">
+                <label class="form-label" for="login-username">Имя пользователя</label>
+                <div class="input-icon">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="login-username" class="form-input" placeholder="Введите имя пользователя" required autocomplete="username">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="login-password">Пароль</label>
+                <div class="input-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="login-password" class="form-input" placeholder="Введите пароль" required autocomplete="current-password">
+                </div>
+            </div>
+            
+            <button type="submit" class="form-button">
+                <span class="button-text">Войти</span>
+            </button>
+        </form>
+        
+        <!-- Форма регистрации -->
+        <form id="register-form" class="auth-form">
+            <div class="form-group">
+                <label class="form-label" for="register-username">Имя пользователя</label>
+                <div class="input-icon">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="register-username" class="form-input" placeholder="Выберите имя пользователя" required autocomplete="username">
+                </div>
+                <div class="password-requirements">Минимум 3 символа</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="register-password">Пароль</label>
+                <div class="input-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="register-password" class="form-input" placeholder="Создайте пароль" required autocomplete="new-password">
+                </div>
+                <div class="password-requirements">Минимум 6 символов</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="register-password-confirm">Подтверждение пароля</label>
+                <div class="input-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="register-password-confirm" class="form-input" placeholder="Повторите пароль" required autocomplete="new-password">
+                </div>
+            </div>
+            
+            <button type="submit" class="form-button">
+                <span class="button-text">Зарегистрироваться</span>
+            </button>
+        </form>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Проверка загрузки шрифтов
+        if ('fonts' in document) {
+            document.fonts.ready.then(function() {
+                console.log('Все шрифты загружены успешно');
+                document.body.classList.add('fonts-loaded');
+            });
+            
+            // Дополнительная проверка конкретного шрифта
+            document.fonts.load('700 1em "Cinzel Decorative"').then(function() {
+                console.log('Cinzel Decorative загружен');
+                document.body.classList.add('fonts-loaded');
+            });
+        }
+        
+        // Fallback для старых браузеров
+        setTimeout(function() {
+            document.body.classList.add('fonts-loaded');
+        }, 3000);
+
+        function switchTab(tab) {
+            // Обновляем табы
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            
+            // Активируем нужный таб
+            if (tab === 'login') {
+                document.querySelector('.auth-tab:first-child').classList.add('active');
+                document.getElementById('login-form').classList.add('active');
+            } else {
+                document.querySelector('.auth-tab:last-child').classList.add('active');
+                document.getElementById('register-form').classList.add('active');
+            }
+            
+            // Очищаем сообщения
+            hideMessages();
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('error-message');
+            const successEl = document.getElementById('success-message');
+            
+            successEl.style.display = 'none';
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+
+        function showSuccess(message) {
+            const errorEl = document.getElementById('error-message');
+            const successEl = document.getElementById('success-message');
+            
+            errorEl.style.display = 'none';
+            successEl.textContent = message;
+            successEl.style.display = 'block';
+        }
+
+        function hideMessages() {
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('success-message').style.display = 'none';
+        }
+
+        function setButtonLoading(button, loading) {
+            if (loading) {
+                button.classList.add('button-loading');
+                button.disabled = true;
+                button.querySelector('.button-text').style.opacity = '0';
+            } else {
+                button.classList.remove('button-loading');
+                button.disabled = false;
+                button.querySelector('.button-text').style.opacity = '1';
+            }
+        }
+
+        // Обработчики форм
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const button = e.target.querySelector('.form-button');
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+            
+            if (!username || !password) {
+                showError('Заполните все поля');
+                return;
+            }
+            
+            setButtonLoading(button, true);
+            hideMessages();
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Сохраняем токен
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    
+                    showSuccess('Вход выполнен успешно! Перенаправление...');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'content.html';
+                    }, 1500);
+                } else {
+                    showError(data.error || 'Ошибка входа');
+                }
+            } catch (error) {
+                console.error('Ошибка входа:', error);
+                showError('Ошибка подключения к серверу');
+            } finally {
+                setButtonLoading(button, false);
+            }
+        });
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const button = e.target.querySelector('.form-button');
+            const username = document.getElementById('register-username').value.trim();
+            const password = document.getElementById('register-password').value;
+            const passwordConfirm = document.getElementById('register-password-confirm').value;
+            
+            if (!username || !password || !passwordConfirm) {
+                showError('Заполните все поля');
+                return;
+            }
+            
+            if (username.length < 3) {
+                showError('Имя пользователя должно содержать минимум 3 символа');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('Пароль должен содержать минимум 6 символов');
+                return;
+            }
+            
+            if (password !== passwordConfirm) {
+                showError('Пароли не совпадают');
+                return;
+            }
+            
+            setButtonLoading(button, true);
+            hideMessages();
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Сохраняем токен
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    
+                    showSuccess('Регистрация выполнена успешно! Перенаправление...');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'content.html';
+                    }, 1500);
+                } else {
+                    showError(data.error || 'Ошибка регистрации');
+                }
+            } catch (error) {
+                console.error('Ошибка регистрации:', error);
+                showError('Ошибка подключения к серверу');
+            } finally {
+                setButtonLoading(button, false);
+            }
+        });
+
+        // Проверяем, авторизован ли пользователь
+        if (localStorage.getItem('authToken')) {
+            // Можно сразу перенаправить на главную
+            // window.location.href = 'content.html';
+        }
+    </script>
+</body>
+</html>

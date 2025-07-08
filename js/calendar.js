@@ -1,10 +1,17 @@
-// Календарь событий для Codex
+// Календарь событий для Codex с системой пользователей
 (function() {
     'use strict';
     
+    // Проверяем авторизацию
+    if (!window.authManager || !window.authManager.isAuthenticated()) {
+        console.warn('Пользователь не авторизован, перенаправляем на страницу входа');
+        window.location.href = 'auth.html';
+        return;
+    }
+    
     // Данные календаря
     let currentDate = new Date();
-    let events = JSON.parse(localStorage.getItem('calendarEvents') || '[]');
+    let events = [];
     let editingEventId = null;
     let selectedColor = '#3498db';
     let participants = [];
@@ -18,14 +25,54 @@
         modalTitle: document.getElementById('modalTitle'),
         eventForm: document.getElementById('eventForm'),
         participantsList: document.getElementById('participantsList'),
-        participantInput: document.getElementById('participantInput')
+        participantInput: document.getElementById('participantInput'),
+        currentUser: document.getElementById('currentUser'),
+        logoutBtn: document.getElementById('logoutBtn')
     };
 
     // Инициализация
-    function init() {
-        renderCalendar();
-        renderEventsList();
-        attachEventListeners();
+    async function init() {
+        try {
+            // Проверяем токен
+            const isValid = await window.authManager.verifyToken();
+            if (!isValid) {
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            // Загружаем события с сервера
+            await loadEventsFromServer();
+            
+            renderCalendar();
+            renderEventsList();
+            attachEventListeners();
+            updateUserInfo();
+            
+            console.log('Календарь инициализирован успешно');
+        } catch (error) {
+            console.error('Ошибка инициализации календаря:', error);
+            showError('Ошибка загрузки календаря: ' + error.message);
+        }
+    }
+
+    // Загрузка событий с сервера
+    async function loadEventsFromServer() {
+        try {
+            events = await window.eventManager.loadEvents();
+            console.log('Загружено событий:', events.length);
+        } catch (error) {
+            console.error('Ошибка загрузки событий:', error);
+            events = [];
+            throw error;
+        }
+    }
+
+    // Обновление информации о пользователе
+    function updateUserInfo() {
+        const user = window.authManager.getCurrentUser();
+        if (elements.currentUser && user) {
+            elements.currentUser.textContent = user.username;
+        }
     }
 
     // Отрисовка календаря
@@ -105,7 +152,13 @@
                 eventEl.className = 'calendar-event';
                 eventEl.style.backgroundColor = event.color || '#3498db';
                 eventEl.textContent = event.title;
-                eventEl.title = event.title;
+                eventEl.title = `${event.title} (${event.createdByUsername})`;
+                
+                // Добавляем индикатор для собственных событий
+                if (window.eventManager.canEditEvent(event)) {
+                    eventEl.classList.add('own-event');
+                }
+                
                 dayEl.appendChild(eventEl);
             });
             
@@ -130,8 +183,7 @@
 
     // Отрисовка списка событий
     function renderEventsList() {
-        const sortedEvents = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
-        const upcomingEvents = sortedEvents.filter(event => new Date(event.date) >= new Date());
+        const upcomingEvents = window.eventManager.getUpcomingEvents();
         
         if (upcomingEvents.length === 0) {
             elements.eventsList.innerHTML = '<p class="no-events">Нет запланированных событий</p>';
@@ -143,6 +195,11 @@
         upcomingEvents.forEach(event => {
             const eventEl = document.createElement('div');
             eventEl.className = 'event-item';
+            
+            // Добавляем класс для собственных событий
+            if (window.eventManager.canEditEvent(event)) {
+                eventEl.classList.add('own-event');
+            }
             
             const eventDate = new Date(event.date);
             const dateStr = eventDate.toLocaleDateString('ru-RU', {
@@ -163,18 +220,28 @@
                 <div class="event-info">
                     <div class="event-title" style="color: ${event.color || '#3498db'}">${event.title}</div>
                     <div class="event-datetime">${dateStr}${timeStr ? ', ' + timeStr : ''}</div>
+                    <div class="event-creator">
+                        <i class="fas fa-user"></i> ${event.createdByUsername}
+                        ${event.createdAt ? ` • ${new Date(event.createdAt).toLocaleDateString('ru-RU')}` : ''}
+                    </div>
                     ${event.participants && event.participants.length > 0 ? 
                         `<div class="event-participants">
                             <i class="fas fa-users"></i> ${event.participants.join(', ')}
                         </div>` : ''}
                 </div>
                 <div class="event-actions">
-                    <button onclick="CalendarModule.editEvent('${event.id}')" title="Редактировать">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button onclick="CalendarModule.deleteEvent('${event.id}')" title="Удалить">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    ${window.eventManager.canEditEvent(event) ? `
+                        <button onclick="editEvent('${event.id}')" title="Редактировать">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteEvent('${event.id}')" title="Удалить">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    ` : `
+                        <span class="read-only-indicator" title="Событие другого пользователя">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    `}
                 </div>
             `;
             
@@ -233,7 +300,7 @@
             tag.className = 'participant-tag';
             tag.innerHTML = `
                 ${participant}
-                <span class="participant-remove" onclick="CalendarModule.removeParticipant(${index})">
+                <span class="participant-remove" onclick="removeParticipant(${index})">
                     <i class="fas fa-times"></i>
                 </span>
             `;
@@ -249,42 +316,59 @@
     }
 
     // Сохранение события
-    function saveEvent(formData) {
-        const eventData = {
-            id: editingEventId || Date.now().toString(),
-            title: formData.get('title'),
-            date: formData.get('date'),
-            timeStart: formData.get('timeStart'),
-            timeEnd: formData.get('timeEnd'),
-            description: formData.get('description'),
-            participants: [...participants],
-            color: selectedColor
-        };
-        
-        if (editingEventId) {
-            // Обновляем существующее событие
-            const index = events.findIndex(e => e.id === editingEventId);
-            if (index !== -1) {
-                events[index] = eventData;
+    async function saveEvent(formData) {
+        try {
+            const eventData = {
+                title: formData.get('title'),
+                date: formData.get('date'),
+                timeStart: formData.get('timeStart'),
+                timeEnd: formData.get('timeEnd'),
+                description: formData.get('description'),
+                participants: [...participants],
+                color: selectedColor
+            };
+            
+            let result;
+            if (editingEventId) {
+                // Обновляем существующее событие
+                result = await window.eventManager.updateEvent(editingEventId, eventData);
+            } else {
+                // Создаем новое событие
+                result = await window.eventManager.createEvent(eventData);
             }
-        } else {
-            // Добавляем новое событие
-            events.push(eventData);
+            
+            if (result.success) {
+                // Обновляем локальный массив событий
+                events = window.eventManager.events;
+                
+                // Обновляем интерфейс
+                renderCalendar();
+                renderEventsList();
+                closeEventModal();
+                
+                showSuccess(editingEventId ? 'Событие обновлено' : 'Событие создано');
+            } else {
+                showError(result.error || 'Ошибка сохранения события');
+            }
+        } catch (error) {
+            console.error('Ошибка сохранения события:', error);
+            showError('Ошибка подключения к серверу');
         }
-        
-        // Сохраняем в localStorage
-        localStorage.setItem('calendarEvents', JSON.stringify(events));
-        
-        // Обновляем интерфейс
-        renderCalendar();
-        renderEventsList();
-        closeEventModal();
     }
 
     // Редактирование события
-    function editEvent(eventId) {
+    async function editEvent(eventId) {
         const event = events.find(e => e.id === eventId);
-        if (!event) return;
+        if (!event) {
+            showError('Событие не найдено');
+            return;
+        }
+        
+        // Проверяем права доступа
+        if (!window.eventManager.canEditEvent(event)) {
+            showError('У вас нет прав для редактирования этого события');
+            return;
+        }
         
         editingEventId = eventId;
         participants = [...(event.participants || [])];
@@ -305,62 +389,142 @@
     }
 
     // Удаление события
-    function deleteEvent(eventId) {
-        if (confirm('Вы уверены, что хотите удалить это событие?')) {
-            events = events.filter(e => e.id !== eventId);
-            localStorage.setItem('calendarEvents', JSON.stringify(events));
-            renderCalendar();
-            renderEventsList();
+    async function deleteEvent(eventId) {
+        const event = events.find(e => e.id === eventId);
+        if (!event) {
+            showError('Событие не найдено');
+            return;
         }
+        
+        // Проверяем права доступа
+        if (!window.eventManager.canEditEvent(event)) {
+            showError('У вас нет прав для удаления этого события');
+            return;
+        }
+        
+        if (!confirm('Вы уверены, что хотите удалить это событие?')) {
+            return;
+        }
+        
+        try {
+            const result = await window.eventManager.deleteEvent(eventId);
+            
+            if (result.success) {
+                // Обновляем локальный массив событий
+                events = window.eventManager.events;
+                
+                renderCalendar();
+                renderEventsList();
+                showSuccess('Событие удалено');
+            } else {
+                showError(result.error || 'Ошибка удаления события');
+            }
+        } catch (error) {
+            console.error('Ошибка удаления события:', error);
+            showError('Ошибка подключения к серверу');
+        }
+    }
+
+    // Отображение сообщений
+    function showError(message) {
+        // Создаем временное уведомление
+        const errorEl = document.createElement('div');
+        errorEl.className = 'notification error';
+        errorEl.innerHTML = `
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>${message}</span>
+        `;
+        
+        document.body.appendChild(errorEl);
+        
+        setTimeout(() => {
+            errorEl.classList.add('show');
+        }, 100);
+        
+        setTimeout(() => {
+            errorEl.classList.remove('show');
+            setTimeout(() => {
+                document.body.removeChild(errorEl);
+            }, 300);
+        }, 4000);
+    }
+
+    function showSuccess(message) {
+        const successEl = document.createElement('div');
+        successEl.className = 'notification success';
+        successEl.innerHTML = `
+            <i class="fas fa-check-circle"></i>
+            <span>${message}</span>
+        `;
+        
+        document.body.appendChild(successEl);
+        
+        setTimeout(() => {
+            successEl.classList.add('show');
+        }, 100);
+        
+        setTimeout(() => {
+            successEl.classList.remove('show');
+            setTimeout(() => {
+                document.body.removeChild(successEl);
+            }, 300);
+        }, 3000);
     }
 
     // Привязка обработчиков событий
     function attachEventListeners() {
         // Навигация по месяцам
-        document.getElementById('prevMonth').addEventListener('click', () => {
+        document.getElementById('prevMonth')?.addEventListener('click', () => {
             currentDate.setMonth(currentDate.getMonth() - 1);
             renderCalendar();
         });
         
-        document.getElementById('nextMonth').addEventListener('click', () => {
+        document.getElementById('nextMonth')?.addEventListener('click', () => {
             currentDate.setMonth(currentDate.getMonth() + 1);
             renderCalendar();
         });
         
         // Кнопка "Сегодня"
-        document.getElementById('todayBtn').addEventListener('click', () => {
+        document.getElementById('todayBtn')?.addEventListener('click', () => {
             currentDate = new Date();
             renderCalendar();
         });
         
         // Кнопка добавления события
-        document.getElementById('addEventBtn').addEventListener('click', () => {
+        document.getElementById('addEventBtn')?.addEventListener('click', () => {
             openEventModal();
         });
         
+        // Кнопка выхода
+        elements.logoutBtn?.addEventListener('click', async () => {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                await window.authManager.logout();
+            }
+        });
+        
         // Закрытие модального окна
-        document.getElementById('closeModal').addEventListener('click', closeEventModal);
-        document.getElementById('cancelBtn').addEventListener('click', closeEventModal);
+        document.getElementById('closeModal')?.addEventListener('click', closeEventModal);
+        document.getElementById('cancelBtn')?.addEventListener('click', closeEventModal);
         
         // Клик вне модального окна
-        elements.eventModal.addEventListener('click', (e) => {
+        elements.eventModal?.addEventListener('click', (e) => {
             if (e.target === elements.eventModal) {
                 closeEventModal();
             }
         });
         
         // Форма события
-        elements.eventForm.addEventListener('submit', (e) => {
+        elements.eventForm?.addEventListener('submit', (e) => {
             e.preventDefault();
             const formData = new FormData(elements.eventForm);
             saveEvent(formData);
         });
         
         // Добавление участника
-        document.getElementById('addParticipant').addEventListener('click', addParticipant);
+        document.getElementById('addParticipant')?.addEventListener('click', addParticipant);
         
         // Enter в поле участника
-        elements.participantInput.addEventListener('keypress', (e) => {
+        elements.participantInput?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 addParticipant();
@@ -387,7 +551,12 @@
     window.CalendarModule = {
         editEvent: editEvent,
         deleteEvent: deleteEvent,
-        removeParticipant: removeParticipant
+        removeParticipant: removeParticipant,
+        refreshEvents: async () => {
+            await loadEventsFromServer();
+            renderCalendar();
+            renderEventsList();
+        }
     };
 
     // Инициализация при загрузке
