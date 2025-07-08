@@ -590,6 +590,47 @@ window.localEventManager = new LocalEventManager(window.localAuthManager);
 window.authManager = window.localAuthManager;
 window.eventManager = window.localEventManager;
 
+console.log('🔐 Улучшенная система пользователей инициализирована');
+console.log('✅ Защищенное хранение паролей');
+console.log('✅ Проверка уникальности имен пользователей');
+console.log('✅ Валидация данных');
+console.log('✅ Защита от брутфорса (блокировка после 5 попыток)');
+console.log('Роли: super_admin, admin, moderator, user');
+
+// Показываем команды для разработки
+if (window.localAuthManager.hasRole('admin')) {
+    console.log('📋 Доступные команды администратора:');
+    console.log('adminCommands.showUsers() - показать всех пользователей');
+    console.log('adminCommands.createAdmin("username", "password") - создать администратора');
+    console.log('adminCommands.createModerator("username", "password") - создать модератора');
+    console.log('adminCommands.unlockUser("user_id") - разблокировать пользователя');
+    console.log('adminCommands.clearAll() - очистить все данные');
+    console.log('adminCommands.clearUsers() - очистить пользователей');
+    console.log('adminCommands.clearEvents() - очистить события');
+} targetUserId);
+    }
+
+    getUpcomingEvents() {
+        const now = new Date();
+        return this.events
+            .filter(event => new Date(event.date) >= now)
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+    }
+
+    getEventsByDate(date) {
+        const targetDate = new Date(date).toDateString();
+        return this.events.filter(event => new Date(event.date).toDateString() === targetDate);
+    }
+}
+
+// Глобальные экземпляры для localStorage версии
+window.localAuthManager = new LocalAuthManager();
+window.localEventManager = new LocalEventManager(window.localAuthManager);
+
+// Совместимость с серверной версией
+window.authManager = window.localAuthManager;
+window.eventManager = window.localEventManager;
+
 console.log('Локальная система пользователей с ролями инициализирована');
 console.log('Роли: super_admin, admin, moderator, user');
 

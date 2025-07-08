@@ -212,6 +212,18 @@
                 userCard.className = 'user-card';
                 const isCurrentUser = user.id === window.localAuthManager.currentUser.id;
                 const canDelete = !isCurrentUser && (window.localAuthManager.hasRole('super_admin') || (user.role !== 'admin' && user.role !== 'super_admin'));
+                const canUnlock = user.isLocked && window.localAuthManager.hasRole('admin');
+                
+                // Статус пользователя
+                let statusBadge = '';
+                if (user.isLocked) {
+                    statusBadge = '<span style="color: #e74c3c; font-weight: bold;">🔒 ЗАБЛОКИРОВАН</span>';
+                } else if (user.loginAttempts > 0) {
+                    statusBadge = `<span style="color: #f39c12;">⚠️ Попыток входа: ${user.loginAttempts}/5</span>`;
+                } else {
+                    statusBadge = '<span style="color: #2ecc71;">✅ Активен</span>';
+                }
+                
                 userCard.innerHTML = `
                     <div class="user-header">
                         <div class="user-name">${user.username}</div>
@@ -220,10 +232,13 @@
                     <div class="user-details">
                         <div>ID: ${user.id}</div>
                         <div>Создан: ${new Date(user.createdAt).toLocaleDateString('ru-RU')}</div>
+                        ${user.lastLogin ? `<div>Последний вход: ${new Date(user.lastLogin).toLocaleDateString('ru-RU')} ${new Date(user.lastLogin).toLocaleTimeString('ru-RU')}</div>` : '<div>Ещё не входил</div>'}
+                        <div>${statusBadge}</div>
                         ${user.isDefault ? '<div style="color: #f39c12;">Администратор по умолчанию</div>' : ''}
                         ${isCurrentUser ? '<div style="color: #3498db;">Это вы</div>' : ''}
                     </div>
                     <div class="user-actions">
+                        ${canUnlock ? `<button onclick="unlockUser('${user.id}', '${user.username}')" class="btn btn-success"><i class="fas fa-unlock"></i> Разблокировать</button>` : ''}
                         ${canDelete ? `<button onclick="deleteUser('${user.id}', '${user.username}')" class="btn btn-danger"><i class="fas fa-trash"></i> Удалить</button>` : ''}
                     </div>`;
                 container.appendChild(userCard);
@@ -292,6 +307,17 @@
             else { showError(result.error); }
         }
 
+        async function unlockUser(userId, username) {
+            if (!confirm(`Разблокировать пользователя ${username}?`)) return;
+            const result = await window.localAuthManager.unlockUser(userId);
+            if (result.success) { 
+                showSuccess(`Пользователь ${username} разблокирован`);
+                loadUsers(); loadStats(); 
+            } else { 
+                showError(result.error); 
+            }
+        }
+
         function clearUsers() {
             if (!confirm('Удалить всех пользователей кроме администраторов?')) return;
             const result = window.localAuthManager.clearUsers();
@@ -339,12 +365,20 @@
 adminCommands.showUsers() - показать всех пользователей
 adminCommands.createAdmin("username", "password") - создать администратора
 adminCommands.createModerator("username", "password") - создать модератора
+adminCommands.unlockUser("user_id") - разблокировать пользователя
 adminCommands.clearAll() - очистить все данные
 adminCommands.clearUsers() - очистить пользователей
 adminCommands.clearEvents() - очистить события
 
-Пример:
-adminCommands.createAdmin("newadmin", "password123")`;
+Примеры:
+adminCommands.createAdmin("newadmin", "password123")
+adminCommands.unlockUser("1234567890_abc123def")
+
+Новые функции безопасности:
+✅ Защищенное хранение паролей
+✅ Проверка уникальности имен
+✅ Валидация данных
+✅ Блокировка после 5 неверных попыток`;
             alert(commands); console.log(commands);
         }
 
