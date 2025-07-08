@@ -304,18 +304,19 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    max-height: 200px;
+    max-height: 300px;
     overflow-y: auto;
 }
 
 .event-item {
     background: #1a1a1a;
     border-radius: 6px;
-    padding: 10px 15px;
+    padding: 12px 15px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     transition: all 0.3s;
+    gap: 15px;
 }
 
 .event-item:hover {
@@ -545,6 +546,14 @@
 .event-datetime {
     color: #888;
     font-size: 0.9rem;
+}
+
+.event-description {
+    color: #ccc;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    line-height: 1.4;
+    max-width: 400px;
 }
 
 .event-participants {
@@ -794,6 +803,8 @@ setTimeout(function() {
                 <div class="event-info">
                     <div class="event-title" style="color: ${event.color || '#3498db'}">${event.title}</div>
                     <div class="event-datetime">${dateStr}${timeStr ? ', ' + timeStr : ''}</div>
+                    ${event.description ? 
+                        `<div class="event-description">${event.description}</div>` : ''}
                     ${event.participants && event.participants.length > 0 ? 
                         `<div class="event-participants">
                             <i class="fas fa-users"></i> ${event.participants.join(', ')}
