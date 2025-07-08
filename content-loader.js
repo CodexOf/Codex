@@ -572,8 +572,8 @@ class ContentLoader {
             
             // Проверяем авторизацию
             if (!window.authManager || !window.authManager.isAuthenticated()) {
-                console.warn('Пользователь не авторизован, перенаправляем на страницу входа');
-                window.location.href = 'auth.html';
+                    console.warn('Пользователь не авторизован, перенаправляем на страницу входа');
+                window.location.href = 'auth-local.html';
                 return;
             }
             
@@ -655,7 +655,7 @@ class ContentLoader {
                 const isValid = await window.authManager.verifyToken();
                 if (!isValid) {
                     console.warn('Токен недействителен, перенаправляем на авторизацию');
-                    window.location.href = 'auth.html';
+                    window.location.href = 'auth-local.html';
                 }
             }
         } catch (error) {
