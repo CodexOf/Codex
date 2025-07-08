@@ -11,6 +11,15 @@ class AuthManager {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             return `http://${window.location.hostname}:3000`;
         }
+        
+        // Для Render.com или другого хостинга
+        // Замените на ваш URL после деплоя на Render
+        if (window.location.hostname.includes('github.io')) {
+            // Если открыто с GitHub Pages, используем URL Render
+            return 'https://codex-XXXX.onrender.com'; // ЗАМЕНИТЕ на ваш URL от Render
+        }
+        
+        // Для продакшена используем тот же домен
         return window.location.origin;
     }
 
@@ -278,6 +287,10 @@ class EventManager {
 // Глобальные экземпляры
 window.authManager = new AuthManager();
 window.eventManager = new EventManager(window.authManager);
+
+// Показываем текущий режим работы
+console.log('🌐 Режим работы:', window.authManager.baseURL);
+console.log('📍 Для смены сервера измените URL в методе getBaseURL()');
 
 // Экспорт для использования в других модулях
 if (typeof module !== 'undefined' && module.exports) {
