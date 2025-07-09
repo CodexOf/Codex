@@ -484,28 +484,16 @@
             hideMessages();
             
             try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
+                const result = await window.authManager.login(username, password);
                 
-                const data = await response.json();
-                
-                if (data.success) {
-                    // Сохраняем токен
-                    localStorage.setItem('authToken', data.token);
-                    localStorage.setItem('currentUser', JSON.stringify(data.user));
-                    
+                if (result.success) {
                     showSuccess('Вход выполнен успешно! Перенаправление...');
                     
                     setTimeout(() => {
                         window.location.href = 'content.html';
                     }, 1500);
                 } else {
-                    showError(data.error || 'Ошибка входа');
+                    showError(result.error || 'Ошибка входа');
                 }
             } catch (error) {
                 console.error('Ошибка входа:', error);
@@ -547,28 +535,16 @@
             hideMessages();
             
             try {
-                const response = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
+                const result = await window.authManager.register(username, password);
                 
-                const data = await response.json();
-                
-                if (data.success) {
-                    // Сохраняем токен
-                    localStorage.setItem('authToken', data.token);
-                    localStorage.setItem('currentUser', JSON.stringify(data.user));
-                    
+                if (result.success) {
                     showSuccess('Регистрация выполнена успешно! Перенаправление...');
                     
                     setTimeout(() => {
                         window.location.href = 'content.html';
                     }, 1500);
                 } else {
-                    showError(data.error || 'Ошибка регистрации');
+                    showError(result.error || 'Ошибка регистрации');
                 }
             } catch (error) {
                 console.error('Ошибка регистрации:', error);
@@ -583,6 +559,28 @@
             // Можно сразу перенаправить на главную
             // window.location.href = 'content.html';
         }
+        
+        // Проверяем статус сервера
+        async function checkServerStatus() {
+            try {
+                const response = await fetch(window.authManager.baseURL + '/api/user', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer test'
+                    }
+                });
+                
+                if (response.status === 401) {
+                    // Сервер работает
+                    console.log('✅ Сервер доступен:', window.authManager.baseURL);
+                }
+            } catch (error) {
+                console.warn('⚠️ Сервер недоступен или запускается. Первый запрос может занять 30-50 секунд.');
+                console.log('🔄 Проверьте статус:', window.authManager.baseURL);
+            }
+        }
+        
+        checkServerStatus();
     </script>
 </body>
 </html>
