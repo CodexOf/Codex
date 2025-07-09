@@ -8,7 +8,42 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+// Настройка CORS для работы с GitHub Pages
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Разрешаем запросы с GitHub Pages и локального сервера
+        const allowedOrigins = [
+            'http://localhost:3000',
+            'http://localhost:5000',
+            'http://127.0.0.1:3000',
+            'http://127.0.0.1:5000',
+            /https:\/\/.*\.github\.io/  // Любой GitHub Pages
+        ];
+        
+        // Разрешаем запросы без origin (например, Postman) в development
+        if (!origin && process.env.NODE_ENV !== 'production') {
+            return callback(null, true);
+        }
+        
+        const isAllowed = allowedOrigins.some(allowed => {
+            if (allowed instanceof RegExp) {
+                return allowed.test(origin);
+            }
+            return allowed === origin;
+        });
+        
+        if (isAllowed) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static('.'));
 

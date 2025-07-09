@@ -13,10 +13,9 @@ class AuthManager {
         }
         
         // Для Render.com или другого хостинга
-        // Замените на ваш URL после деплоя на Render
         if (window.location.hostname.includes('github.io')) {
             // Если открыто с GitHub Pages, используем URL Render
-            return 'https://codex-XXXX.onrender.com'; // ЗАМЕНИТЕ на ваш URL от Render
+            return 'https://codex-of.onrender.com';
         }
         
         // Для продакшена используем тот же домен
