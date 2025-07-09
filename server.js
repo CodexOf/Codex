@@ -17,7 +17,8 @@ const corsOptions = {
             'http://localhost:5000',
             'http://127.0.0.1:3000',
             'http://127.0.0.1:5000',
-            /https:\/\/.*\.github\.io/  // Любой GitHub Pages
+            'https://codexof.github.io',  // Ваш GitHub Pages
+            'https://codex-of.onrender.com'  // Сам сервер
         ];
         
         // Разрешаем запросы без origin (например, Postman) в development
@@ -25,14 +26,8 @@ const corsOptions = {
             return callback(null, true);
         }
         
-        const isAllowed = allowedOrigins.some(allowed => {
-            if (allowed instanceof RegExp) {
-                return allowed.test(origin);
-            }
-            return allowed === origin;
-        });
-        
-        if (isAllowed) {
+        // Проверяем точное совпадение или GitHub Pages
+        if (!origin || allowedOrigins.includes(origin) || origin.includes('.github.io')) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
@@ -40,7 +35,9 @@ const corsOptions = {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));
