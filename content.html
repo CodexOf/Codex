@@ -393,6 +393,14 @@
     <script src="content-loader.js"></script>
     
     <script>
+        // Проверяем, пришли ли мы с index.html
+        if (document.referrer.includes('index.html') || window.location.search.includes('from=index')) {
+            document.body.classList.add('entering-content');
+            setTimeout(() => {
+                document.body.classList.remove('entering-content');
+            }, 1000);
+        }
+        
         // Проверка загрузки шрифтов
         if ('fonts' in document) {
             document.fonts.ready.then(function() {

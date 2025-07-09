@@ -18,32 +18,34 @@ class PageTransitions {
     }
 
     static setupPageTransitions() {
-        const startButton = document.getElementById('startButton');
+        const startButtons = document.querySelectorAll('.start-button');
         
-        if (!startButton) {
-            console.warn('Кнопка startButton не найдена');
+        if (!startButtons.length) {
+            console.warn('Кнопки start-button не найдены');
             return;
         }
         
-        startButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Предотвращаем множественные клики
-            if (PageTransitions.isTransitioning) {
-                console.log('Переход уже выполняется, игнорируем клик');
-                return;
-            }
-            
-            const targetUrl = this.getAttribute('href');
-            if (!targetUrl) {
-                console.error('Отсутствует href у кнопки');
-                return;
-            }
-            
-            PageTransitions.performExitAnimation(targetUrl);
+        startButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Предотвращаем множественные клики
+                if (PageTransitions.isTransitioning) {
+                    console.log('Переход уже выполняется, игнорируем клик');
+                    return;
+                }
+                
+                const targetUrl = this.getAttribute('href');
+                if (!targetUrl) {
+                    console.error('Отсутствует href у кнопки');
+                    return;
+                }
+                
+                PageTransitions.performExitAnimation(targetUrl);
+            });
         });
         
-        console.log('Обработчик события для startButton установлен');
+        console.log('Обработчики событий для', startButtons.length, 'кнопок установлены');
     }
 
     static performExitAnimation(targetUrl) {
@@ -72,10 +74,11 @@ class PageTransitions {
         }
         
         // Отключаем возможность повторного клика
-        if (elements.startButton) {
-            elements.startButton.style.pointerEvents = 'none';
-            elements.startButton.style.cursor = 'not-allowed';
-        }
+        const allButtons = document.querySelectorAll('.start-button');
+        allButtons.forEach(btn => {
+            btn.style.pointerEvents = 'none';
+            btn.style.cursor = 'not-allowed';
+        });
         
         try {
             // Фаза 1 (0-400мс): Затухание текстовых элементов

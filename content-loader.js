@@ -79,6 +79,13 @@ class ContentLoader {
             
             // Специальная обработка для календаря
             if (url.includes('calendar.html')) {
+                // Проверяем авторизацию только для календаря
+                if (!window.authManager || !window.authManager.isAuthenticated()) {
+                    console.warn('Для доступа к календарю необходима авторизация');
+                    window.location.href = 'auth.html';
+                    return;
+                }
+                
                 console.log('Загружена страница календаря, инициализируем скрипты...');
                 // Выполняем все скрипты в загруженном контенте
                 const scripts = container.querySelectorAll('script');
@@ -570,15 +577,8 @@ class ContentLoader {
             console.log('Инициализация ContentLoader...');
             console.log('DOM ready state:', document.readyState);
             
-            // Проверяем авторизацию
-            if (!window.authManager || !window.authManager.isAuthenticated()) {
-                    console.warn('Пользователь не авторизован, перенаправляем на страницу входа');
-                window.location.href = 'auth-local.html';
-                return;
-            }
-            
-            // Проверяем токен на сервере
-            this.verifyAuthenticationAsync();
+            // Не проверяем авторизацию - доступ для всех
+            console.log('Content.html доступен без авторизации');
             
             // Восстанавливаем сохраненные настройки анимации
             this.restoreAnimationSettings();
