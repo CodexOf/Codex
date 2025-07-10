@@ -5,7 +5,7 @@
     // Проверяем авторизацию
     if (!window.authManager || !window.authManager.isAuthenticated()) {
         console.warn('Пользователь не авторизован, перенаправляем на страницу входа');
-        window.location.href = 'auth-local.html';
+        window.location.href = 'auth-local.html?returnTo=calendar';
         return;
     }
     
@@ -36,7 +36,7 @@
             // Проверяем токен
             const isValid = await window.authManager.verifyToken();
             if (!isValid) {
-                window.location.href = 'auth-local.html';
+                window.location.href = 'auth-local.html?returnTo=calendar';
                 return;
             }
             

@@ -538,7 +538,15 @@
                     showSuccess('Вход выполнен успешно! Перенаправление...');
                     
                     setTimeout(() => {
-                        window.location.href = 'content.html';
+                        // Проверяем, откуда пришел пользователь
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const returnTo = urlParams.get('returnTo');
+                        
+                        if (returnTo === 'calendar') {
+                            window.location.href = 'calendar.html';
+                        } else {
+                            window.location.href = 'content.html';
+                        }
                     }, 1500);
                 } else {
                     showError(result.error || 'Ошибка входа');
@@ -597,7 +605,15 @@
                     showSuccess('Регистрация выполнена успешно! Перенаправление...');
                     
                     setTimeout(() => {
-                        window.location.href = 'content.html';
+                        // Проверяем, откуда пришел пользователь
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const returnTo = urlParams.get('returnTo');
+                        
+                        if (returnTo === 'calendar') {
+                            window.location.href = 'calendar.html';
+                        } else {
+                            window.location.href = 'content.html';
+                        }
                     }, 1500);
                 } else {
                     showError(result.error || 'Ошибка регистрации');
