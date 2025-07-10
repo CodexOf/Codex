@@ -229,6 +229,45 @@
             .nav-btn, .codex-btn {
                 padding: 14px 18px;
             }
+            
+            .calendar-widget {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+        
+        /* === ВИДЖЕТ КАЛЕНДАРЯ === */
+        .calendar-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+            transition: all 0.3s ease;
+            z-index: 999;
+            opacity: 0.8;
+        }
+        
+        .calendar-widget:hover {
+            opacity: 1;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+        }
+        
+        .calendar-widget:active {
+            transform: translateY(-1px) scale(1.02);
         }
         
         @media (max-width: 576px) {
@@ -247,6 +286,14 @@
             .nav-btn, .codex-btn {
                 padding: 12px 15px;
                 font-size: 0.95rem;
+            }
+            
+            .calendar-widget {
+                bottom: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -383,8 +430,13 @@
         </div>
     </div>
 
-    <!-- Подключение системы авторизации (серверная версия) -->
-    <script src="js/auth.js"></script>
+    <!-- Виджет календаря -->
+    <div class="calendar-widget" id="calendarWidget" title="Календарь событий">
+        <i class="fas fa-calendar-alt"></i>
+    </div>
+
+    <!-- Подключение локальной системы авторизации -->
+    <script src="js/auth-local.js"></script>
     
     <!-- Подключение нашего content-loader.js -->
     <script src="content-loader.js"></script>
@@ -416,6 +468,24 @@
         setTimeout(function() {
             document.body.classList.add('fonts-loaded');
         }, 3000);
+        
+        // Обработчик для виджета календаря
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarWidget = document.getElementById('calendarWidget');
+            
+            if (calendarWidget) {
+                calendarWidget.addEventListener('click', function() {
+                    // Проверяем авторизацию
+                    if (window.authManager && window.authManager.isAuthenticated()) {
+                        // Пользователь авторизован - переходим на календарь
+                        window.location.href = 'calendar.html';
+                    } else {
+                        // Пользователь не авторизован - перенаправляем на авторизацию
+                        window.location.href = 'auth-local.html?returnTo=calendar';
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
