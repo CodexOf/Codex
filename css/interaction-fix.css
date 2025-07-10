@@ -1,0 +1,139 @@
+/**
+ * Критическое исправление взаимодействия на страницах календаря и контента
+ * Решает проблему с недоступными кнопками и элементами
+ */
+
+/* Принудительное восстановление взаимодействия после анимаций */
+body.animation-complete,
+body:not(.transitioning) {
+    pointer-events: auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+}
+
+/* Убираем ограничение высоты для html после загрузки */
+html:not(.loading) {
+    overflow: visible !important;
+    height: auto !important;
+}
+
+/* Принудительное включение взаимодействия для всех интерактивных элементов */
+button,
+a,
+input,
+select,
+textarea,
+.calendar-day,
+.calendar-nav-btn,
+.event-item,
+.nav-btn,
+.codex-btn,
+.calendar-widget,
+.content-widget,
+.color-option,
+.btn-primary,
+.btn-secondary,
+.modal-close,
+[onclick],
+[role="button"] {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    user-select: auto !important;
+    touch-action: auto !important;
+}
+
+/* Особые правила для календаря */
+.calendar-container,
+.calendar-grid,
+.calendar-days,
+.calendar-controls,
+.events-list-section,
+.calendar-container *,
+.calendar-grid *,
+.calendar-days *,
+.calendar-controls *,
+.events-list-section * {
+    pointer-events: auto !important;
+}
+
+/* Правила для контента */
+.main-content,
+.sidebar,
+.content-container,
+#content-container,
+.main-content *,
+.sidebar *,
+#content-container * {
+    pointer-events: auto !important;
+}
+
+/* Убираем блокировку для модальных окон */
+.modal-overlay,
+.modal-content,
+.modal-overlay *,
+.modal-content * {
+    pointer-events: auto !important;
+}
+
+/* Исправление для специфичных элементов календаря */
+.calendar-day {
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+.calendar-day:hover {
+    z-index: 10 !important;
+}
+
+/* Исправление для навигации */
+.sidebar-nav a,
+.nav-btn {
+    display: block !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* Убираем любые оверлеи, которые могут блокировать клики */
+.page-transition-overlay:not(.active) {
+    display: none !important;
+    pointer-events: none !important;
+}
+
+/* Дополнительная защита от блокировки */
+body:not(.transitioning) * {
+    pointer-events: auto !important;
+}
+
+/* Исправление z-index для важных элементов */
+.calendar-controls {
+    position: relative;
+    z-index: 100;
+}
+
+.events-list-section {
+    position: relative;
+    z-index: 100;
+}
+
+.sidebar {
+    z-index: 1000 !important;
+}
+
+.modal-overlay {
+    z-index: 10000 !important;
+}
+
+/* Отладочный режим - подсвечиваем кликабельные элементы */
+@media (hover: hover) {
+    button:hover,
+    a:hover,
+    .calendar-day:hover,
+    .nav-btn:hover,
+    .codex-btn:hover {
+        outline: 2px solid rgba(52, 152, 219, 0.5) !important;
+        outline-offset: 2px;
+    }
+}
