@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест универсальных переходов - Codex</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/utilities/page-transitions.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: #0D1A13;
+            color: #d0d0d0;
+            font-family: 'Roboto', sans-serif;
+            padding: 40px;
+            line-height: 1.6;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .test-header h1 {
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .test-header p {
+            color: #bbb;
+            font-size: 1.1rem;
+        }
+        
+        .navigation-section {
+            margin-bottom: 30px;
+        }
+        
+        .navigation-section h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .test-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 20px;
+            background: #252525;
+            color: #e0e0e0;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            border: 2px solid transparent;
+        }
+        
+        .test-btn:hover {
+            background: #303030;
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border-color: #3498db;
+        }
+        
+        .test-btn.primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .test-btn.primary:hover {
+            background: #2980b9;
+            border-color: #fff;
+        }
+        
+        .test-btn.secondary {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .test-btn.secondary:hover {
+            background: #27ae60;
+            border-color: #fff;
+        }
+        
+        .debug-section {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .debug-section h3 {
+            color: #f39c12;
+            margin-bottom: 15px;
+        }
+        
+        .debug-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .debug-btn {
+            padding: 8px 15px;
+            background: #444;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .debug-btn:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+        
+        .status-info {
+            background: #333;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .info-box {
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box h4 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        .info-box ul {
+            margin-left: 20px;
+            color: #bbb;
+        }
+        
+        .info-box li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1><i class="fas fa-rocket"></i> Тест универсальных переходов</h1>
+            <p>Проверка анимаций затемнения для всех страниц сайта</p>
+        </div>
+
+        <div class="info-box">
+            <h4><i class="fas fa-info-circle"></i> Как это работает:</h4>
+            <ul>
+                <li>При клике на любую ссылку запускается анимация затемнения</li>
+                <li>Затемняются элементы текущей страницы</li>
+                <li>Появляется черный оверлей</li>
+                <li>Происходит переход на новую страницу</li>
+                <li>На новой странице оверлей плавно исчезает</li>
+            </ul>
+        </div>
+
+        <div class="navigation-section">
+            <h2><i class="fas fa-home"></i> Основные страницы</h2>
+            <div class="nav-buttons">
+                <a href="index.html" class="test-btn primary">
+                    <i class="fas fa-home"></i> Главная страница
+                </a>
+                <a href="content.html" class="test-btn secondary">
+                    <i class="fas fa-book-open"></i> Контент
+                </a>
+                <a href="calendar.html" class="test-btn">
+                    <i class="fas fa-calendar-alt"></i> Календарь
+                </a>
+                <a href="auth-local.html" class="test-btn">
+                    <i class="fas fa-sign-in-alt"></i> Авторизация
+                </a>
+            </div>
+        </div>
+
+        <div class="navigation-section">
+            <h2><i class="fas fa-vials"></i> Тестовые страницы</h2>
+            <div class="nav-buttons">
+                <a href="test/animation-test.html" class="test-btn">
+                    <i class="fas fa-play"></i> Тест анимаций
+                </a>
+                <a href="test/transition-test.html" class="test-btn">
+                    <i class="fas fa-exchange-alt"></i> Тест переходов
+                </a>
+                <a href="debug.html" class="test-btn">
+                    <i class="fas fa-bug"></i> Отладка
+                </a>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h3><i class="fas fa-cogs"></i> Инструменты отладки</h3>
+            <div class="debug-buttons">
+                <button class="debug-btn" onclick="checkTransitionStatus()">
+                    <i class="fas fa-info"></i> Статус системы
+                </button>
+                <button class="debug-btn" onclick="testTransition()">
+                    <i class="fas fa-play"></i> Тест перехода
+                </button>
+                <button class="debug-btn" onclick="resetTransitions()">
+                    <i class="fas fa-redo"></i> Сброс
+                </button>
+                <button class="debug-btn" onclick="showDebugInfo()">
+                    <i class="fas fa-code"></i> Отладочная информация
+                </button>
+            </div>
+            <div id="statusInfo" class="status-info" style="display: none;">
+                Здесь будет отображаться информация о системе переходов...
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключение универсальной системы переходов -->
+    <script src="js/universal-transitions.js"></script>
+    
+    <script>
+        // Функции для отладки
+        function checkTransitionStatus() {
+            const statusDiv = document.getElementById('statusInfo');
+            
+            if (window.UniversalPageTransitions) {
+                const status = window.UniversalPageTransitions.getStatus();
+                statusDiv.innerHTML = `
+<strong>📊 Статус системы переходов:</strong>
+• Переход активен: ${status.isTransitioning ? '✅ Да' : '❌ Нет'}
+• Оверлей создан: ${status.hasOverlay ? '✅ Да' : '❌ Нет'}
+• Текущая страница: ${status.currentPage}
+
+<strong>🔍 Найденные элементы:</strong>
+• Кнопки start: ${status.elementsFound.startButtons}
+• Виджет календаря: ${status.elementsFound.calendarWidget ? '✅' : '❌'}
+• Виджет контента: ${status.elementsFound.contentWidget ? '✅' : '❌'}
+• Кнопки назад: ${status.elementsFound.backButtons}
+
+<strong>🌐 Информация о странице:</strong>
+• URL: ${window.location.href}
+• Referrer: ${document.referrer || 'Нет'}
+• User Agent: ${navigator.userAgent.substring(0, 60)}...
+                `;
+                statusDiv.style.display = 'block';
+            } else {
+                statusDiv.innerHTML = '❌ Система переходов не загружена!';
+                statusDiv.style.display = 'block';
+            }
+        }
+
+        function testTransition() {
+            if (window.UniversalPageTransitions) {
+                console.log('🧪 Запуск тестового перехода...');
+                window.UniversalPageTransitions.performTransition('index.html', 'test');
+            } else {
+                alert('❌ Система переходов не доступна');
+            }
+        }
+
+        function resetTransitions() {
+            if (window.UniversalPageTransitions) {
+                window.UniversalPageTransitions.reset();
+                alert('✅ Состояние переходов сброшено');
+            } else {
+                alert('❌ Система переходов не доступна');
+            }
+        }
+
+        function showDebugInfo() {
+            if (window.UniversalPageTransitions) {
+                window.UniversalPageTransitions.debug();
+                alert('📝 Отладочная информация выведена в консоль (F12)');
+            } else {
+                alert('❌ Система переходов не доступна');
+            }
+        }
+
+        // Автоматическая проверка при загрузке
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                console.log('🔍 Автоматическая проверка системы переходов...');
+                checkTransitionStatus();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+/* === СИСТЕМА АНИМАЦИЙ ПЕРЕХОДОВ МЕЖДУ СТРАНИЦАМИ === */
+
+/* Глобальные стили для плавных переходов */
+html, body {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Универсальный оверлей для переходов */
+.page-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    right: 0;
+    bottom: 0;
+    background: #000;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: translate3d(0, 0, 0); /* Аппаратное ускорение */
+}
+
+/* Состояние активного перехода */
+.page-transition-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Анимации затемнения для элементов */
+.exit-text-animation {
+    animation: textFadeOut 0.5s ease-out forwards;
+}
+
+.exit-background-animation {
+    animation: backgroundFadeOut 0.8s ease-out forwards 0.3s;
+}
+
+/* Анимация появления страницы */
+body {
+    opacity: 0;
+    animation: pageEntrance 1s ease-in forwards;
+    animation-delay: 0.3s;
+}
+
+/* Восстановление скролла после анимации */
+body.animation-complete {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Скрытие содержимого при переходе */
+body.transitioning .main-content,
+body.transitioning .sidebar,
+body.transitioning .calendar-container,
+body.transitioning .welcome-screen {
+    visibility: hidden;
+}
+
+/* Keyframes для анимаций */
+@keyframes textFadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes backgroundFadeOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes pageEntrance {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Стили для конкретных элементов при переходах */
+.welcome-screen.exiting .game-title,
+.welcome-screen.exiting .game-subtitle,
+.welcome-screen.exiting .start-button,
+.welcome-screen.exiting .main-footer {
+    animation: textFadeOut 0.5s ease-out forwards;
+}
+
+.welcome-screen.exiting {
+    animation: backgroundFadeOut 0.8s ease-out forwards 0.3s;
+}
+
+/* Предотвращение взаимодействия во время переходов */
+body.transitioning {
+    pointer-events: none;
+}
+
+body.transitioning * {
+    pointer-events: none;
+}
+
+/* Исключения для элементов перехода */
+.page-transition-overlay {
+    pointer-events: auto;
+}

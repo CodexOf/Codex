@@ -20,6 +20,7 @@
 @import 'utilities/animations.css';
 @import 'utilities/loading.css';
 @import 'utilities/error.css';
+@import 'utilities/page-transitions.css';
 
 /* === ОСНОВНЫЕ КОНТЕЙНЕРЫ === */
 
