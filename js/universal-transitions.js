@@ -99,11 +99,11 @@ class UniversalPageTransitions {
                 e.preventDefault();
                 if (this.isTransitioning) return;
                 
-                // КРИТИЧНО: Используем локальную систему авторизации
-                if (window.localAuthManager && window.localAuthManager.isAuthenticated()) {
+                // Используем серверную систему авторизации
+                if (window.authManager && window.authManager.isAuthenticated()) {
                     this.performTransition('calendar.html', 'to-calendar');
                 } else {
-                    this.performTransition('auth-local.html?returnTo=calendar', 'to-auth');
+                    this.performTransition('auth.html?returnTo=calendar', 'to-auth');
                 }
             });
         }
