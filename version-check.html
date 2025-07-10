@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проверка версии</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .check-item {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        .status {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #2980b9; }
+        .code { 
+            background: #f8f9fa; 
+            padding: 10px; 
+            border-radius: 4px; 
+            font-family: monospace; 
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Проверка версии сайта</h1>
+    <p>Эта страница поможет определить, загружена ли новая версия с анимацией затемнения.</p>
+
+    <div class="check-item">
+        <h3>1. Проверка наличия чёрного оверлея в content.html</h3>
+        <p>Новая версия должна содержать элемент <code>&lt;div id="initialBlackOverlay"&gt;</code></p>
+        <button onclick="checkContentPage()">Проверить content.html</button>
+        <div id="contentCheck"></div>
+    </div>
+
+    <div class="check-item">
+        <h3>2. Проверка CSS стилей</h3>
+        <p>Новая версия должна содержать стили для чёрного фона</p>
+        <button onclick="checkStyles()">Проверить CSS</button>
+        <div id="stylesCheck"></div>
+    </div>
+
+    <div class="check-item">
+        <h3>3. Проверка скрипта анимации</h3>
+        <p>Новая версия должна содержать код для анимации затемнения</p>
+        <button onclick="checkScript()">Проверить JavaScript</button>
+        <div id="scriptCheck"></div>
+    </div>
+
+    <div class="check-item">
+        <h3>4. Тест перехода</h3>
+        <p>Протестировать реальный переход с анимацией</p>
+        <a href="index.html" style="display: inline-block; background: #e74c3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Перейти на index.html для теста</a>
+    </div>
+
+    <div class="check-item">
+        <h3>5. Информация о кэше</h3>
+        <div class="code">
+            <strong>Для принудительного обновления:</strong><br>
+            • Ctrl + F5 (Windows)<br>
+            • Cmd + Shift + R (Mac)<br>
+            • Приватное окно браузера<br>
+            • Очистка кэша в DevTools (F12 → Network → Disable cache)
+        </div>
+    </div>
+
+    <script>
+        async function checkContentPage() {
+            const resultDiv = document.getElementById('contentCheck');
+            resultDiv.innerHTML = 'Проверяем...';
+            
+            try {
+                const response = await fetch('content.html');
+                const html = await response.text();
+                
+                const checks = [
+                    {
+                        name: 'Чёрный оверлей',
+                        test: html.includes('id="initialBlackOverlay"'),
+                        description: 'initialBlackOverlay элемент'
+                    },
+                    {
+                        name: 'Чёрный фон CSS',
+                        test: html.includes('background: #000 !important'),
+                        description: 'CSS для чёрного фона'
+                    },
+                    {
+                        name: 'from-index класс',
+                        test: html.includes('body.from-index'),
+                        description: 'CSS класс для скрытия содержимого'
+                    },
+                    {
+                        name: 'Анимация JavaScript',
+                        test: html.includes('fromIndex') && html.includes('initialOverlay'),
+                        description: 'JavaScript код для анимации'
+                    }
+                ];
+                
+                let result = '<div style="margin-top: 10px;">';
+                let allPassed = true;
+                
+                checks.forEach(check => {
+                    const status = check.test ? 'success' : 'error';
+                    const icon = check.test ? '✅' : '❌';
+                    if (!check.test) allPassed = false;
+                    
+                    result += `<div>${icon} ${check.name}: <span class="status ${status}">${check.test ? 'НАЙДЕНО' : 'НЕ НАЙДЕНО'}</span></div>`;
+                });
+                
+                result += '</div>';
+                
+                if (allPassed) {
+                    result += '<div class="status success" style="margin-top: 10px;">🎉 Новая версия загружена успешно!</div>';
+                } else {
+                    result += '<div class="status error" style="margin-top: 10px;">⚠️ Старая версия или проблемы с загрузкой</div>';
+                }
+                
+                resultDiv.innerHTML = result;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="status error">Ошибка: ${error.message}</div>`;
+            }
+        }
+
+        function checkStyles() {
+            const resultDiv = document.getElementById('stylesCheck');
+            
+            // Создаем тестовый элемент для проверки CSS
+            const testDiv = document.createElement('div');
+            testDiv.className = 'initial-black-overlay';
+            testDiv.style.position = 'absolute';
+            testDiv.style.left = '-9999px';
+            document.body.appendChild(testDiv);
+            
+            const computedStyle = window.getComputedStyle(testDiv);
+            const hasBlackBg = computedStyle.background.includes('rgb(0, 0, 0)') || computedStyle.backgroundColor === 'rgb(0, 0, 0)';
+            const hasFixedPos = computedStyle.position === 'fixed';
+            const hasHighZIndex = parseInt(computedStyle.zIndex) > 1000;
+            
+            document.body.removeChild(testDiv);
+            
+            let result = '<div style="margin-top: 10px;">';
+            result += `<div>${hasBlackBg ? '✅' : '❌'} Чёрный фон: <span class="status ${hasBlackBg ? 'success' : 'error'}">${hasBlackBg ? 'ОК' : 'НЕТ'}</span></div>`;
+            result += `<div>${hasFixedPos ? '✅' : '❌'} Fixed позиция: <span class="status ${hasFixedPos ? 'success' : 'error'}">${hasFixedPos ? 'ОК' : 'НЕТ'}</span></div>`;
+            result += `<div>${hasHighZIndex ? '✅' : '❌'} Высокий z-index: <span class="status ${hasHighZIndex ? 'success' : 'error'}">${hasHighZIndex ? 'ОК' : 'НЕТ'}</span></div>`;
+            result += '</div>';
+            
+            const allOk = hasBlackBg && hasFixedPos && hasHighZIndex;
+            if (allOk) {
+                result += '<div class="status success" style="margin-top: 10px;">🎨 CSS стили загружены корректно!</div>';
+            } else {
+                result += '<div class="status warning" style="margin-top: 10px;">⚠️ Некоторые CSS стили отсутствуют</div>';
+            }
+            
+            resultDiv.innerHTML = result;
+        }
+
+        function checkScript() {
+            const resultDiv = document.getElementById('scriptCheck');
+            
+            const checks = [
+                {
+                    name: 'Переменная fromIndex',
+                    test: document.documentElement.innerHTML.includes('fromIndex'),
+                },
+                {
+                    name: 'initialOverlay переменная',
+                    test: document.documentElement.innerHTML.includes('initialOverlay'),
+                },
+                {
+                    name: 'classList.add from-index',
+                    test: document.documentElement.innerHTML.includes('classList.add(\'from-index\')'),
+                },
+                {
+                    name: 'opacity transition',
+                    test: document.documentElement.innerHTML.includes('opacity 1.5s ease-out'),
+                }
+            ];
+            
+            let result = '<div style="margin-top: 10px;">';
+            let passed = 0;
+            
+            checks.forEach(check => {
+                const icon = check.test ? '✅' : '❌';
+                const status = check.test ? 'success' : 'error';
+                if (check.test) passed++;
+                
+                result += `<div>${icon} ${check.name}: <span class="status ${status}">${check.test ? 'НАЙДЕНО' : 'НЕ НАЙДЕНО'}</span></div>`;
+            });
+            
+            result += '</div>';
+            
+            if (passed === checks.length) {
+                result += '<div class="status success" style="margin-top: 10px;">🚀 JavaScript код загружен полностью!</div>';
+            } else if (passed > 0) {
+                result += '<div class="status warning" style="margin-top: 10px;">⚠️ Частично загружен</div>';
+            } else {
+                result += '<div class="status error" style="margin-top: 10px;">❌ JavaScript код не найден</div>';
+            }
+            
+            resultDiv.innerHTML = result;
+        }
+
+        // Автоматическая проверка при загрузке
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                checkContentPage();
+                checkStyles();
+                checkScript();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
