@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex - Календарь</title>
+    <link rel="preload" href="partials/main.html" as="fetch" crossorigin="anonymous">
+    <!-- Предварительная загрузка критически важного шрифта -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/cinzeldecorative/v16/daaCSScvJGqLYhG8nNt8KPPswUAPnh7URs0LaCpbRzhXVrE.woff2" as="font" type="font/woff2" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=block" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* === ГЛОБАЛЬНЫЕ СТИЛИ === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #d0d0d0;
+            background: #0D1A13;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        
+        .back-to-content {
+            margin-bottom: 30px;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: #252525;
+            color: #e0e0e0;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .back-btn:hover {
+            background: #303030;
+            color: #fff;
+            transform: translateX(-3px);
+        }
+        
+        /* === СТИЛИ КАЛЕНДАРЯ === */
+        
+        /* Заголовок с информацией о пользователе */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .calendar-title-section h1 {
+            color: #fff;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .calendar-title-section .calendar-subtitle {
+            color: #bbb;
+            font-size: 1.1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(52, 152, 219, 0.1);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .current-user {
+            color: #3498db;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-logout {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            color: #e74c3c;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout:hover {
+            background: rgba(231, 76, 60, 0.3);
+            color: #fff;
+        }
+
+        /* Основные стили для сетки календаря */
+        .calendar-grid {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .calendar-weekdays {
+            display: grid !important;
+            grid-template-columns: repeat(7, 1fr) !important;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .calendar-weekday {
+            text-align: center;
+            font-weight: bold;
+            color: #888;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+
+        .calendar-days {
+            display: grid !important;
+            grid-template-columns: repeat(7, 1fr) !important;
+            gap: 10px;
+        }
+
+        .calendar-day {
+            background: #1a1a1a;
+            border-radius: 8px;
+            min-height: 100px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calendar-day:hover {
+            background: #252525;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .calendar-day-number {
+            font-weight: bold;
+            color: #ddd;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .calendar-day.other-month .calendar-day-number {
+            color: #666;
+        }
+
+        .calendar-day.today {
+            background: #1e3a57;
+            border: 2px solid #3498db;
+        }
+
+        .calendar-day.has-events {
+            border-left: 4px solid #3498db;
+        }
+
+        .calendar-event {
+            background: #3498db;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-top: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .calendar-event.own-event {
+            border-left: 3px solid #fff;
+        }
+
+        /* Панель управления */
+        .calendar-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .calendar-nav-btn {
+            background: #2a2a2a;
+            border: none;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .calendar-nav-btn:hover {
+            background: #3a3a3a;
+            transform: scale(1.1);
+        }
+
+        .calendar-current-month {
+            color: #fff;
+            font-size: 1.5rem;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .calendar-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Список событий */
+        .events-list-section {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .events-list-section h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .events-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .events-list::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        .events-list::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        .events-list::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .event-item {
+            background: #1a1a1a;
+            border-radius: 6px;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: all 0.3s;
+            gap: 15px;
+        }
+
+        .event-item:hover {
+            background: #252525;
+            transform: translateX(3px);
+        }
+
+        .event-item.own-event {
+            border-left: 4px solid #3498db;
+        }
+
+        .event-info {
+            flex: 1;
+        }
+
+        .event-title {
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .event-datetime {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .event-creator {
+            color: #999;
+            font-size: 0.8rem;
+            margin-top: 3px;
+        }
+
+        .event-participants {
+            color: #b0b0b0;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .event-actions button {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 5px 10px;
+            transition: all 0.3s;
+            border-radius: 4px;
+        }
+
+        .event-actions button:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .read-only-indicator {
+            color: #666;
+            font-size: 1.1rem;
+            padding: 5px 10px;
+        }
+
+        /* Модальное окно */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: #2a2a2a;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            color: #fff;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        /* Форма события */
+        .event-form {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #b0b0b0;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 10px 15px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            background: #252525;
+        }
+
+        /* Участники */
+        .participants-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-add-participant {
+            background: #3498db;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-add-participant:hover {
+            background: #2980b9;
+        }
+
+        .participants-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .participant-tag {
+            background: #444;
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .participant-remove {
+            cursor: pointer;
+            color: #888;
+            transition: color 0.3s;
+        }
+
+        .participant-remove:hover {
+            color: #e74c3c;
+        }
+
+        /* Выбор цвета */
+        .color-picker {
+            display: flex;
+            gap: 10px;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.active {
+            border-color: #fff;
+            box-shadow: 0 0 0 2px #444;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+        }
+
+        /* Кнопки */
+        .btn-primary, .btn-secondary {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary {
+            background: #555;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #666;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .no-events {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #e74c3c;
+        }
+
+        .notification.success {
+            background: #2ecc71;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 992px) {
+            .calendar-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .user-info {
+                justify-content: space-between;
+            }
+            
+            .calendar-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .calendar-nav {
+                justify-content: center;
+            }
+            
+            .calendar-actions {
+                justify-content: center;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .calendar-grid {
+                padding: 10px;
+            }
+            
+            .calendar-day {
+                min-height: 80px;
+                padding: 5px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+            
+            .event-form {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Кнопка возврата -->
+        <div class="back-to-content">
+            <a href="content.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Назад к содержимому
+            </a>
+        </div>
+
+        <!-- Календарь событий с системой пользователей -->
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <div class="calendar-title-section">
+                    <h1><i class="fas fa-calendar-alt"></i> Календарь событий</h1>
+                    <p class="calendar-subtitle">Планируйте и управляйте игровыми сессиями</p>
+                </div>
+                <div class="user-info">
+                    <span class="current-user">
+                        <i class="fas fa-user"></i>
+                        <span id="currentUser">Пользователь</span>
+                    </span>
+                    <button class="btn-logout" id="logoutBtn" title="Выйти">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Панель управления -->
+            <div class="calendar-controls">
+                <div class="calendar-nav">
+                    <button class="calendar-nav-btn" id="prevMonth">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <h2 class="calendar-current-month" id="currentMonth">Январь 2025</h2>
+                    <button class="calendar-nav-btn" id="nextMonth">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="calendar-actions">
+                    <button class="btn-primary" id="addEventBtn">
+                        <i class="fas fa-plus"></i> Добавить событие
+                    </button>
+                    <button class="btn-secondary" id="todayBtn">
+                        <i class="fas fa-home"></i> Сегодня
+                    </button>
+                    <button class="btn-secondary" id="refreshBtn" title="Обновить события">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Список событий -->
+            <div class="events-list-section">
+                <h3><i class="fas fa-list"></i> Ближайшие события</h3>
+                <div class="events-list" id="eventsList">
+                    <p class="no-events">Нет запланированных событий</p>
+                </div>
+            </div>
+
+            <!-- Сетка календаря -->
+            <div class="calendar-grid" id="calendarGrid">
+                <div class="calendar-weekdays">
+                    <div class="calendar-weekday">Пн</div>
+                    <div class="calendar-weekday">Вт</div>
+                    <div class="calendar-weekday">Ср</div>
+                    <div class="calendar-weekday">Чт</div>
+                    <div class="calendar-weekday">Пт</div>
+                    <div class="calendar-weekday">Сб</div>
+                    <div class="calendar-weekday">Вс</div>
+                </div>
+                <div class="calendar-days" id="calendarDays">
+                    <!-- Дни будут сгенерированы JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для добавления/редактирования события -->
+        <div class="modal-overlay" id="eventModal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Новое событие</h2>
+                    <button class="modal-close" id="closeModal">&times;</button>
+                </div>
+                <form id="eventForm" class="event-form">
+                    <div class="form-group">
+                        <label for="eventTitle">Название события</label>
+                        <input type="text" id="eventTitle" name="title" required 
+                               placeholder="Например: Игровая сессия">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eventDate">Дата</label>
+                        <input type="date" id="eventDate" name="date" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="eventTimeStart">Время начала</label>
+                            <input type="time" id="eventTimeStart" name="timeStart">
+                        </div>
+                        <div class="form-group">
+                            <label for="eventTimeEnd">Время окончания</label>
+                            <input type="time" id="eventTimeEnd" name="timeEnd">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eventDescription">Описание</label>
+                        <textarea id="eventDescription" name="description" rows="4" 
+                                  placeholder="Описание события, планы на сессию и т.д."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eventParticipants">Участники</label>
+                        <div class="participants-input">
+                            <input type="text" id="participantInput" 
+                                   placeholder="Введите имя участника">
+                            <button type="button" class="btn-add-participant" id="addParticipant">
+                                <i class="fas fa-user-plus"></i>
+                            </button>
+                        </div>
+                        <div class="participants-list" id="participantsList"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eventColor">Цвет события</label>
+                        <div class="color-picker">
+                            <button type="button" class="color-option active" data-color="#3498db" 
+                                    style="background-color: #3498db;"></button>
+                            <button type="button" class="color-option" data-color="#e74c3c" 
+                                    style="background-color: #e74c3c;"></button>
+                            <button type="button" class="color-option" data-color="#2ecc71" 
+                                    style="background-color: #2ecc71;"></button>
+                            <button type="button" class="color-option" data-color="#f39c12" 
+                                    style="background-color: #f39c12;"></button>
+                            <button type="button" class="color-option" data-color="#9b59b6" 
+                                    style="background-color: #9b59b6;"></button>
+                            <button type="button" class="color-option" data-color="#1abc9c" 
+                                    style="background-color: #1abc9c;"></button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="cancelBtn">Отмена</button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Сохранить
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключаем JavaScript для локальной системы пользователей -->
+    <script src="js/auth-local.js"></script>
+
+    <!-- JavaScript для календаря с авторизацией -->
+    <script src="js/calendar.js"></script>
+</body>
+</html>

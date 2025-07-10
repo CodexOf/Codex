@@ -77,33 +77,6 @@ class ContentLoader {
             // Устанавливаем контент
             container.innerHTML = html;
             
-            // Специальная обработка для календаря
-            if (url.includes('calendar.html')) {
-                // Проверяем авторизацию только для календаря
-                if (!window.authManager || !window.authManager.isAuthenticated()) {
-                    console.warn('Для доступа к календарю необходима авторизация');
-                    window.location.href = 'auth.html';
-                    return;
-                }
-                
-                console.log('Загружена страница календаря, инициализируем скрипты...');
-                // Выполняем все скрипты в загруженном контенте
-                const scripts = container.querySelectorAll('script');
-                scripts.forEach(script => {
-                    const newScript = document.createElement('script');
-                    if (script.src) {
-                        newScript.src = script.src;
-                    } else {
-                        newScript.textContent = script.textContent;
-                    }
-                    document.body.appendChild(newScript);
-                    // Удаляем скрипт после выполнения
-                    setTimeout(() => {
-                        document.body.removeChild(newScript);
-                    }, 1000);
-                });
-            }
-            
             // Анимация появления нового контента
             await this.animateIn(container, animation);
             
