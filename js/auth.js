@@ -52,7 +52,7 @@ class AuthManager {
         });
 
         // Если токен недействителен, выходим из системы
-        if (response.status === 401) {
+        if (response.status === 401 && url !== '/api/user') {
             this.logout();
             throw new Error('Сессия истекла. Необходимо войти снова.');
         }
@@ -145,13 +145,30 @@ class AuthManager {
         }
 
         try {
-            const response = await this.makeAuthenticatedRequest('/api/user');
-            const data = await response.json();
+            const response = await fetch(`${this.baseURL}/api/user`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
             
-            if (data.user) {
-                this.user = data.user;
-                localStorage.setItem('currentUser', JSON.stringify(this.user));
-                return true;
+            if (response.status === 401) {
+                // Токен недействителен
+                this.token = null;
+                this.user = null;
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                return false;
+            }
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.user) {
+                    this.user = data.user;
+                    localStorage.setItem('currentUser', JSON.stringify(this.user));
+                    return true;
+                }
             }
             
             return false;

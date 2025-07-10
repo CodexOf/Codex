@@ -3,6 +3,12 @@
     'use strict';
     
     // Проверяем авторизацию
+    console.log('📅 Calendar.js: Проверка авторизации');
+    console.log('🎫 Токен:', localStorage.getItem('authToken'));
+    console.log('👤 Пользователь:', localStorage.getItem('currentUser'));
+    console.log('🔐 authManager:', window.authManager);
+    console.log('✅ isAuthenticated:', window.authManager?.isAuthenticated());
+    
     if (!window.authManager || !window.authManager.isAuthenticated()) {
         console.warn('Пользователь не авторизован, перенаправляем на страницу входа');
         window.location.href = 'auth.html?returnTo=calendar';

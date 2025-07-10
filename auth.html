@@ -490,7 +490,12 @@
             hideMessages();
             
             try {
+                console.log('🔑 Попытка входа:', username);
                 const result = await window.authManager.login(username, password);
+                
+                console.log('📊 Результат входа:', result);
+                console.log('🎫 Токен:', localStorage.getItem('authToken'));
+                console.log('👤 Пользователь:', localStorage.getItem('currentUser'));
                 
                 if (result.success) {
                     showSuccess('Вход выполнен успешно! Перенаправление...');
@@ -499,6 +504,8 @@
                         // Проверяем, откуда пришел пользователь
                         const urlParams = new URLSearchParams(window.location.search);
                         const returnTo = urlParams.get('returnTo');
+                        
+                        console.log('🚀 Перенаправление на:', returnTo === 'calendar' ? 'calendar.html' : 'content.html');
                         
                         if (returnTo === 'calendar') {
                             window.location.href = 'calendar.html';
