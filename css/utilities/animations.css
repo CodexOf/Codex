@@ -22,7 +22,7 @@
 
 /* === АНИМАЦИИ ПЕРЕХОДОВ С ЗАТЕМНЕНИЕМ === */
 
-/* Переходный экран */
+/* Переходный экран - темный оверлей */
 .page-transition {
     position: fixed;
     top: 0;
@@ -33,7 +33,7 @@
     z-index: 9999;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .page-transition.active {
@@ -63,47 +63,94 @@ body.transitioning {
     }
 }
 
+@keyframes darknessRecede {
+    from {
+        background: radial-gradient(circle, transparent 0%, #000 50%);
+        opacity: 1;
+    }
+    to {
+        background: radial-gradient(circle, transparent 100%, #000 100%);
+        opacity: 1;
+    }
+}
+
 .fade-in-from-dark {
     animation: fadeInFromDark 1s ease-out forwards;
+}
+
+.darkness-recede {
+    animation: darknessRecede 1.2s ease-out forwards;
 }
 
 /* Специальный класс для content.html при первом входе */
 body.entering-content {
     background: #000;
-    animation: fadeInFromDark 1s ease-out forwards;
+    animation: fadeInFromDark 1.2s ease-out forwards;
+}
+
+/* Дополнительный оверлей для эффекта рассеивания тьмы */
+.darkness-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, transparent 0%, #000 50%);
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 1.2s ease-out;
+}
+
+.darkness-overlay.receding {
+    opacity: 0;
+    background: radial-gradient(circle at center, transparent 100%, #000 100%);
 }
 
 /* === АНИМАЦИИ ВЫХОДА С ГЛАВНОЙ СТРАНИЦЫ === */
-@keyframes exitTextFade {
+@keyframes exitTextFadeToDark {
     from {
         opacity: 1;
         transform: translateY(0);
     }
     to {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(-20px);
     }
 }
 
-@keyframes exitBackgroundFade {
+@keyframes exitBackgroundToDark {
     from {
         opacity: 1;
         transform: scale(1);
-        background-color: transparent;
     }
     to {
         opacity: 0;
-        transform: scale(1.05);
-        background-color: #000;
+        transform: scale(0.95);
+    }
+}
+
+@keyframes darknessEnvelop {
+    from {
+        background: radial-gradient(circle at center, transparent 100%, #000 100%);
+        opacity: 0;
+    }
+    to {
+        background: radial-gradient(circle at center, transparent 0%, #000 50%);
+        opacity: 1;
     }
 }
 
 .exit-text-animation {
-    animation: exitTextFade 0.4s ease-out forwards;
+    animation: exitTextFadeToDark 0.6s ease-out forwards;
 }
 
 .exit-background-animation {
-    animation: exitBackgroundFade 0.4s ease-out forwards;
+    animation: exitBackgroundToDark 0.6s ease-out forwards;
+}
+
+.darkness-envelop {
+    animation: darknessEnvelop 0.8s ease-out forwards;
 }
 
 /* === АНИМАЦИИ ПЕРЕХОДОВ МЕЖДУ СТРАНИЦАМИ === */

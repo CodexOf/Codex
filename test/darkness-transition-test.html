@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест анимации затемнения</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .test-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .test-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        
+        .test-button:hover {
+            background: #c0392b;
+        }
+        
+        /* Анимации затемнения */
+        .darkness-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 100%, #000 100%);
+            z-index: 10000;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 1s ease-out;
+        }
+        
+        .darkness-overlay.enveloping {
+            background: radial-gradient(circle at center, transparent 0%, #000 50%);
+            opacity: 1;
+        }
+        
+        .darkness-overlay.complete {
+            background: #000;
+            opacity: 1;
+        }
+        
+        .darkness-overlay.receding {
+            background: radial-gradient(circle at center, transparent 30%, #000 80%);
+            opacity: 1;
+        }
+        
+        .darkness-overlay.receding-more {
+            background: radial-gradient(circle at center, transparent 70%, #000 90%);
+            opacity: 1;
+        }
+        
+        .darkness-overlay.almost-gone {
+            background: radial-gradient(circle at center, transparent 95%, #000 98%);
+            opacity: 0.3;
+        }
+        
+        .darkness-overlay.gone {
+            opacity: 0;
+        }
+        
+        .status {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Тест анимации затемнения</h1>
+        <p>Проверка эффекта затемнения и рассеивания тьмы</p>
+        
+        <button class="test-button" onclick="testDarknessEnvelop()">Тест затемнения</button>
+        <button class="test-button" onclick="testDarknessRecede()">Тест рассеивания</button>
+        <button class="test-button" onclick="testFullCycle()">Полный цикл</button>
+        <button class="test-button" onclick="resetTest()">Сброс</button>
+        
+        <div class="status" id="status">Готов к тестированию</div>
+    </div>
+
+    <script>
+        let currentOverlay = null;
+
+        function createOverlay() {
+            if (currentOverlay) {
+                removeOverlay();
+            }
+            
+            currentOverlay = document.createElement('div');
+            currentOverlay.className = 'darkness-overlay';
+            document.body.appendChild(currentOverlay);
+            return currentOverlay;
+        }
+
+        function removeOverlay() {
+            if (currentOverlay && currentOverlay.parentNode) {
+                currentOverlay.parentNode.removeChild(currentOverlay);
+                currentOverlay = null;
+            }
+        }
+
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+
+        function testDarknessEnvelop() {
+            updateStatus('Тест затемнения...');
+            const overlay = createOverlay();
+            
+            setTimeout(() => {
+                updateStatus('Фаза 1: Начало затемнения');
+                overlay.classList.add('enveloping');
+            }, 100);
+            
+            setTimeout(() => {
+                updateStatus('Фаза 2: Полное затемнение');
+                overlay.classList.remove('enveloping');
+                overlay.classList.add('complete');
+            }, 1200);
+            
+            setTimeout(() => {
+                updateStatus('Затемнение завершено');
+            }, 2200);
+        }
+
+        function testDarknessRecede() {
+            updateStatus('Тест рассеивания...');
+            const overlay = createOverlay();
+            overlay.classList.add('complete');
+            
+            setTimeout(() => {
+                updateStatus('Фаза 1: Начало рассеивания');
+                overlay.classList.remove('complete');
+                overlay.classList.add('receding');
+            }, 100);
+            
+            setTimeout(() => {
+                updateStatus('Фаза 2: Расширение света');
+                overlay.classList.remove('receding');
+                overlay.classList.add('receding-more');
+            }, 600);
+            
+            setTimeout(() => {
+                updateStatus('Фаза 3: Почти рассеялось');
+                overlay.classList.remove('receding-more');
+                overlay.classList.add('almost-gone');
+            }, 1100);
+            
+            setTimeout(() => {
+                updateStatus('Фаза 4: Полное рассеивание');
+                overlay.classList.remove('almost-gone');
+                overlay.classList.add('gone');
+            }, 1600);
+            
+            setTimeout(() => {
+                removeOverlay();
+                updateStatus('Рассеивание завершено');
+            }, 2100);
+        }
+
+        function testFullCycle() {
+            updateStatus('Полный цикл анимации...');
+            const overlay = createOverlay();
+            
+            // Затемнение
+            setTimeout(() => {
+                updateStatus('Затемнение экрана');
+                overlay.classList.add('enveloping');
+            }, 100);
+            
+            setTimeout(() => {
+                updateStatus('Полная тьма');
+                overlay.classList.remove('enveloping');
+                overlay.classList.add('complete');
+            }, 1200);
+            
+            // Пауза в темноте
+            setTimeout(() => {
+                updateStatus('Переход между страницами...');
+            }, 1700);
+            
+            // Рассеивание
+            setTimeout(() => {
+                updateStatus('Начало рассеивания тьмы');
+                overlay.classList.remove('complete');
+                overlay.classList.add('receding');
+            }, 2200);
+            
+            setTimeout(() => {
+                updateStatus('Расширение света');
+                overlay.classList.remove('receding');
+                overlay.classList.add('receding-more');
+            }, 2800);
+            
+            setTimeout(() => {
+                updateStatus('Почти светло');
+                overlay.classList.remove('receding-more');
+                overlay.classList.add('almost-gone');
+            }, 3300);
+            
+            setTimeout(() => {
+                updateStatus('Свет победил тьму!');
+                overlay.classList.remove('almost-gone');
+                overlay.classList.add('gone');
+            }, 3800);
+            
+            setTimeout(() => {
+                removeOverlay();
+                updateStatus('Полный цикл завершен');
+            }, 4300);
+        }
+
+        function resetTest() {
+            removeOverlay();
+            updateStatus('Готов к тестированию');
+        }
+
+        // Тест при загрузке страницы
+        window.addEventListener('load', () => {
+            updateStatus('Страница загружена. Выберите тест.');
+        });
+    </script>
+</body>
+</html>

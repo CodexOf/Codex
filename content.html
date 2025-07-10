@@ -444,10 +444,41 @@
     <script>
         // Проверяем, пришли ли мы с index.html
         if (document.referrer.includes('index.html') || window.location.search.includes('from=index')) {
-            document.body.classList.add('entering-content');
+            console.log('Переход с главной страницы - запускаем эффект рассеивания тьмы');
+            
+            // Создаем оверлей тьмы
+            const darknessOverlay = document.createElement('div');
+            darknessOverlay.className = 'darkness-overlay';
+            darknessOverlay.style.background = '#000';
+            darknessOverlay.style.opacity = '1';
+            document.body.appendChild(darknessOverlay);
+            
+            // Начинаем анимацию рассеивания через короткую задержку
             setTimeout(() => {
-                document.body.classList.remove('entering-content');
-            }, 1000);
+                console.log('Начинаем рассеивание тьмы');
+                darknessOverlay.style.background = 'radial-gradient(circle at center, transparent 30%, #000 80%)';
+                darknessOverlay.style.transition = 'all 1.5s ease-out';
+                
+                // Постепенное расширение светлой области
+                setTimeout(() => {
+                    darknessOverlay.style.background = 'radial-gradient(circle at center, transparent 60%, #000 90%)';
+                }, 500);
+                
+                setTimeout(() => {
+                    darknessOverlay.style.background = 'radial-gradient(circle at center, transparent 90%, #000 95%)';
+                }, 1000);
+                
+                // Полное исчезновение тьмы
+                setTimeout(() => {
+                    darknessOverlay.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        if (darknessOverlay.parentNode) {
+                            darknessOverlay.parentNode.removeChild(darknessOverlay);
+                        }
+                    }, 500);
+                }, 1500);
+            }, 100);
         }
         
         // Проверка загрузки шрифтов
