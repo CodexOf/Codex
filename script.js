@@ -27,6 +27,12 @@ class PageTransitions {
         
         startButtons.forEach(button => {
             button.addEventListener('click', function(e) {
+                // Если это кнопка календаря, позволяем обычный переход
+                if (this.classList.contains('calendar-button')) {
+                    console.log('Клик по кнопке календаря, обычный переход');
+                    return; // Не предотвращаем обычное поведение
+                }
+                
                 e.preventDefault();
                 
                 // Предотвращаем множественные клики

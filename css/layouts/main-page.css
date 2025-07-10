@@ -60,6 +60,15 @@
     opacity: 0.9;
 }
 
+/* Контейнер для кнопок */
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 2rem;
+}
+
 /* Кнопка начала */
 .start-button {
     display: inline-block;
@@ -74,7 +83,6 @@
     cursor: pointer;
     transition: all var(--transition-normal, 0.3s);
     animation: pulse 2s infinite;
-    margin-top: 20px;
     font-display: block;
     visibility: hidden;
     border-radius: var(--border-radius, 6px);
@@ -113,6 +121,20 @@
 
 .start-button:active {
     transform: translateY(-1px);
+}
+
+/* Кнопка календаря */
+.calendar-button {
+    background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+    border-color: #2ecc71 !important;
+    color: white !important;
+}
+
+.calendar-button:hover {
+    background: linear-gradient(135deg, #27ae60, #1e8449) !important;
+    border-color: #27ae60 !important;
+    color: white !important;
+    box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3) !important;
 }
 
 /* Футер главной страницы */
@@ -367,6 +389,10 @@
         letter-spacing: 1px;
     }
     
+    .buttons-container {
+        gap: 12px;
+    }
+    
     .main-footer {
         font-size: 0.8rem;
         padding: 12px 0;
@@ -395,6 +421,10 @@
         letter-spacing: 0.5px;
     }
     
+    .buttons-container {
+        gap: 10px;
+    }
+    
     .main-footer {
         font-size: 0.75rem;
         padding: 10px 0;
@@ -413,6 +443,10 @@
     .start-button {
         font-size: 0.9rem;
         padding: 8px 16px;
+    }
+    
+    .buttons-container {
+        gap: 8px;
     }
 }
 
