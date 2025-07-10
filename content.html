@@ -24,6 +24,24 @@
             overflow-x: hidden;
         }
         
+        /* ВАЖНО: Скрываем страницу при переходе с index.html */
+        body.from-index {
+            visibility: hidden;
+        }
+        
+        /* Изначальный чёрный оверлей для плавного появления */
+        .initial-black-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 99999;
+            opacity: 1;
+            pointer-events: none;
+        }
+        
         /* === СТИЛИ САЙДБАРА === */
         .sidebar {
             width: 280px;
@@ -299,6 +317,8 @@
     </style>
 </head>
 <body>
+    <!-- Изначальный чёрный оверлей для плавного появления -->
+    <div id="initialBlackOverlay" class="initial-black-overlay"></div>
     <!-- Боковая панель навигации -->
     <div class="sidebar">
         <div class="sidebar-header">
@@ -442,38 +462,44 @@
     <script src="content-loader.js"></script>
     
     <script>
-        // Проверяем, пришли ли мы с index.html
-        if (document.referrer.includes('index.html') || window.location.search.includes('from=index')) {
-            console.log('Переход с главной страницы - запускаем простое рассеивание чёрного');
+        // Проверяем при загрузке, пришли ли мы с index.html
+        const fromIndex = document.referrer.includes('index.html') || window.location.search.includes('from=index');
+        const initialOverlay = document.getElementById('initialBlackOverlay');
+        
+        if (fromIndex) {
+            console.log('Переход с главной страницы');
             
-            // Создаём простой чёрный оверлей
-            const blackOverlay = document.createElement('div');
-            blackOverlay.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: #000;
-                z-index: 10000;
-                opacity: 1;
-                pointer-events: none;
-                transition: opacity 1.5s ease-out;
-            `;
-            document.body.appendChild(blackOverlay);
+            // Добавляем класс для скрытия страницы
+            document.body.classList.add('from-index');
             
-            // Простое исчезновение чёрного экрана
+            // Откладываем показ страницы и запускаем анимацию
             setTimeout(() => {
-                console.log('Начинаем рассеивание чёрного экрана');
-                blackOverlay.style.opacity = '0';
+                console.log('Показываем страницу и начинаем рассеивание');
+                
+                // Показываем страницу
+                document.body.classList.remove('from-index');
+                document.body.style.visibility = 'visible';
+                
+                // Начинаем рассеивание чёрного экрана
+                initialOverlay.style.transition = 'opacity 1.5s ease-out';
+                initialOverlay.style.opacity = '0';
                 
                 // Удаляем оверлей после анимации
                 setTimeout(() => {
-                    if (blackOverlay.parentNode) {
-                        blackOverlay.parentNode.removeChild(blackOverlay);
+                    if (initialOverlay && initialOverlay.parentNode) {
+                        initialOverlay.parentNode.removeChild(initialOverlay);
                     }
                 }, 1500);
-            }, 300);
+            }, 500); // Короткая задержка для стабилизации
+            
+        } else {
+            console.log('Обычная загрузка страницы');
+            
+            // Обычная загрузка - сразу убираем оверлей
+            if (initialOverlay) {
+                initialOverlay.style.display = 'none';
+            }
+            document.body.style.visibility = 'visible';
         }
         
         // Проверка загрузки шрифтов

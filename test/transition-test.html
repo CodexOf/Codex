@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест перехода на content.html</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .test-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        
+        .test-link {
+            display: inline-block;
+            padding: 20px 40px;
+            font-size: 18px;
+            background: #e74c3c;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        
+        .test-link:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .info {
+            margin: 20px 0;
+            padding: 15px;
+            background: #d6eaf8;
+            border-radius: 8px;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Тестирование перехода</h1>
+        <p>Нажмите ссылку чтобы протестировать переход на content.html</p>
+        
+        <div class="info">
+            <strong>Ожидаемое поведение:</strong><br>
+            1. Переход без мигания/вспышки<br>
+            2. Сразу чёрный экран<br>
+            3. Плавное появление content.html
+        </div>
+        
+        <a href="content.html?from=index" class="test-link">
+            🚀 Перейти на content.html
+        </a>
+        
+        <br><br>
+        
+        <a href="no-flash-test.html?from=index" class="test-link">
+            🔬 Тест анимации
+        </a>
+    </div>
+</body>
+</html>

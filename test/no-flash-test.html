@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест мгновенного появления</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        /* Скрываем содержимое при загрузке */
+        body.loading {
+            visibility: hidden;
+        }
+        
+        /* Изначальный чёрный оверлей */
+        .initial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 99999;
+            opacity: 1;
+            pointer-events: none;
+        }
+        
+        .test-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            max-width: 600px;
+        }
+        
+        .test-button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        
+        .test-button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .success {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+        
+        .info {
+            background: #d6eaf8;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body class="loading">
+    <!-- Изначальный чёрный оверлей -->
+    <div id="initialOverlay" class="initial-overlay"></div>
+    
+    <div class="test-container">
+        <h1>🚀 Тест мгновенного появления</h1>
+        <p>Проверка что страница не "мелькает" перед анимацией</p>
+        
+        <button class="test-button" onclick="simulateFromIndex()">Симуляция перехода с index.html</button>
+        <button class="test-button" onclick="simulateDirectLoad()">Симуляция прямой загрузки</button>
+        <button class="test-button" onclick="testFullCycle()">Полный тест цикла</button>
+        <button class="test-button" onclick="resetPage()">Сброс страницы</button>
+        
+        <div class="status info" id="status">Страница готова к тестированию</div>
+    </div>
+
+    <script>
+        const initialOverlay = document.getElementById('initialOverlay');
+        const statusEl = document.getElementById('status');
+
+        function updateStatus(message, className = 'info') {
+            statusEl.textContent = message;
+            statusEl.className = `status ${className}`;
+        }
+
+        function simulateFromIndex() {
+            updateStatus('Симуляция: страница загружается скрытой...', 'info');
+            
+            // Скрываем страницу
+            document.body.classList.add('loading');
+            initialOverlay.style.opacity = '1';
+            initialOverlay.style.display = 'block';
+            
+            setTimeout(() => {
+                updateStatus('Показываем страницу и начинаем fade-out...', 'info');
+                
+                // Показываем страницу
+                document.body.classList.remove('loading');
+                document.body.style.visibility = 'visible';
+                
+                // Запускаем fade-out
+                initialOverlay.style.transition = 'opacity 1.5s ease-out';
+                initialOverlay.style.opacity = '0';
+                
+                setTimeout(() => {
+                    updateStatus('✅ Переход завершён! Никаких миганий.', 'success');
+                }, 1500);
+                
+            }, 500);
+        }
+
+        function simulateDirectLoad() {
+            updateStatus('Симуляция: прямая загрузка страницы...', 'info');
+            
+            // Прямая загрузка - сразу убираем оверлей
+            initialOverlay.style.display = 'none';
+            document.body.classList.remove('loading');
+            document.body.style.visibility = 'visible';
+            
+            setTimeout(() => {
+                updateStatus('✅ Прямая загрузка - оверлей сразу скрыт', 'success');
+            }, 100);
+        }
+
+        function testFullCycle() {
+            updateStatus('Полный тест: скрытие → показ → fade-out', 'info');
+            
+            // Этап 1: Полное скрытие
+            document.body.classList.add('loading');
+            initialOverlay.style.display = 'block';
+            initialOverlay.style.opacity = '1';
+            initialOverlay.style.transition = 'none';
+            
+            setTimeout(() => {
+                updateStatus('Этап 1: Страница полностью скрыта ✓', 'info');
+            }, 200);
+            
+            // Этап 2: Показ страницы
+            setTimeout(() => {
+                updateStatus('Этап 2: Показываем страницу ✓', 'info');
+                document.body.classList.remove('loading');
+                document.body.style.visibility = 'visible';
+            }, 700);
+            
+            // Этап 3: Fade-out
+            setTimeout(() => {
+                updateStatus('Этап 3: Запускаем fade-out ✓', 'info');
+                initialOverlay.style.transition = 'opacity 1.5s ease-out';
+                initialOverlay.style.opacity = '0';
+            }, 1200);
+            
+            // Финал
+            setTimeout(() => {
+                updateStatus('🎉 Полный цикл завершён успешно!', 'success');
+            }, 2700);
+        }
+
+        function resetPage() {
+            updateStatus('Сброс в исходное состояние...', 'info');
+            
+            document.body.classList.remove('loading');
+            document.body.style.visibility = 'visible';
+            initialOverlay.style.display = 'none';
+            initialOverlay.style.opacity = '1';
+            initialOverlay.style.transition = 'none';
+            
+            setTimeout(() => {
+                updateStatus('Готов к новому тесту', 'info');
+            }, 300);
+        }
+
+        // Инициализация страницы
+        window.addEventListener('load', () => {
+            // Имитируем поведение content.html
+            const fromIndex = window.location.search.includes('from=index');
+            
+            if (fromIndex) {
+                updateStatus('Обнаружен параметр from=index - запуск анимации', 'info');
+                simulateFromIndex();
+            } else {
+                updateStatus('Обычная загрузка - убираем оверлей', 'info');
+                simulateDirectLoad();
+            }
+        });
+    </script>
+</body>
+</html>
