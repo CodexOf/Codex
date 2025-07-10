@@ -496,6 +496,9 @@
     <!-- Подключение универсальной системы переходов -->
     <script src="js/universal-transitions.js"></script>
     
+    <!-- Подключение исправления навигации -->
+    <script src="js/navigation-fix.js"></script>
+    
     <!-- Подключение локальной системы авторизации -->
     <script src="js/auth-local.js"></script>
     
@@ -579,24 +582,6 @@
         setTimeout(function() {
             document.body.classList.add('fonts-loaded');
         }, 3000);
-        
-        // Обработчик для виджета календаря
-        document.addEventListener('DOMContentLoaded', function() {
-            const calendarWidget = document.getElementById('calendarWidget');
-            
-            if (calendarWidget) {
-                calendarWidget.addEventListener('click', function() {
-                    // Проверяем авторизацию
-                    if (window.authManager && window.authManager.isAuthenticated()) {
-                        // Пользователь авторизован - переходим на календарь
-                        window.location.href = 'calendar.html';
-                    } else {
-                        // Пользователь не авторизован - перенаправляем на авторизацию
-                        window.location.href = 'auth-local.html?returnTo=calendar';
-                    }
-                });
-            }
-        });
     </script>
 </body>
 </html>
