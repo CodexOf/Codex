@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codex - НОВАЯ ВЕРСИЯ</title>
+    <title>Тест белых полосок</title>
     <style>
-        /* КРИТИЧНО: Чёрный фон с самого начала + убираем белые полоски */
+        /* Полное устранение белых полосок */
         * {
             margin: 0;
             padding: 0;
@@ -31,22 +31,22 @@
             overflow-x: hidden;
         }
         
-        /* Оверлей для анимации - полное покрытие */
+        /* Увеличенный оверлей для гарантированного покрытия */
         .black-overlay {
             position: fixed;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            width: calc(100% + 20px);
-            height: calc(100% + 20px);
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            width: calc(100% + 40px);
+            height: calc(100% + 40px);
             background: #000;
             z-index: 99999;
             opacity: 1;
             pointer-events: none;
+            transition: opacity 1.5s ease-out;
         }
         
-        /* Основной контент - полное покрытие */
         .content {
             padding: 50px;
             text-align: center;
@@ -63,9 +63,9 @@
             border-radius: 15px;
             backdrop-filter: blur(10px);
             display: inline-block;
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
         
-        /* Скрытие контента при переходе */
         body.from-index .content {
             visibility: hidden;
         }
@@ -79,12 +79,12 @@
             font-size: 16px;
             cursor: pointer;
             margin: 10px;
-            text-decoration: none;
-            display: inline-block;
+            transition: all 0.3s;
         }
         
         .test-btn:hover {
             background: #c0392b;
+            transform: translateY(-2px);
         }
         
         .status {
@@ -94,25 +94,39 @@
             border: 1px solid rgba(46, 204, 113, 0.3);
             border-radius: 8px;
         }
+        
+        .warning {
+            background: rgba(241, 196, 15, 0.2);
+            border-color: rgba(241, 196, 15, 0.3);
+            color: #f1c40f;
+        }
     </style>
 </head>
 <body>
-    <!-- Чёрный оверлей для анимации -->
+    <!-- Увеличенный чёрный оверлей -->
     <div id="blackOverlay" class="black-overlay"></div>
     
     <div class="content">
         <div class="container">
-            <h1>✅ НОВАЯ ВЕРСИЯ ЗАГРУЖЕНА!</h1>
+            <h1>🔍 Тест белых полосок</h1>
             <div class="status">
-                Если вы видите этот текст - новая версия с анимацией работает!
+                Если вы НЕ видите белых полосок по краям - исправление работает!
             </div>
             
-            <p><strong>Версия:</strong> Анимация затемнения v2.0</p>
+            <div class="status warning">
+                <strong>Проверьте:</strong><br>
+                ❌ Белые полоски сверху/снизу/по бокам?<br>
+                ❌ Видны ли края браузера?<br>
+                ✅ Полностью чёрный экран при анимации?
+            </div>
+            
+            <p><strong>Версия:</strong> Исправление белых полосок v1.0</p>
             <p><strong>Время:</strong> <span id="loadTime"></span></p>
             
             <div>
-                <a href="index.html" class="test-btn">🏠 Назад на главную</a>
-                <button class="test-btn" onclick="testAnimation()">🎬 Тест анимации</button>
+                <button class="test-btn" onclick="testAnimation()">🎬 Тест анимации fade-out</button>
+                <button class="test-btn" onclick="testFullScreen()">📱 Тест на полный экран</button>
+                <a href="index.html" class="test-btn" style="text-decoration: none;">🏠 Назад на главную</a>
             </div>
             
             <div id="animationStatus"></div>
@@ -120,7 +134,6 @@
     </div>
 
     <script>
-        // Показываем время загрузки
         document.getElementById('loadTime').textContent = new Date().toLocaleString('ru-RU');
         
         // Проверяем переход с index.html
@@ -128,37 +141,32 @@
         const overlay = document.getElementById('blackOverlay');
         
         if (fromIndex) {
-            console.log('🎬 Переход с index.html - запуск анимации');
+            console.log('🎬 Переход с index.html - тест белых полосок');
             
-            // Скрываем контент
             document.body.classList.add('from-index');
             
-            // Запускаем анимацию через 500мс
             setTimeout(() => {
                 console.log('📦 Показываем контент');
                 document.body.classList.remove('from-index');
                 
-                console.log('🌫️ Начинаем fade-out');
-                overlay.style.transition = 'opacity 1.5s ease-out';
+                console.log('🌫️ Начинаем fade-out (следите за белыми полосками!)');
                 overlay.style.opacity = '0';
                 
-                // Меняем фон
                 setTimeout(() => {
                     document.documentElement.style.background = '';
                     document.body.style.background = 'linear-gradient(135deg, #0D1A13 0%, #1a4d3a 100%)';
                 }, 500);
                 
-                // Удаляем оверлей
                 setTimeout(() => {
                     if (overlay.parentNode) {
                         overlay.parentNode.removeChild(overlay);
                     }
-                    console.log('✅ Анимация завершена');
+                    console.log('✅ Анимация завершена - были ли белые полоски?');
                 }, 1500);
             }, 500);
             
         } else {
-            console.log('📄 Обычная загрузка - убираем оверлей');
+            console.log('📄 Обычная загрузка');
             overlay.style.display = 'none';
             document.documentElement.style.background = '';
             document.body.style.background = 'linear-gradient(135deg, #0D1A13 0%, #1a4d3a 100%)';
@@ -166,26 +174,47 @@
         
         function testAnimation() {
             const statusDiv = document.getElementById('animationStatus');
-            statusDiv.innerHTML = '<div class="status">🎬 Тестируем анимацию...</div>';
+            statusDiv.innerHTML = '<div class="status">🎬 Тест fade-out анимации...</div>';
             
-            // Создаём новый оверлей для теста
             const testOverlay = document.createElement('div');
             testOverlay.className = 'black-overlay';
             document.body.appendChild(testOverlay);
             
             setTimeout(() => {
-                statusDiv.innerHTML = '<div class="status">🌫️ Запуск fade-out...</div>';
-                testOverlay.style.transition = 'opacity 1.5s ease-out';
+                statusDiv.innerHTML = '<div class="status warning">🔍 ВНИМАТЕЛЬНО смотрите на края экрана!</div>';
                 testOverlay.style.opacity = '0';
                 
                 setTimeout(() => {
                     if (testOverlay.parentNode) {
                         testOverlay.parentNode.removeChild(testOverlay);
                     }
-                    statusDiv.innerHTML = '<div class="status">✅ Тест анимации завершён!</div>';
+                    statusDiv.innerHTML = '<div class="status">✅ Тест завершён! Видели ли белые полоски?</div>';
                 }, 1500);
             }, 500);
         }
+        
+        function testFullScreen() {
+            const statusDiv = document.getElementById('animationStatus');
+            
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().then(() => {
+                    statusDiv.innerHTML = '<div class="status">📱 Полноэкранный режим - проверьте края!</div>';
+                    
+                    setTimeout(() => {
+                        testAnimation();
+                    }, 1000);
+                });
+            } else {
+                statusDiv.innerHTML = '<div class="status warning">❌ Полноэкранный режим не поддерживается</div>';
+            }
+        }
+        
+        // Выход из полноэкранного режима по Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+        });
     </script>
 </body>
 </html>
