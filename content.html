@@ -10,6 +10,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto:wght@300;400&display=block" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* === КРИТИЧНО: ИЗНАЧАЛЬНО ЧЁРНЫЙ ФОН === */
+        html {
+            background: #000 !important;
+        }
+        
+        body {
+            background: #000 !important;
+            margin: 0;
+            padding: 0;
+        }
+        
         /* === ГЛОБАЛЬНЫЕ СТИЛИ === */
         * {
             margin: 0;
@@ -24,8 +35,10 @@
             overflow-x: hidden;
         }
         
-        /* ВАЖНО: Скрываем страницу при переходе с index.html */
-        body.from-index {
+        /* Скрываем содержимое при переходе с index.html */
+        body.from-index .sidebar,
+        body.from-index .main-content,
+        body.from-index .calendar-widget {
             visibility: hidden;
         }
         
@@ -159,6 +172,11 @@
             background: #0D1A13;
             min-height: 100vh;
             transition: margin-left 0.3s;
+        }
+        
+        /* При переходе с index.html фон должен быть чёрным */
+        body.from-index .main-content {
+            background: #000;
         }
         
         #content-container {
@@ -467,22 +485,33 @@
         const initialOverlay = document.getElementById('initialBlackOverlay');
         
         if (fromIndex) {
-            console.log('Переход с главной страницы');
+            console.log('Переход с главной страницы - чёрный фон активен');
             
-            // Добавляем класс для скрытия страницы
+            // Добавляем класс для скрытия содержимого
             document.body.classList.add('from-index');
             
-            // Откладываем показ страницы и запускаем анимацию
+            // Откладываем показ содержимого и запускаем анимацию
             setTimeout(() => {
-                console.log('Показываем страницу и начинаем рассеивание');
+                console.log('Показываем содержимое и начинаем рассеивание');
                 
-                // Показываем страницу
+                // Показываем содержимое
                 document.body.classList.remove('from-index');
-                document.body.style.visibility = 'visible';
                 
                 // Начинаем рассеивание чёрного экрана
                 initialOverlay.style.transition = 'opacity 1.5s ease-out';
                 initialOverlay.style.opacity = '0';
+                
+                // Меняем фон на нормальный после начала анимации
+                setTimeout(() => {
+                    document.documentElement.style.background = '';
+                    document.body.style.background = '#0D1A13'; // Основной фон
+                    
+                    // Восстанавливаем нормальные фоны для элементов
+                    const mainContent = document.querySelector('.main-content');
+                    if (mainContent) {
+                        mainContent.style.background = '#0D1A13';
+                    }
+                }, 500);
                 
                 // Удаляем оверлей после анимации
                 setTimeout(() => {
@@ -495,11 +524,12 @@
         } else {
             console.log('Обычная загрузка страницы');
             
-            // Обычная загрузка - сразу убираем оверлей
+            // Обычная загрузка - сразу восстанавливаем нормальный вид
             if (initialOverlay) {
                 initialOverlay.style.display = 'none';
             }
-            document.body.style.visibility = 'visible';
+            document.documentElement.style.background = '';
+            document.body.style.background = '#0D1A13'; // Основной фон
         }
         
         // Проверка загрузки шрифтов

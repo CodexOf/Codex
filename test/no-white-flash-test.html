@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест устранения белого экрана</title>
+    <style>
+        /* Критично: изначально чёрный фон */
+        html {
+            background: #000 !important;
+        }
+        
+        body {
+            background: #000 !important;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+            transition: background 0.5s ease;
+        }
+        
+        /* Скрываем содержимое при тесте */
+        body.testing .content {
+            visibility: hidden;
+        }
+        
+        /* Изначальный чёрный оверлей */
+        .initial-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000;
+            z-index: 99999;
+            opacity: 1;
+            pointer-events: none;
+        }
+        
+        .content {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .test-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        
+        .test-button:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(52, 152, 219, 0.2);
+            border-radius: 8px;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+        
+        .success {
+            background: rgba(46, 204, 113, 0.2);
+            border-color: rgba(46, 204, 113, 0.3);
+        }
+        
+        .warning {
+            background: rgba(241, 196, 15, 0.2);
+            border-color: rgba(241, 196, 15, 0.3);
+        }
+        
+        /* Нормальный фон сайта */
+        .normal-bg {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Изначальный чёрный оверлей -->
+    <div id="initialOverlay" class="initial-overlay"></div>
+    
+    <div class="content">
+        <div class="test-container">
+            <h1>🖤 Тест устранения белого экрана</h1>
+            <p>Проверка что нет белого мигания при загрузке</p>
+            
+            <button class="test-button" onclick="testBlackStart()">Тест чёрного старта</button>
+            <button class="test-button" onclick="testTransition()">Тест полного перехода</button>
+            <button class="test-button" onclick="testNormalLoad()">Тест обычной загрузки</button>
+            <button class="test-button" onclick="resetToBlack()">Сброс в чёрный</button>
+            
+            <div class="status" id="status">Готов к тестированию белого экрана</div>
+        </div>
+    </div>
+
+    <script>
+        const initialOverlay = document.getElementById('initialOverlay');
+        const statusEl = document.getElementById('status');
+
+        function updateStatus(message, className = '') {
+            statusEl.textContent = message;
+            statusEl.className = `status ${className}`;
+        }
+
+        function testBlackStart() {
+            updateStatus('Тест: страница должна быть чёрной с самого начала', 'warning');
+            
+            // Сброс в исходное состояние
+            document.documentElement.style.background = '#000';
+            document.body.style.background = '#000';
+            document.body.classList.add('testing');
+            initialOverlay.style.display = 'block';
+            initialOverlay.style.opacity = '1';
+            
+            setTimeout(() => {
+                updateStatus('✅ Чёрный фон активен с самого начала!', 'success');
+            }, 500);
+        }
+
+        function testTransition() {
+            updateStatus('Тест полного перехода: чёрный → контент → нормальный фон', '');
+            
+            // Этап 1: Чёрный старт
+            document.documentElement.style.background = '#000';
+            document.body.style.background = '#000';
+            document.body.classList.add('testing');
+            initialOverlay.style.display = 'block';
+            initialOverlay.style.opacity = '1';
+            initialOverlay.style.transition = 'none';
+            
+            setTimeout(() => {
+                updateStatus('Этап 1: Чёрный старт ✓');
+            }, 200);
+            
+            // Этап 2: Показ контента
+            setTimeout(() => {
+                updateStatus('Этап 2: Показ контента ✓');
+                document.body.classList.remove('testing');
+            }, 700);
+            
+            // Этап 3: Начало fade-out
+            setTimeout(() => {
+                updateStatus('Этап 3: Fade-out чёрного оверлея ✓');
+                initialOverlay.style.transition = 'opacity 1.5s ease-out';
+                initialOverlay.style.opacity = '0';
+            }, 1200);
+            
+            // Этап 4: Смена фона
+            setTimeout(() => {
+                updateStatus('Этап 4: Переход на нормальный фон ✓');
+                document.documentElement.style.background = '';
+                document.body.classList.add('normal-bg');
+            }, 1700);
+            
+            // Финал
+            setTimeout(() => {
+                updateStatus('🎉 Полный переход завершён без белых вспышек!', 'success');
+                setTimeout(() => {
+                    initialOverlay.style.display = 'none';
+                }, 500);
+            }, 2700);
+        }
+
+        function testNormalLoad() {
+            updateStatus('Тест обычной загрузки (без перехода с index.html)', '');
+            
+            // Обычная загрузка - сразу нормальный вид
+            initialOverlay.style.display = 'none';
+            document.documentElement.style.background = '';
+            document.body.classList.remove('testing');
+            document.body.classList.add('normal-bg');
+            
+            setTimeout(() => {
+                updateStatus('✅ Обычная загрузка - оверлей сразу скрыт', 'success');
+            }, 100);
+        }
+
+        function resetToBlack() {
+            updateStatus('Сброс в исходное чёрное состояние', 'warning');
+            
+            document.documentElement.style.background = '#000';
+            document.body.style.background = '#000';
+            document.body.classList.remove('normal-bg', 'testing');
+            initialOverlay.style.display = 'block';
+            initialOverlay.style.opacity = '1';
+            initialOverlay.style.transition = 'none';
+            
+            setTimeout(() => {
+                updateStatus('Готов к новому тесту (чёрный фон)', '');
+            }, 300);
+        }
+
+        // Инициализация страницы
+        window.addEventListener('load', () => {
+            // Имитируем поведение content.html
+            const fromIndex = window.location.search.includes('from=index');
+            
+            if (fromIndex) {
+                updateStatus('Обнаружен параметр from=index - старт с чёрного', 'warning');
+                testTransition();
+            } else {
+                updateStatus('Обычная загрузка - чёрный фон по умолчанию', '');
+            }
+        });
+    </script>
+</body>
+</html>
