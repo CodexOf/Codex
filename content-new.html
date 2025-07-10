@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex - НОВАЯ ВЕРСИЯ</title>
+    <style>
+        /* КРИТИЧНО: Чёрный фон с самого начала */
+        html { background: #000 !important; }
+        body { 
+            background: #000 !important; 
+            margin: 0; 
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        
+        /* Оверлей для анимации */
+        .black-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000;
+            z-index: 99999;
+            opacity: 1;
+            pointer-events: none;
+        }
+        
+        /* Основной контент */
+        .content {
+            padding: 50px;
+            text-align: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0D1A13 0%, #1a4d3a 100%);
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            display: inline-block;
+        }
+        
+        /* Скрытие контента при переходе */
+        body.from-index .content {
+            visibility: hidden;
+        }
+        
+        .test-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .test-btn:hover {
+            background: #c0392b;
+        }
+        
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Чёрный оверлей для анимации -->
+    <div id="blackOverlay" class="black-overlay"></div>
+    
+    <div class="content">
+        <div class="container">
+            <h1>✅ НОВАЯ ВЕРСИЯ ЗАГРУЖЕНА!</h1>
+            <div class="status">
+                Если вы видите этот текст - новая версия с анимацией работает!
+            </div>
+            
+            <p><strong>Версия:</strong> Анимация затемнения v2.0</p>
+            <p><strong>Время:</strong> <span id="loadTime"></span></p>
+            
+            <div>
+                <a href="index.html" class="test-btn">🏠 Назад на главную</a>
+                <button class="test-btn" onclick="testAnimation()">🎬 Тест анимации</button>
+            </div>
+            
+            <div id="animationStatus"></div>
+        </div>
+    </div>
+
+    <script>
+        // Показываем время загрузки
+        document.getElementById('loadTime').textContent = new Date().toLocaleString('ru-RU');
+        
+        // Проверяем переход с index.html
+        const fromIndex = document.referrer.includes('index.html') || window.location.search.includes('from=index');
+        const overlay = document.getElementById('blackOverlay');
+        
+        if (fromIndex) {
+            console.log('🎬 Переход с index.html - запуск анимации');
+            
+            // Скрываем контент
+            document.body.classList.add('from-index');
+            
+            // Запускаем анимацию через 500мс
+            setTimeout(() => {
+                console.log('📦 Показываем контент');
+                document.body.classList.remove('from-index');
+                
+                console.log('🌫️ Начинаем fade-out');
+                overlay.style.transition = 'opacity 1.5s ease-out';
+                overlay.style.opacity = '0';
+                
+                // Меняем фон
+                setTimeout(() => {
+                    document.documentElement.style.background = '';
+                    document.body.style.background = 'linear-gradient(135deg, #0D1A13 0%, #1a4d3a 100%)';
+                }, 500);
+                
+                // Удаляем оверлей
+                setTimeout(() => {
+                    if (overlay.parentNode) {
+                        overlay.parentNode.removeChild(overlay);
+                    }
+                    console.log('✅ Анимация завершена');
+                }, 1500);
+            }, 500);
+            
+        } else {
+            console.log('📄 Обычная загрузка - убираем оверлей');
+            overlay.style.display = 'none';
+            document.documentElement.style.background = '';
+            document.body.style.background = 'linear-gradient(135deg, #0D1A13 0%, #1a4d3a 100%)';
+        }
+        
+        function testAnimation() {
+            const statusDiv = document.getElementById('animationStatus');
+            statusDiv.innerHTML = '<div class="status">🎬 Тестируем анимацию...</div>';
+            
+            // Создаём новый оверлей для теста
+            const testOverlay = document.createElement('div');
+            testOverlay.className = 'black-overlay';
+            document.body.appendChild(testOverlay);
+            
+            setTimeout(() => {
+                statusDiv.innerHTML = '<div class="status">🌫️ Запуск fade-out...</div>';
+                testOverlay.style.transition = 'opacity 1.5s ease-out';
+                testOverlay.style.opacity = '0';
+                
+                setTimeout(() => {
+                    if (testOverlay.parentNode) {
+                        testOverlay.parentNode.removeChild(testOverlay);
+                    }
+                    statusDiv.innerHTML = '<div class="status">✅ Тест анимации завершён!</div>';
+                }, 1500);
+            }, 500);
+        }
+    </script>
+</body>
+</html>

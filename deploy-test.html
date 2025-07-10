@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест коммита</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: 0;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            display: inline-block;
+        }
+        .timestamp {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffeb3b;
+            margin-bottom: 20px;
+        }
+        .version {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Тест деплоя</h1>
+        <div class="timestamp" id="timestamp"></div>
+        <div class="version">Версия: АНИМАЦИЯ ЗАТЕМНЕНИЯ v2.0</div>
+        <div class="version">Время создания: <span id="buildTime"></span></div>
+        
+        <p>Если вы видите эту страницу с правильным временем - коммиты доходят до сервера!</p>
+        
+        <div style="margin-top: 20px;">
+            <a href="content.html" style="background: #e74c3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Проверить content.html</a>
+        </div>
+    </div>
+
+    <script>
+        // Показываем текущее время загрузки страницы
+        const now = new Date();
+        document.getElementById('timestamp').textContent = now.toLocaleString('ru-RU');
+        
+        // Время сборки (когда файл был создан)
+        document.getElementById('buildTime').textContent = '2025-01-10 18:30:00';
+        
+        console.log('Тест деплоя загружен в:', now.toISOString());
+        console.log('Если вы видите это в консоли - JavaScript работает!');
+    </script>
+</body>
+</html>
