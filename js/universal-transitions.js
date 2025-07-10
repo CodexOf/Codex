@@ -92,15 +92,15 @@ class UniversalPageTransitions {
             });
         }
 
-        // Виджет календаря
+        // Проверка авторизации
         const calendarWidget = document.getElementById('calendarWidget');
         if (calendarWidget) {
             calendarWidget.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (this.isTransitioning) return;
                 
-                // Проверка авторизации
-                if (window.authManager && window.authManager.isAuthenticated()) {
+                // КРИТИЧНО: Используем локальную систему авторизации
+                if (window.localAuthManager && window.localAuthManager.isAuthenticated()) {
                     this.performTransition('calendar.html', 'to-calendar');
                 } else {
                     this.performTransition('auth-local.html?returnTo=calendar', 'to-auth');
