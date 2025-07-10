@@ -60,10 +60,10 @@ class PageTransitions {
             return;
         }
         
-        console.log('Начало анимации затемнения с главной страницы:', targetUrl);
+        console.log('Начало анимации затемнения:', targetUrl);
         this.isTransitioning = true;
         
-        // Получаем элементы для анимации с проверкой существования
+        // Получаем элементы для анимации
         const elements = {
             gameTitle: document.querySelector('.game-title'),
             gameSubtitle: document.querySelector('.game-subtitle'),
@@ -72,14 +72,13 @@ class PageTransitions {
             welcomeScreen: document.querySelector('.welcome-screen')
         };
         
-        // Проверяем наличие основных элементов
         if (!elements.welcomeScreen) {
-            console.error('welcome-screen не найден, выполняем обычный переход');
+            console.error('welcome-screen не найден');
             this.fallbackTransition(targetUrl);
             return;
         }
         
-        // Отключаем возможность повторного клика
+        // Отключаем кнопки
         const allButtons = document.querySelectorAll('.start-button');
         allButtons.forEach(btn => {
             btn.style.pointerEvents = 'none';
@@ -87,15 +86,24 @@ class PageTransitions {
         });
         
         try {
-            // Создаем оверлей тьмы
-            const darknessOverlay = document.createElement('div');
-            darknessOverlay.className = 'darkness-overlay';
-            darknessOverlay.style.background = 'radial-gradient(circle at center, transparent 100%, #000 100%)';
-            darknessOverlay.style.opacity = '0';
-            document.body.appendChild(darknessOverlay);
+            // Создаём чёрный оверлей
+            const blackOverlay = document.createElement('div');
+            blackOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #000;
+                z-index: 10000;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.8s ease-out;
+            `;
+            document.body.appendChild(blackOverlay);
             
-            // Фаза 1 (0-600мс): Затухание текстовых элементов
-            console.log('Фаза 1: Затухание текстовых элементов в темноту');
+            // Фаза 1: Затухание текста
+            console.log('Фаза 1: Затухание текста');
             const textElements = [
                 elements.gameTitle, 
                 elements.gameSubtitle, 
@@ -109,35 +117,28 @@ class PageTransitions {
                 }
             });
             
-            // Фаза 2 (200-800мс): Затемнение экрана тьмой
+            // Фаза 2: Появление чёрного экрана
             setTimeout(() => {
-                console.log('Фаза 2: Надвигающаяся тьма');
-                darknessOverlay.classList.add('darkness-envelop');
-                darknessOverlay.style.opacity = '1';
-                darknessOverlay.style.background = 'radial-gradient(circle at center, transparent 0%, #000 50%)';
-            }, 200);
+                console.log('Фаза 2: Появление чёрного экрана');
+                blackOverlay.style.opacity = '1';
+            }, 300);
             
-            // Фаза 3 (600мс): Затухание фона
+            // Фаза 3: Затухание фона
             setTimeout(() => {
                 console.log('Фаза 3: Затухание фона');
                 if (elements.welcomeScreen) {
                     elements.welcomeScreen.classList.add('exit-background-animation');
                 }
-            }, 600);
+            }, 500);
             
-            // Фаза 4 (1000мс): Полное затемнение и переход
+            // Фаза 4: Переход на новую страницу
             setTimeout(() => {
-                console.log('Фаза 4: Полное затемнение - переход на новую страницу');
-                darknessOverlay.style.background = '#000';
-                darknessOverlay.style.opacity = '1';
-                
-                setTimeout(() => {
-                    this.navigateToPage(targetUrl);
-                }, 100);
-            }, 1000);
+                console.log('Фаза 4: Переход на новую страницу');
+                this.navigateToPage(targetUrl);
+            }, 1200);
             
         } catch (error) {
-            console.error('Ошибка во время анимации затемнения:', error);
+            console.error('Ошибка во время анимации:', error);
             setTimeout(() => {
                 this.navigateToPage(targetUrl);
             }, 100);

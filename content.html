@@ -444,41 +444,36 @@
     <script>
         // Проверяем, пришли ли мы с index.html
         if (document.referrer.includes('index.html') || window.location.search.includes('from=index')) {
-            console.log('Переход с главной страницы - запускаем эффект рассеивания тьмы');
+            console.log('Переход с главной страницы - запускаем простое рассеивание чёрного');
             
-            // Создаем оверлей тьмы
-            const darknessOverlay = document.createElement('div');
-            darknessOverlay.className = 'darkness-overlay';
-            darknessOverlay.style.background = '#000';
-            darknessOverlay.style.opacity = '1';
-            document.body.appendChild(darknessOverlay);
+            // Создаём простой чёрный оверлей
+            const blackOverlay = document.createElement('div');
+            blackOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #000;
+                z-index: 10000;
+                opacity: 1;
+                pointer-events: none;
+                transition: opacity 1.5s ease-out;
+            `;
+            document.body.appendChild(blackOverlay);
             
-            // Начинаем анимацию рассеивания через короткую задержку
+            // Простое исчезновение чёрного экрана
             setTimeout(() => {
-                console.log('Начинаем рассеивание тьмы');
-                darknessOverlay.style.background = 'radial-gradient(circle at center, transparent 30%, #000 80%)';
-                darknessOverlay.style.transition = 'all 1.5s ease-out';
+                console.log('Начинаем рассеивание чёрного экрана');
+                blackOverlay.style.opacity = '0';
                 
-                // Постепенное расширение светлой области
+                // Удаляем оверлей после анимации
                 setTimeout(() => {
-                    darknessOverlay.style.background = 'radial-gradient(circle at center, transparent 60%, #000 90%)';
-                }, 500);
-                
-                setTimeout(() => {
-                    darknessOverlay.style.background = 'radial-gradient(circle at center, transparent 90%, #000 95%)';
-                }, 1000);
-                
-                // Полное исчезновение тьмы
-                setTimeout(() => {
-                    darknessOverlay.style.opacity = '0';
-                    
-                    setTimeout(() => {
-                        if (darknessOverlay.parentNode) {
-                            darknessOverlay.parentNode.removeChild(darknessOverlay);
-                        }
-                    }, 500);
+                    if (blackOverlay.parentNode) {
+                        blackOverlay.parentNode.removeChild(blackOverlay);
+                    }
                 }, 1500);
-            }, 100);
+            }, 300);
         }
         
         // Проверка загрузки шрифтов
