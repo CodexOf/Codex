@@ -322,7 +322,9 @@
         }
     </style>
 </head>
-<body>
+<body data-page="auth-local">
+    <!-- КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Немедленное восстановление взаимодействия -->
+    <script src="critical-fix.js"></script>
     <div class="decorative-bg"></div>
     
     <a href="index.html" class="back-to-site">
@@ -436,6 +438,9 @@
     
     <!-- Подключение универсальной системы переходов -->
     <script src="js/universal-transitions.js"></script>
+    
+    <!-- Специальное исправление для переходов на странице авторизации -->
+    <script src="js/auth-transition-fix.js"></script>
     
     <!-- Локальная система авторизации -->
     <script src="js/auth-local.js"></script>

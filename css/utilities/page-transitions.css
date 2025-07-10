@@ -125,8 +125,31 @@ body.transitioning * {
 .form-input,
 .form-button,
 .auth-tab,
-.back-to-site {
+.back-to-site,
+.auth-container input,
+.auth-container button,
+.auth-container form,
+.auth-container a,
+.auth-container select {
     pointer-events: auto !important;
+    cursor: auto !important;
+    user-select: auto !important;
+    touch-action: auto !important;
+}
+
+/* Устанавливаем правильные курсоры */
+.form-button,
+.auth-tab,
+.back-to-site,
+.auth-container button,
+.auth-container a {
+    cursor: pointer !important;
+}
+
+.form-input,
+.auth-container input,
+.auth-container select {
+    cursor: text !important;
 }
 
 body.transitioning .auth-container,
@@ -135,5 +158,14 @@ body.transitioning .form-input,
 body.transitioning .form-button,
 body.transitioning .auth-tab,
 body.transitioning .back-to-site {
+    pointer-events: auto !important;
+}
+
+/* Исключение для страницы авторизации */
+body[data-page="auth-local"] {
+    pointer-events: auto !important;
+}
+
+body[data-page="auth-local"].transitioning {
     pointer-events: auto !important;
 }
