@@ -431,6 +431,9 @@
         </form>
     </div>
 
+    <!-- КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Скрипт для восстановления взаимодействия -->
+    <script src="fix-auth-interaction.js"></script>
+    
     <!-- Подключение универсальной системы переходов -->
     <script src="js/universal-transitions.js"></script>
     
@@ -679,6 +682,21 @@
             }
         }
 
+        // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Удаляем блокировку pointer-events
+        document.body.classList.remove('transitioning');
+        document.body.style.pointerEvents = 'auto';
+        
+        // Принудительно включаем взаимодействие для всех элементов
+        const enableInteraction = () => {
+            document.querySelectorAll('.auth-container, .form-input, .form-button, .auth-tab').forEach(el => {
+                el.style.pointerEvents = 'auto';
+            });
+        };
+        
+        enableInteraction();
+        setTimeout(enableInteraction, 100);
+        setTimeout(enableInteraction, 500);
+        
         // Проверяем, авторизован ли пользователь
         if (window.localAuthManager && window.localAuthManager.isAuthenticated()) {
             console.log('Пользователь уже авторизован, перенаправляем...');

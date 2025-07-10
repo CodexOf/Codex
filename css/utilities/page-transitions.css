@@ -118,3 +118,22 @@ body.transitioning * {
 .page-transition-overlay {
     pointer-events: auto;
 }
+
+/* КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Принудительное включение взаимодействия на странице авторизации */
+.auth-container,
+.auth-container *,
+.form-input,
+.form-button,
+.auth-tab,
+.back-to-site {
+    pointer-events: auto !important;
+}
+
+body.transitioning .auth-container,
+body.transitioning .auth-container *,
+body.transitioning .form-input,
+body.transitioning .form-button,
+body.transitioning .auth-tab,
+body.transitioning .back-to-site {
+    pointer-events: auto !important;
+}
