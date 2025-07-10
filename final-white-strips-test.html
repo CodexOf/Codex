@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <title>Финальный тест белых полос</title>
+    <style>
+        :root {
+            color-scheme: dark;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            background: #000 !important;
+            background-color: #000 !important;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        body {
+            background: #000 !important;
+            background-color: #000 !important;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        body.animation-complete {
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .black-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            right: 0;
+            bottom: 0;
+            background: #000;
+            z-index: 99999;
+            opacity: 1;
+            pointer-events: none;
+            transform: translate3d(0, 0, 0);
+            transition: opacity 1.5s ease-out;
+        }
+        
+        .content {
+            padding: 50px;
+            text-align: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0D1A13 0%, #1a4d3a 100%);
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            display: inline-block;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        body.from-index .content {
+            visibility: hidden;
+        }
+        
+        .test-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        
+        .test-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-radius: 8px;
+        }
+        
+        .warning {
+            background: rgba(241, 196, 15, 0.2);
+            border-color: rgba(241, 196, 15, 0.3);
+            color: #f1c40f;
+        }
+        
+        .info {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: rgba(52, 152, 219, 0.3);
+            color: #3498db;
+        }
+        
+        /* Дополнительное содержимое для проверки скролла */
+        .extra-content {
+            margin-top: 100px;
+            padding: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="blackOverlay" class="black-overlay"></div>
+    
+    <div class="content">
+        <div class="container">
+            <h1>🎯 Финальный тест белых полос</h1>
+            
+            <div class="status info">
+                <strong>Исправления v3:</strong><br>
+                ✅ Убраны скроллбары при анимации<br>
+                ✅ Полное покрытие экрана (right: 0, bottom: 0)<br>
+                ✅ Аппаратное ускорение GPU<br>
+                ✅ Восстановление скролла после анимации
+            </div>
+            
+            <div class="status warning">
+                <strong>ПРОВЕРЬТЕ:</strong><br>
+                ❌ Видны ли белые полосы ПО КРАЯМ экрана?<br>
+                ❌ Проскакивает ли белый фон браузера?<br>
+                ✅ Полностью чёрный экран при fade-out?
+            </div>
+            
+            <p><strong>Время:</strong> <span id="loadTime"></span></p>
+            
+            <div>
+                <button class="test-btn" onclick="testAnimation()">🎬 Тест fade-out</button>
+                <button class="test-btn" onclick="inspectOverlay()">🔍 Проверить размеры оверлея</button>
+                <a href="index.html" class="test-btn">🏠 Назад на главную</a>
+            </div>
+            
+            <div id="animationStatus"></div>
+        </div>
+        
+        <!-- Дополнительное содержимое для проверки скролла -->
+        <div class="extra-content">
+            <h3>Дополнительное содержимое</h3>
+            <p>Этот блок нужен для проверки, что скролл работает после анимации.</p>
+            <p>Если вы видите этот текст и можете скроллить - всё работает!</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loadTime').textContent = new Date().toLocaleString('ru-RU');
+        
+        const fromIndex = document.referrer.includes('index.html') || window.location.search.includes('from=index');
+        const overlay = document.getElementById('blackOverlay');
+        
+        if (fromIndex) {
+            console.log('🎬 Переход с index.html - тест финального исправления');
+            
+            document.body.classList.add('from-index');
+            
+            setTimeout(() => {
+                console.log('📦 Показываем контент');
+                document.body.classList.remove('from-index');
+                
+                console.log('🌫️ Начинаем fade-out (НЕ должно быть белых полос!)');
+                overlay.style.opacity = '0';
+                
+                setTimeout(() => {
+                    document.documentElement.style.background = '';
+                    document.body.style.background = 'linear-gradient(135deg, #0D1A13 0%, #1a4d3a 100%)';
+                }, 500);
+                
+                setTimeout(() => {
+                    if (overlay.parentNode) {
+                        overlay.parentNode.removeChild(overlay);
+                    }
+                    // Восстанавливаем скролл
+                    document.body.classList.add('animation-complete');
+                    document.documentElement.style.overflow = '';
+                    console.log('✅ Анимация завершена, скролл восстановлен');
+                }, 1500);
+            }, 500);
+            
+        } else {
+            console.log('📄 Обычная загрузка');
+            overlay.style.display = 'none';
+            document.documentElement.style.background = '';
+            document.body.style.background = 'linear-gradient(135deg, #0D1A13 0%, #1a4d3a 100%)';
+            document.body.classList.add('animation-complete');
+            document.documentElement.style.overflow = '';
+        }
+        
+        function testAnimation() {
+            const statusDiv = document.getElementById('animationStatus');
+            statusDiv.innerHTML = '<div class="status warning">🎬 Тест fade-out - следите за краями экрана!</div>';
+            
+            const testOverlay = document.createElement('div');
+            testOverlay.className = 'black-overlay';
+            document.body.appendChild(testOverlay);
+            
+            setTimeout(() => {
+                statusDiv.innerHTML = '<div class="status warning">🔍 ВНИМАНИЕ: Есть ли белые полосы по краям?</div>';
+                testOverlay.style.opacity = '0';
+                
+                setTimeout(() => {
+                    if (testOverlay.parentNode) {
+                        testOverlay.parentNode.removeChild(testOverlay);
+                    }
+                    statusDiv.innerHTML = '<div class="status">✅ Тест завершён! Результат проверки?</div>';
+                }, 1500);
+            }, 500);
+        }
+        
+        function inspectOverlay() {
+            const statusDiv = document.getElementById('animationStatus');
+            
+            // Создаём тестовый оверлей для проверки размеров
+            const testOverlay = document.createElement('div');
+            testOverlay.className = 'black-overlay';
+            testOverlay.style.background = 'red'; // Красный для видимости
+            testOverlay.style.opacity = '0.5';
+            document.body.appendChild(testOverlay);
+            
+            const rect = testOverlay.getBoundingClientRect();
+            const viewport = {
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+            
+            statusDiv.innerHTML = `
+                <div class="status info">
+                    <strong>🔍 Размеры оверлея:</strong><br>
+                    Оверлей: ${rect.width} x ${rect.height}<br>
+                    Viewport: ${viewport.width} x ${viewport.height}<br>
+                    Покрытие: ${rect.width >= viewport.width && rect.height >= viewport.height ? '✅ ПОЛНОЕ' : '❌ НЕПОЛНОЕ'}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                if (testOverlay.parentNode) {
+                    testOverlay.parentNode.removeChild(testOverlay);
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

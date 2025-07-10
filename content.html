@@ -27,6 +27,9 @@
         html {
             background: #000 !important;
             background-color: #000 !important;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Убираем скроллбары */
         }
         
         body {
@@ -37,6 +40,14 @@
             font-family: 'Roboto', sans-serif;
             line-height: 1.6;
             color: #d0d0d0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Убираем скроллбары при переходе */
+        }
+        
+        /* Восстанавливаем скролл после анимации */
+        body.animation-complete {
+            overflow-y: auto;
             overflow-x: hidden;
         }
         
@@ -47,17 +58,20 @@
             visibility: hidden;
         }
         
-        /* Изначальный чёрный оверлей для плавного появления */
+        /* Изначальный чёрный оверлей для плавного появления - ПОЛНОЕ покрытие */
         .initial-black-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
+            right: 0;
+            bottom: 0;
             background: #000;
             z-index: 99999;
             opacity: 1;
             pointer-events: none;
+            transform: translate3d(0, 0, 0); /* Аппаратное ускорение */
         }
         
         /* === СТИЛИ САЙДБАРА === */
@@ -523,6 +537,10 @@
                     if (initialOverlay && initialOverlay.parentNode) {
                         initialOverlay.parentNode.removeChild(initialOverlay);
                     }
+                    // Восстанавливаем скролл после анимации
+                    document.body.classList.add('animation-complete');
+                    document.documentElement.style.overflow = '';
+                    console.log('✅ Анимация завершена, скролл восстановлен');
                 }, 1500);
             }, 500); // Короткая задержка для стабилизации
             
@@ -535,6 +553,8 @@
             }
             document.documentElement.style.background = '';
             document.body.style.background = '#0D1A13'; // Основной фон
+            document.body.classList.add('animation-complete'); // Восстанавливаем скролл
+            document.documentElement.style.overflow = '';
         }
         
         // Проверка загрузки шрифтов
