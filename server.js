@@ -8,13 +8,30 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-// Упрощенная настройка CORS для работы с любыми доменами
+// Расширенная настройка CORS для работы с GitHub Pages и кэш-заголовками
 app.use(cors({
     origin: true,  // Разрешаем все origins
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: [
+        'Content-Type', 
+        'Authorization', 
+        'Cache-Control', 
+        'Pragma',
+        'X-Requested-With',
+        'Accept',
+        'Origin'
+    ],
+    exposedHeaders: ['Content-Length', 'X-Kuma-Revision']
 }));
+
+// Дополнительная обработка preflight запросов
+app.options('*', (req, res) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cache-Control, Pragma, X-Requested-With, Accept, Origin');
+    res.sendStatus(200);
+});
 
 app.use(express.json());
 app.use(express.static('.'));

@@ -1,10 +1,11 @@
-// Система авторизации для Codex - ИСПРАВЛЕННАЯ ДЛЯ RENDER.COM
+// Система авторизации для Codex - ИСПРАВЛЕННАЯ ДЛЯ GITHUB PAGES + RENDER.COM
 class AuthManager {
     constructor() {
         this.token = localStorage.getItem('authToken');
         this.user = this.getCurrentUser();
         this.baseURL = this.getBaseURL();
         this.serverWakeupTime = 60000; // 60 секунд на пробуждение сервера
+        this.isGitHubPages = window.location.hostname.includes('github.io');
     }
 
     getBaseURL() {
@@ -13,9 +14,8 @@ class AuthManager {
             return `http://${window.location.hostname}:3000`;
         }
         
-        // Для Render.com или другого хостинга
-        if (window.location.hostname.includes('github.io')) {
-            // Если открыто с GitHub Pages, используем URL Render
+        // Для GitHub Pages всегда используем Render.com
+        if (this.isGitHubPages) {
             return 'https://codex-of.onrender.com';
         }
         
@@ -37,20 +37,16 @@ class AuthManager {
         return !!(this.token && this.user);
     }
 
-    // Специальная функция для "пробуждения" Render.com сервера
+    // Специальная функция для "пробуждения" Render.com сервера (без проблемных заголовков)
     async wakeUpServer() {
         console.log('⏰ Пробуждение сервера Render.com...');
         const startTime = Date.now();
         
         try {
-            // Простой запрос для пробуждения сервера
+            // Простой запрос без проблемных заголовков
             const response = await fetch(this.baseURL, {
-                method: 'GET',
-                cache: 'no-cache',
-                headers: {
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
-                }
+                method: 'GET'
+                // Убираем cache-control и pragma для GitHub Pages
             });
             
             const endTime = Date.now();
@@ -72,12 +68,17 @@ class AuthManager {
     }
 
     async makeAuthenticatedRequest(url, options = {}) {
+        // Используем минимальный набор заголовков для совместимости с GitHub Pages
         const headers = {
             'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache',
             ...options.headers
         };
+
+        // Добавляем cache-control только если НЕ GitHub Pages
+        if (!this.isGitHubPages) {
+            headers['Cache-Control'] = 'no-cache';
+            headers['Pragma'] = 'no-cache';
+        }
 
         if (this.token) {
             headers['Authorization'] = `Bearer ${this.token}`;
@@ -120,6 +121,13 @@ class AuthManager {
             } catch (error) {
                 lastError = error;
                 
+                // Проверяем, является ли это CORS ошибкой
+                if (error.message.includes('CORS') || error.message.includes('blocked')) {
+                    console.log('🔄 CORS ошибка обнаружена, пробуждаем сервер...');
+                    await this.wakeUpServer();
+                    continue;
+                }
+                
                 // Если это первая попытка и ошибка связана с сетью
                 if (attempt === 1 && (error.name === 'TypeError' || error.message.includes('fetch'))) {
                     console.log('🔄 Сетевая ошибка, возможно сервер спит. Пробуждаем...');
@@ -144,6 +152,7 @@ class AuthManager {
         try {
             console.log('🔑 Попытка входа на сервер:', this.baseURL);
             console.log('👤 Пользователь:', username);
+            console.log('🌐 GitHub Pages режим:', this.isGitHubPages);
             
             // Проверяем, не спит ли сервер перед логином
             const serverAwake = await this.checkServerHealth();
@@ -151,13 +160,20 @@ class AuthManager {
                 await this.wakeUpServer();
             }
             
+            // Минимальный набор заголовков для GitHub Pages
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            // Добавляем cache-control только если НЕ GitHub Pages
+            if (!this.isGitHubPages) {
+                headers['Cache-Control'] = 'no-cache';
+                headers['Pragma'] = 'no-cache';
+            }
+            
             const response = await fetch(`${this.baseURL}/api/login`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
-                },
+                headers: headers,
                 body: JSON.stringify({ username, password })
             });
 
@@ -206,6 +222,13 @@ class AuthManager {
         } catch (error) {
             console.error('💥 Критическая ошибка входа:', error);
             
+            if (error.message.includes('CORS')) {
+                return { 
+                    success: false, 
+                    error: 'Проблема с CORS. Сервер пробуждается, попробуйте через 30-60 секунд.' 
+                };
+            }
+            
             if (error.name === 'TypeError' || error.message.includes('fetch')) {
                 return { 
                     success: false, 
@@ -221,6 +244,7 @@ class AuthManager {
         try {
             console.log('📝 Попытка регистрации на сервер:', this.baseURL);
             console.log('👤 Новый пользователь:', username);
+            console.log('🌐 GitHub Pages режим:', this.isGitHubPages);
             
             // Проверяем, не спит ли сервер перед регистрацией
             const serverAwake = await this.checkServerHealth();
@@ -228,13 +252,20 @@ class AuthManager {
                 await this.wakeUpServer();
             }
             
+            // Минимальный набор заголовков для GitHub Pages
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            // Добавляем cache-control только если НЕ GitHub Pages
+            if (!this.isGitHubPages) {
+                headers['Cache-Control'] = 'no-cache';
+                headers['Pragma'] = 'no-cache';
+            }
+            
             const response = await fetch(`${this.baseURL}/api/register`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
-                },
+                headers: headers,
                 body: JSON.stringify({ username, password })
             });
 
@@ -283,6 +314,13 @@ class AuthManager {
         } catch (error) {
             console.error('💥 Критическая ошибка регистрации:', error);
             
+            if (error.message.includes('CORS')) {
+                return { 
+                    success: false, 
+                    error: 'Проблема с CORS. Сервер пробуждается, попробуйте через 30-60 секунд.' 
+                };
+            }
+            
             if (error.name === 'TypeError' || error.message.includes('fetch')) {
                 return { 
                     success: false, 
@@ -321,10 +359,6 @@ class AuthManager {
         try {
             const response = await fetch(this.baseURL, {
                 method: 'GET',
-                cache: 'no-cache',
-                headers: {
-                    'Cache-Control': 'no-cache'
-                },
                 timeout: 5000
             });
             return response.ok;
@@ -514,6 +548,7 @@ window.eventManager = new EventManager(window.authManager);
 
 // Показываем текущий режим работы
 console.log('🌐 Режим работы:', window.authManager.baseURL);
+console.log('📍 GitHub Pages режим:', window.authManager.isGitHubPages);
 console.log('📍 Для смены сервера измените URL в методе getBaseURL()');
 
 // Проверяем статус сервера при загрузке
