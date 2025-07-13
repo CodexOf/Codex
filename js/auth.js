@@ -1,29 +1,13 @@
 /**
- * Система авторизации с поддержкой анимированных переходов
- * Интегрируется с UniversalAnimatedTransitions для плавных переходов
+ * Восстановленная рабочая система авторизации + только анимации
+ * Основано на оригинальном коде с минимальными изменениями
  */
 
-class AuthManagerWithAnimations {
+class AuthManager {
     constructor() {
         this.baseURL = 'https://codex-backend-production.up.railway.app';
         this.isInitialized = false;
-        
-        // Ждем загрузки системы анимаций
-        this.waitForAnimationSystem();
-    }
-
-    /**
-     * Ожидание загрузки системы анимаций
-     */
-    waitForAnimationSystem() {
-        const checkForAnimations = () => {
-            if (window.universalAnimatedTransitions || window.UniversalAnimatedTransitions) {
-                this.init();
-            } else {
-                setTimeout(checkForAnimations, 100);
-            }
-        };
-        checkForAnimations();
+        this.init();
     }
 
     /**
@@ -32,7 +16,7 @@ class AuthManagerWithAnimations {
     init() {
         if (this.isInitialized) return;
         
-        console.log('🔐 Инициализация системы авторизации с анимациями');
+        console.log('🔐 Инициализация системы авторизации');
         this.setupAuthEventHandlers();
         this.checkExistingAuth();
         this.isInitialized = true;
@@ -93,7 +77,7 @@ class AuthManagerWithAnimations {
             if (result.success) {
                 this.showSuccess('Вход выполнен успешно! Перенаправление...');
                 
-                // Используем анимированный переход
+                // Добавляем анимированный переход
                 setTimeout(() => {
                     this.performAnimatedRedirect();
                 }, 1500);
@@ -150,7 +134,7 @@ class AuthManagerWithAnimations {
             if (result.success) {
                 this.showSuccess('Регистрация выполнена успешно! Перенаправление...');
                 
-                // Используем анимированный переход
+                // Добавляем анимированный переход
                 setTimeout(() => {
                     this.performAnimatedRedirect();
                 }, 1500);
@@ -166,7 +150,7 @@ class AuthManagerWithAnimations {
     }
 
     /**
-     * Выполняет анимированный переход после успешной авторизации
+     * НОВОЕ: Анимированный переход после авторизации
      */
     performAnimatedRedirect() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -182,20 +166,18 @@ class AuthManagerWithAnimations {
         
         console.log(`🚀 Анимированный переход после авторизации: ${transitionType} -> ${targetUrl}`);
         
-        // Используем систему анимированных переходов
+        // Используем систему анимированных переходов, если доступна
         if (window.universalAnimatedTransitions) {
             window.universalAnimatedTransitions.performTransition(targetUrl, transitionType);
-        } else if (window.performAnimatedAuthTransition) {
-            window.performAnimatedAuthTransition(targetUrl);
         } else {
-            // Fallback
+            // Fallback - обычный переход
             console.log('⚠️ Система анимаций недоступна, обычный переход');
             window.location.href = targetUrl;
         }
     }
 
     /**
-     * Вход пользователя
+     * Оригинальный метод входа (без изменений)
      */
     async login(username, password) {
         try {
@@ -228,7 +210,7 @@ class AuthManagerWithAnimations {
     }
 
     /**
-     * Регистрация пользователя
+     * Оригинальный метод регистрации (без изменений)
      */
     async register(username, password) {
         try {
@@ -261,7 +243,7 @@ class AuthManagerWithAnimations {
     }
 
     /**
-     * Выход пользователя
+     * Выход пользователя (обновлен с анимацией)
      */
     logout() {
         console.log('👋 Выход пользователя');
@@ -271,7 +253,7 @@ class AuthManagerWithAnimations {
         localStorage.removeItem('currentUser');
         localStorage.removeItem('userId');
         
-        // Используем анимированный переход на главную
+        // Анимированный переход на главную, если система анимаций доступна
         if (window.universalAnimatedTransitions) {
             window.universalAnimatedTransitions.performTransition('index.html', 'logout');
         } else {
@@ -280,7 +262,7 @@ class AuthManagerWithAnimations {
     }
 
     /**
-     * Проверка авторизации
+     * Оригинальные методы (без изменений)
      */
     isAuthenticated() {
         const token = localStorage.getItem('authToken');
@@ -288,23 +270,14 @@ class AuthManagerWithAnimations {
         return !!(token && user);
     }
 
-    /**
-     * Получение текущего пользователя
-     */
     getCurrentUser() {
         return localStorage.getItem('currentUser');
     }
 
-    /**
-     * Получение токена авторизации
-     */
     getAuthToken() {
         return localStorage.getItem('authToken');
     }
 
-    /**
-     * Проверка существующей авторизации при загрузке
-     */
     checkExistingAuth() {
         if (this.isAuthenticated()) {
             const currentUser = this.getCurrentUser();
@@ -318,14 +291,11 @@ class AuthManagerWithAnimations {
         }
     }
 
-    /**
-     * Принудительная проверка доступа к календарю
-     */
     requireAuth(redirectTo = 'calendar') {
         if (!this.isAuthenticated()) {
             console.log('🔒 Требуется авторизация для доступа к', redirectTo);
             
-            // Анимированный переход на страницу авторизации
+            // Анимированный переход на страницу авторизации, если система доступна
             if (window.universalAnimatedTransitions) {
                 window.universalAnimatedTransitions.performTransition(`auth.html?returnTo=${redirectTo}`, 'require-auth');
             } else {
@@ -336,9 +306,6 @@ class AuthManagerWithAnimations {
         return true;
     }
 
-    /**
-     * Показ сообщения об ошибке
-     */
     showError(message) {
         const errorEl = document.getElementById('error-message');
         const successEl = document.getElementById('success-message');
@@ -350,9 +317,6 @@ class AuthManagerWithAnimations {
         }
     }
 
-    /**
-     * Показ сообщения об успехе
-     */
     showSuccess(message) {
         const errorEl = document.getElementById('error-message');
         const successEl = document.getElementById('success-message');
@@ -364,9 +328,6 @@ class AuthManagerWithAnimations {
         }
     }
 
-    /**
-     * Скрытие всех сообщений
-     */
     hideMessages() {
         const errorEl = document.getElementById('error-message');
         const successEl = document.getElementById('success-message');
@@ -375,9 +336,6 @@ class AuthManagerWithAnimations {
         if (successEl) successEl.style.display = 'none';
     }
 
-    /**
-     * Управление состоянием загрузки кнопки
-     */
     setButtonLoading(button, loading) {
         if (!button) return;
         
@@ -394,9 +352,6 @@ class AuthManagerWithAnimations {
         }
     }
 
-    /**
-     * Получение информации о состоянии авторизации
-     */
     getAuthStatus() {
         return {
             isAuthenticated: this.isAuthenticated(),
@@ -407,19 +362,19 @@ class AuthManagerWithAnimations {
     }
 }
 
-// Создание глобального экземпляра
+// Создание глобального экземпляра (как в оригинале)
 let authManagerInstance = null;
 
 function initAuthManager() {
     if (!authManagerInstance) {
-        authManagerInstance = new AuthManagerWithAnimations();
+        authManagerInstance = new AuthManager();
         window.authManager = authManagerInstance;
-        console.log('🔐 AuthManager с анимациями инициализирован');
+        console.log('🔐 AuthManager инициализирован');
     }
     return authManagerInstance;
 }
 
-// Инициализация при загрузке
+// Инициализация при загрузке (как в оригинале)
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initAuthManager);
 } else {
@@ -432,4 +387,4 @@ setTimeout(initAuthManager, 500);
 // Экспорт для использования в других скриптах
 window.initAuthManager = initAuthManager;
 
-console.log('🔐 Система авторизации с анимациями загружена');
+console.log('🔐 Восстановленная система авторизации с анимациями загружена');
