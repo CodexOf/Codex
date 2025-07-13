@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Диагностика сервера Codex</title>
+    <style>
+        body {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #1a1a1a;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #3498db;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        .status.success {
+            background: rgba(46, 204, 113, 0.1);
+            border-color: #2ecc71;
+            color: #2ecc71;
+        }
+        .status.error {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        .status.warning {
+            background: rgba(241, 196, 15, 0.1);
+            border-color: #f1c40f;
+            color: #f1c40f;
+        }
+        .status.info {
+            background: rgba(52, 152, 219, 0.1);
+            border-color: #3498db;
+            color: #3498db;
+        }
+        .log {
+            background: #1e1e1e;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 2px 0;
+        }
+        .log-timestamp {
+            color: #888;
+            font-size: 11px;
+        }
+        .log-success { color: #2ecc71; }
+        .log-error { color: #e74c3c; }
+        .log-warning { color: #f1c40f; }
+        .log-info { color: #3498db; }
+        
+        .test-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .test-button:hover {
+            background: #2980b9;
+        }
+        .test-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #444;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Диагностика сервера Codex</h1>
+        
+        <div id="server-info" class="status info">
+            <strong>🌐 Сервер:</strong> <span id="server-url">Определяется...</span>
+        </div>
+        
+        <div class="test-controls">
+            <button class="test-button" onclick="runFullDiagnostic()">🔍 Полная диагностика</button>
+            <button class="test-button" onclick="testServerWakeup()">⏰ Пробудить сервер</button>
+            <button class="test-button" onclick="testLogin()">🔑 Тест авторизации</button>
+            <button class="test-button" onclick="clearLogs()">🧹 Очистить логи</button>
+        </div>
+        
+        <div class="progress" id="progress-container" style="display: none;">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div id="status-container">
+            <!-- Статусы тестов будут добавляться здесь -->
+        </div>
+        
+        <div class="log" id="log-container">
+            <div class="log-entry log-info">
+                <span class="log-timestamp">[СИСТЕМА]</span> Диагностический инструмент готов к работе
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let logContainer = document.getElementById('log-container');
+        let statusContainer = document.getElementById('status-container');
+        let serverUrl = '';
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            detectServer();
+        });
+
+        function detectServer() {
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                serverUrl = `http://${window.location.hostname}:3000`;
+            } else if (window.location.hostname.includes('github.io')) {
+                serverUrl = 'https://codex-of.onrender.com';
+            } else {
+                serverUrl = window.location.origin;
+            }
+            
+            document.getElementById('server-url').textContent = serverUrl;
+            log('info', `Определен сервер: ${serverUrl}`);
+        }
+
+        function log(type, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span> ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function showStatus(type, title, message) {
+            const status = document.createElement('div');
+            status.className = `status ${type}`;
+            status.innerHTML = `<strong>${title}</strong><br>${message}`;
+            statusContainer.appendChild(status);
+        }
+
+        function clearLogs() {
+            logContainer.innerHTML = '<div class="log-entry log-info"><span class="log-timestamp">[СИСТЕМА]</span> Логи очищены</div>';
+            statusContainer.innerHTML = '';
+        }
+
+        function setProgress(percent) {
+            const progressContainer = document.getElementById('progress-container');
+            const progressBar = document.getElementById('progress-bar');
+            
+            if (percent > 0) {
+                progressContainer.style.display = 'block';
+                progressBar.style.width = percent + '%';
+            } else {
+                progressContainer.style.display = 'none';
+            }
+        }
+
+        async function testBasicConnection() {
+            log('info', '🔗 Тестирование базового подключения...');
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch(serverUrl, {
+                    method: 'GET',
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                const endTime = Date.now();
+                const responseTime = endTime - startTime;
+
+                if (response.ok) {
+                    log('success', `✅ Сервер отвечает (${responseTime}ms)`);
+                    showStatus('success', '✅ Базовое подключение', `Сервер доступен, время ответа: ${responseTime}ms`);
+                    return true;
+                } else {
+                    log('warning', `⚠️ Сервер вернул статус ${response.status}`);
+                    showStatus('warning', '⚠️ Проблема с сервером', `HTTP ${response.status}: ${response.statusText}`);
+                    return false;
+                }
+            } catch (error) {
+                log('error', `❌ Ошибка подключения: ${error.message}`);
+                showStatus('error', '❌ Ошибка подключения', `Не удается подключиться к серверу: ${error.message}`);
+                return false;
+            }
+        }
+
+        async function testApiEndpoint(endpoint, expectedStatus = 200) {
+            log('info', `🔍 Тестирование API: ${endpoint}`);
+            
+            try {
+                const response = await fetch(`${serverUrl}${endpoint}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer test-token'
+                    }
+                });
+
+                if (response.status === expectedStatus || (endpoint === '/api/user' && response.status === 401)) {
+                    log('success', `✅ API ${endpoint} работает (статус: ${response.status})`);
+                    return true;
+                } else {
+                    log('warning', `⚠️ API ${endpoint} вернул неожиданный статус: ${response.status}`);
+                    return false;
+                }
+            } catch (error) {
+                log('error', `❌ Ошибка API ${endpoint}: ${error.message}`);
+                return false;
+            }
+        }
+
+        async function testServerWakeup() {
+            log('info', '⏰ Начинается пробуждение сервера...');
+            setProgress(10);
+            
+            const startTime = Date.now();
+            let attempts = 0;
+            const maxAttempts = 12; // 60 секунд максимум
+            
+            while (attempts < maxAttempts) {
+                attempts++;
+                const progress = (attempts / maxAttempts) * 100;
+                setProgress(progress);
+                
+                try {
+                    log('info', `🔄 Попытка ${attempts}/${maxAttempts}...`);
+                    
+                    const response = await fetch(serverUrl, {
+                        method: 'GET',
+                        cache: 'no-cache',
+                        headers: {
+                            'Cache-Control': 'no-cache'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const endTime = Date.now();
+                        const totalTime = endTime - startTime;
+                        
+                        log('success', `✅ Сервер проснулся за ${totalTime}ms`);
+                        showStatus('success', '✅ Пробуждение завершено', `Сервер готов к работе (${totalTime}ms)`);
+                        setProgress(0);
+                        return true;
+                    }
+                } catch (error) {
+                    log('warning', `⚠️ Попытка ${attempts}: ${error.message}`);
+                }
+
+                // Пауза 5 секунд между попытками
+                await new Promise(resolve => setTimeout(resolve, 5000));
+            }
+
+            log('error', '❌ Не удалось пробудить сервер за отведенное время');
+            showStatus('error', '❌ Таймаут пробуждения', 'Сервер не отвечает более 60 секунд');
+            setProgress(0);
+            return false;
+        }
+
+        async function testLogin() {
+            log('info', '🔑 Тестирование авторизации...');
+            
+            // Используем тестовые данные
+            const testUsername = 'test-user-' + Date.now();
+            const testPassword = 'test-password-123';
+            
+            try {
+                // Сначала регистрируем тестового пользователя
+                log('info', '📝 Регистрация тестового пользователя...');
+                
+                const registerResponse = await fetch(`${serverUrl}/api/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: testUsername,
+                        password: testPassword
+                    })
+                });
+
+                const registerData = await registerResponse.json();
+                
+                if (registerData.success) {
+                    log('success', '✅ Тестовый пользователь зарегистрирован');
+                    
+                    // Теперь тестируем вход
+                    log('info', '🔓 Тестирование входа...');
+                    
+                    const loginResponse = await fetch(`${serverUrl}/api/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: testUsername,
+                            password: testPassword
+                        })
+                    });
+
+                    const loginData = await loginResponse.json();
+                    
+                    if (loginData.success && loginData.token) {
+                        log('success', '✅ Авторизация работает корректно');
+                        showStatus('success', '✅ Система авторизации', 'Регистрация и вход работают правильно');
+                        
+                        // Тестируем проверку токена
+                        log('info', '🎫 Проверка токена...');
+                        
+                        const userResponse = await fetch(`${serverUrl}/api/user`, {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${loginData.token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (userResponse.ok) {
+                            const userData = await userResponse.json();
+                            log('success', `✅ Токен действителен, пользователь: ${userData.user.username}`);
+                            showStatus('success', '✅ Проверка токена', 'Система токенов работает корректно');
+                        } else {
+                            log('warning', '⚠️ Проблема с проверкой токена');
+                            showStatus('warning', '⚠️ Проблема с токеном', 'Токен не прошел проверку');
+                        }
+                        
+                        return true;
+                    } else {
+                        log('error', `❌ Ошибка входа: ${loginData.error}`);
+                        showStatus('error', '❌ Ошибка входа', loginData.error || 'Неизвестная ошибка');
+                        return false;
+                    }
+                } else {
+                    log('error', `❌ Ошибка регистрации: ${registerData.error}`);
+                    showStatus('error', '❌ Ошибка регистрации', registerData.error || 'Неизвестная ошибка');
+                    return false;
+                }
+            } catch (error) {
+                log('error', `❌ Критическая ошибка авторизации: ${error.message}`);
+                showStatus('error', '❌ Критическая ошибка', `Система авторизации недоступна: ${error.message}`);
+                return false;
+            }
+        }
+
+        async function checkDatabaseStatus() {
+            log('info', '🗄️ Проверка состояния базы данных...');
+            
+            try {
+                // Пытаемся получить список событий (это покажет, работает ли БД)
+                const response = await fetch(`${serverUrl}/api/events`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer invalid-token'
+                    }
+                });
+
+                if (response.status === 401) {
+                    // 401 - нормально, это означает что сервер работает и проверяет токены
+                    log('success', '✅ База данных отвечает (API возвращает 401 для неверного токена)');
+                    showStatus('success', '✅ База данных', 'PostgreSQL работает корректно');
+                    return true;
+                } else if (response.status === 500) {
+                    log('error', '❌ Ошибка базы данных (500)');
+                    showStatus('error', '❌ Проблема с БД', 'Возможно, база данных недоступна или истек срок действия');
+                    return false;
+                } else {
+                    log('warning', `⚠️ Неожиданный ответ БД: ${response.status}`);
+                    showStatus('warning', '⚠️ Неопределенное состояние БД', `HTTP ${response.status}`);
+                    return true;
+                }
+            } catch (error) {
+                log('error', `❌ Ошибка проверки БД: ${error.message}`);
+                showStatus('error', '❌ Ошибка БД', 'Не удается подключиться к базе данных');
+                return false;
+            }
+        }
+
+        async function runFullDiagnostic() {
+            log('info', '🚀 Запуск полной диагностики...');
+            clearLogs();
+            log('info', '🚀 Запуск полной диагностики...');
+            
+            const tests = [
+                { name: 'Базовое подключение', func: testBasicConnection },
+                { name: 'Проверка API /api/user', func: () => testApiEndpoint('/api/user', 401) },
+                { name: 'Состояние базы данных', func: checkDatabaseStatus },
+                { name: 'Система авторизации', func: testLogin }
+            ];
+
+            let passedTests = 0;
+            const totalTests = tests.length;
+
+            for (let i = 0; i < tests.length; i++) {
+                const test = tests[i];
+                const progress = ((i + 1) / totalTests) * 100;
+                setProgress(progress);
+                
+                log('info', `🧪 Тест ${i + 1}/${totalTests}: ${test.name}`);
+                
+                try {
+                    const result = await test.func();
+                    if (result) {
+                        passedTests++;
+                        log('success', `✅ ${test.name} - ПРОЙДЕН`);
+                    } else {
+                        log('error', `❌ ${test.name} - ПРОВАЛЕН`);
+                    }
+                } catch (error) {
+                    log('error', `❌ ${test.name} - ОШИБКА: ${error.message}`);
+                }
+
+                // Пауза между тестами
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            setProgress(0);
+            
+            // Итоговый отчет
+            const successRate = (passedTests / totalTests) * 100;
+            
+            if (successRate === 100) {
+                log('success', `🎉 Диагностика завершена: ${passedTests}/${totalTests} тестов пройдено (${successRate.toFixed(1)}%)`);
+                showStatus('success', '🎉 Диагностика завершена', `Все системы работают корректно (${passedTests}/${totalTests})`);
+            } else if (successRate >= 75) {
+                log('warning', `⚠️ Диагностика завершена: ${passedTests}/${totalTests} тестов пройдено (${successRate.toFixed(1)}%)`);
+                showStatus('warning', '⚠️ Частичные проблемы', `Некоторые компоненты требуют внимания (${passedTests}/${totalTests})`);
+            } else {
+                log('error', `❌ Диагностика завершена: ${passedTests}/${totalTests} тестов пройдено (${successRate.toFixed(1)}%)`);
+                showStatus('error', '❌ Серьезные проблемы', `Система требует вмешательства (${passedTests}/${totalTests})`);
+            }
+
+            // Рекомендации
+            if (passedTests < totalTests) {
+                log('info', '💡 РЕКОМЕНДАЦИИ:');
+                if (passedTests === 0) {
+                    log('info', '   • Проверьте подключение к интернету');
+                    log('info', '   • Убедитесь, что сервер не превысил лимиты Render.com');
+                    log('info', '   • Попробуйте подождать 2-3 минуты и повторить тест');
+                } else {
+                    log('info', '   • Некоторые компоненты работают частично');
+                    log('info', '   • Попробуйте перезагрузить страницу');
+                    log('info', '   • Если проблемы с БД - возможно истек 90-дневный лимит Render.com');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

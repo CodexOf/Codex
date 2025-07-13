@@ -362,6 +362,10 @@
                 <a href="password-recovery-server.html" style="color: #3498db; text-decoration: none; font-size: 0.9rem;">
                     <i class="fas fa-question-circle"></i> Забыли пароль?
                 </a>
+                <br>
+                <a href="diagnostic.html" style="color: #f39c12; text-decoration: none; font-size: 0.85rem; margin-top: 10px; display: inline-block;">
+                    <i class="fas fa-tools"></i> Диагностика сервера
+                </a>
             </div>
         </form>
         
@@ -396,6 +400,12 @@
             <button type="submit" class="form-button">
                 <span class="button-text">Зарегистрироваться</span>
             </button>
+            
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="diagnostic.html" style="color: #f39c12; text-decoration: none; font-size: 0.85rem;">
+                    <i class="fas fa-tools"></i> Диагностика сервера
+                </a>
+            </div>
         </form>
     </div>
 
@@ -606,6 +616,7 @@
             } catch (error) {
                 console.warn('⚠️ Сервер недоступен или запускается. Первый запрос может занять 30-50 секунд.');
                 console.log('🔄 Проверьте статус:', window.authManager.baseURL);
+                console.log('🔧 Для детальной диагностики используйте: diagnostic.html');
             }
         }
         
